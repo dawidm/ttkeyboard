@@ -77,10 +77,11 @@ public class TTKeyboardLayout {
                     Button button = new Button(context);
                     button.setText(ttButton.getLabel());
                     button.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize()));
-                    button.setOnGenericMotionListener(new View.OnGenericMotionListener() {
+                    button.setOnTouchListener(new View.OnTouchListener() {
                         @Override
-                        public boolean onGenericMotion(View view, MotionEvent motionEvent) {
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
                             ttMotionEventListener.onMotionEvent(ttButton,motionEvent);
+                            Log.v(TAG,ttButton.getLabel()+" onTouch called: "+motionEvent.getAction());
                             return false;
                         }
                     });
