@@ -1,7 +1,7 @@
 package com.example.taptimingkeyboard;
 
 import android.content.Context;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class TapTimingKeyboard {
@@ -9,10 +9,16 @@ public class TapTimingKeyboard {
     private View tapTimingKeyboardView;
 
     public TapTimingKeyboard(Context context) {
-        this.tapTimingKeyboardView = LayoutInflater.from(context).inflate(R.layout.tt_keyboard_layout,null);
+        this.tapTimingKeyboardView = TTKeyboardLayout.qwertyLayout().generateView(context, new TTKeyboardMotionEventListener() {
+            @Override
+            public void onMotionEvent(TTKeyboardButton ttButton, MotionEvent motionEvent) {
+
+            }
+        });
     }
 
     public View getView() {
         return tapTimingKeyboardView;
     }
+
 }
