@@ -34,4 +34,21 @@ public class TTKeyboardButton extends TTKeyboardElement {
     public float getSize() {
         return size;
     }
+
+    public boolean isLetterCharacter() {
+        return Character.isLetter(code);
+    }
+
+    @Override
+    public int hashCode() {
+        return (label+code+size).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof TTKeyboardButton)
+                && ((TTKeyboardButton)obj).getLabel().equals(label)
+                && ((TTKeyboardButton)obj).getCode()==code
+                && ((TTKeyboardButton)obj).getSize()==size;
+    }
 }

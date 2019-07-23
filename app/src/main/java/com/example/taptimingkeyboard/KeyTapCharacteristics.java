@@ -3,12 +3,12 @@ package com.example.taptimingkeyboard;
 public class KeyTapCharacteristics {
 
     private TTKeyboardButton ttKeyboardButton;
-    private long holdTimeNanos;
+    private long holdTimeMillis;
     private float pressure;
 
-    public KeyTapCharacteristics(TTKeyboardButton ttKeyboardButton, long holdTimeNanos, float pressure) {
+    public KeyTapCharacteristics(TTKeyboardButton ttKeyboardButton, long holdTimeMillis, float pressure) {
         this.ttKeyboardButton = ttKeyboardButton;
-        this.holdTimeNanos=holdTimeNanos;
+        this.holdTimeMillis = holdTimeMillis;
         this.pressure=pressure;
     }
 }
