@@ -80,8 +80,8 @@ public class TTKeyboardLayout {
                     button.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View view, MotionEvent motionEvent) {
+                            Log.v(TAG,ttButton.getLabel()+" onTouch called: "+ motionEvent.getAction() + " X: " + motionEvent.getX() + "Y: " + motionEvent.getY());
                             ttMotionEventListener.onMotionEvent(ttButton,motionEvent);
-                            Log.v(TAG,ttButton.getLabel()+" onTouch called: "+motionEvent.getAction());
                             return false;
                         }
                     });
