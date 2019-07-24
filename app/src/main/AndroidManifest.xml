@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.taptimingkeyboard">
 
@@ -7,15 +8,27 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+
         <service
             android:name=".TapTimingKeyboardService"
             android:label="TapTimingKeyboard"
             android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
-                <action android:name="android.view.InputMethod"/>
+                <action android:name="android.view.InputMethod" />
             </intent-filter>
-            <meta-data android:name="android.view.im" android:resource="@xml/method"/>
+
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method" />
         </service>
+
+        <activity android:name=".TapTimingKeyboardPreferencesActivity"
+            android:label="TapTimingKeyboardPreferences">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
+
 </manifest>
