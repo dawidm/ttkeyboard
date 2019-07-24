@@ -18,13 +18,13 @@ public class TapTimingKeyboardService extends InputMethodService {
     //which buttons are currently pressed (but not released) and associated MotionEvents
     private Map<TTKeyboardButton,KeyDownParameters> ttButtonsDownParametersMap = Collections.synchronizedMap(new HashMap<TTKeyboardButton, KeyDownParameters>());
     private TTKeyboardButton lastTTButtonDown = null;
-    private TTKeyboardButton lastTTButtonUp = null;
-    private long lastTTButtonUpTimeMillis = 0;
+    private TTKeyboardButton lastCommittedTTButton = null;
+    private long lastTTButtonCommitTimeMillis = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        tapTimingKeyboard = new TapTimingKeyboard(this, new TTKeyboardMotionEventListener() {
+        tapTimingKeyboard = new TapTimingKeyboard(this, TTKeyboardLayout.Layout.SIMPLEST_QWERTY_SYMMETRIC, new TTKeyboardMotionEventListener() {
             @Override
             public void onMotionEvent(TTKeyboardButton ttButton, MotionEvent motionEvent) {
                 handleMotionEvent(ttButton,motionEvent);
@@ -34,6 +34,7 @@ public class TapTimingKeyboardService extends InputMethodService {
 
     @Override
     public View onCreateInputView() {
+        Log.d(TAG,"onCreateInputView");
         return tapTimingKeyboard.getView();
     }
 
@@ -41,34 +42,37 @@ public class TapTimingKeyboardService extends InputMethodService {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
+                KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
                 if(!ttButtonsDownParametersMap.isEmpty()) {
                     //TODO distance
-                    new FlightTimeCharacteristics(lastTTButtonDown,ttButton,0,0);
-                    Log.d(TAG,"zero flight time: "+lastTTButtonDown.getLabel() + "->" + ttButton.getLabel());
+                    new FlightTimeCharacteristics(lastCommittedTTButton,lastTTButtonDown,0,0);
                     getCurrentInputConnection().commitText(""+(char)lastTTButtonDown.getCode(),1);
+                    Log.d(TAG,"zero flight time: "+lastCommittedTTButton.getLabel() + "->" + lastTTButtonDown.getLabel());
+                    ttButtonsDownParametersMap.get(lastTTButtonDown).setCommitted(true);
+                    lastCommittedTTButton=lastTTButtonDown;
+                    lastTTButtonCommitTimeMillis = motionEvent.getEventTime();
                 }
-                ttButtonsDownParametersMap.put(ttButton,new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY()));
+                ttButtonsDownParametersMap.put(ttButton,keyDownParameters);
                 lastTTButtonDown=ttButton;
                 break;
             case MotionEvent.ACTION_UP:
                 Log.v(TAG, ttButton.getLabel() + " ACTION_UP");
                 if(!ttButtonsDownParametersMap.containsKey(ttButton))
                     return;
-                //MotionEvent downMotionEvent = ttButtonsDownParametersMap.get(ttButton);
-                KeyDownParameters keyDownParameters = ttButtonsDownParametersMap.get(ttButton);
-                if(lastTTButtonDown==ttButton) {
-                    if(lastTTButtonUp!=null) {
-                        new FlightTimeCharacteristics(lastTTButtonUp,ttButton,0,keyDownParameters.getTimeMillis()-lastTTButtonUpTimeMillis);
-                        Log.d(TAG,"flight time (millis): "+lastTTButtonUp.getLabel() + "->" + ttButton.getLabel()+": "+(keyDownParameters.getTimeMillis()-lastTTButtonUpTimeMillis));
+                KeyDownParameters correspondingKeyDownParameters = ttButtonsDownParametersMap.get(ttButton);
+                if(lastTTButtonDown==ttButton && !correspondingKeyDownParameters.isCommitted()) {
+                    if(lastCommittedTTButton != null) {
+                        new FlightTimeCharacteristics(lastCommittedTTButton,ttButton,0,correspondingKeyDownParameters.getTimeMillis()-lastTTButtonCommitTimeMillis);
+                        Log.d(TAG,"flight time (millis): "+ lastCommittedTTButton.getLabel() + "->" + ttButton.getLabel()+": "+(correspondingKeyDownParameters.getTimeMillis()-lastTTButtonCommitTimeMillis));
                     }
                     getCurrentInputConnection().commitText("" + (char) ttButton.getCode(), 1);
+                    lastCommittedTTButton = ttButton;
+                    lastTTButtonCommitTimeMillis = motionEvent.getEventTime();
                 }
-                long holdTimeMillis = motionEvent.getEventTime() - keyDownParameters.getTimeMillis();
-                KeyTapCharacteristics keyTapCharacteristics = new KeyTapCharacteristics(ttButton,holdTimeMillis,keyDownParameters.getPressure());
-                Log.d(TAG,"tapped button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + keyDownParameters.getPressure());
+                long holdTimeMillis = motionEvent.getEventTime() - correspondingKeyDownParameters.getTimeMillis();
+                KeyTapCharacteristics keyTapCharacteristics = new KeyTapCharacteristics(ttButton,holdTimeMillis,correspondingKeyDownParameters.getPressure());
+                Log.d(TAG,"tapped button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + correspondingKeyDownParameters.getPressure());
                 ttButtonsDownParametersMap.remove(ttButton);
-                lastTTButtonUp = ttButton;
-                lastTTButtonUpTimeMillis = motionEvent.getEventTime();
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.v(TAG, ttButton.getLabel() + " ACTION_MOVE");
