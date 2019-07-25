@@ -1,16 +1,8 @@
 package com.example.taptimingkeyboard;
 
-import android.content.Context;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Space;
-
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.List;
 
 public class TTKeyboardLayout {
 
@@ -40,7 +32,11 @@ public class TTKeyboardLayout {
         }
     }
 
-    public static TTKeyboardLayout simplestQwertyLayoutAsymmetric() {
+    public List<TTKeyboardRow> getRows() {
+        return Collections.unmodifiableList(rows);
+    }
+
+    private static TTKeyboardLayout simplestQwertyLayoutAsymmetric() {
         TTKeyboardRow firstRow = new TTKeyboardRow();
         firstRow.addElement(new TTKeyboardButton('q'));
         firstRow.addElement(new TTKeyboardButton('w'));
@@ -86,7 +82,7 @@ public class TTKeyboardLayout {
         return ttKeyboardLayout;
     }
 
-    public static TTKeyboardLayout simplestQwertyLayoutSymmetric() {
+    private static TTKeyboardLayout simplestQwertyLayoutSymmetric() {
         TTKeyboardRow firstRow = new TTKeyboardRow();
         firstRow.addElement(new TTKeyboardButton('q'));
         firstRow.addElement(new TTKeyboardButton('w'));
@@ -140,43 +136,6 @@ public class TTKeyboardLayout {
     private static TTKeyboardLayout simpleQwertyLayoutSymmetric() {
         //TODO
         throw new RuntimeException("not implemented");
-    }
-
-    public View generateView(Context context, final TTKeyboardMotionEventListener ttMotionEventListener) {
-        LinearLayout mainLayout = new LinearLayout(context);
-        mainLayout.setOrientation(LinearLayout.VERTICAL);
-        for(Iterator<TTKeyboardRow> itRow = rows.iterator();itRow.hasNext();) {
-            TTKeyboardRow row = itRow.next();
-            LinearLayout rowLinearLayout = new LinearLayout(context);
-            for(Iterator<TTKeyboardElement> itElement = row.getElements().iterator(); itElement.hasNext();) {
-                TTKeyboardElement element = itElement.next();
-                if(element instanceof TTKeyboardButton) {
-                    final TTKeyboardButton ttButton = (TTKeyboardButton)element;
-                    Button button = new Button(context);
-                    button.setText(ttButton.getLabel());
-                    button.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize()));
-                    button.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            Log.v(TAG,ttButton.getLabel()+" onTouch called: "+ motionEvent.getAction() + " X: " + motionEvent.getX() + "Y: " + motionEvent.getY());
-                            ttMotionEventListener.onMotionEvent(ttButton,motionEvent);
-                            return false;
-                        }
-                    });
-                    Log.v(TAG,"adding button " + ttButton.getLabel() + " size " +ttButton.getSize());
-                    rowLinearLayout.addView(button);
-                }
-                if(element instanceof TTKeyboardSpacer) {
-                    TTKeyboardSpacer ttSpacer = (TTKeyboardSpacer)element;
-                    Space space = new Space(context);
-                    space.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttSpacer.getSize()));
-                    Log.v(TAG,"adding space size " + ttSpacer.getSize());
-                    rowLinearLayout.addView(space);
-                }
-            }
-            mainLayout.addView(rowLinearLayout);
-        }
-        return mainLayout;
     }
 
 }
