@@ -14,6 +14,7 @@ import java.util.Iterator;
 public class TestSessionActivity extends AppCompatActivity {
 
     private TapTimingKeyboard tapTimingKeyboard;
+
     private ArrayList<Long> clicksIds = new ArrayList<>();
     private String[] words;
     private int wordsIterator;
@@ -46,6 +47,22 @@ public class TestSessionActivity extends AppCompatActivity {
                 stopButtonClick(view);
             }
         });
+        initKeyboard();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initKeyboard();
+    }
+
+    @Override
+    protected void onPause() {
+        endSession(true);
+        super.onPause();
+    }
+
+    private void initKeyboard() {
         tapTimingKeyboard = new TapTimingKeyboard(getApplicationContext(), TTKeyboardLayout.Layout.SIMPLEST_QWERTY_SYMMETRIC, new TTKeyboardClickListener() {
             @Override
             public void onKeyboardClick(TTKeyboardButton ttButton, long clickId) {
@@ -141,8 +158,11 @@ public class TestSessionActivity extends AppCompatActivity {
                 }
             }
         } else {
-            resetWord();
-            rejectWaitingClicks();
+            if(charsIterator>0) {
+                resetWord();
+                rejectWaitingClicks();
+                checkKeyboardClick(ttButton, clickId);
+            }
         }
     }
 
