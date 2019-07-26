@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="app_name">TapTimingKeyboard</string>
+    <string-array name="test_words">
+        <item>word</item>
+        <item>wordd</item>
+        <item>worddd</item>
+    </string-array>
 </resources>

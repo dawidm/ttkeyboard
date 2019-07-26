@@ -23,8 +23,14 @@
                 android:resource="@xml/method" />
         </service>
 
-        <activity android:name=".TapTimingKeyboardPreferencesActivity"
+        <activity
+            android:name=".TapTimingKeyboardPreferencesActivity"
             android:label="TapTimingKeyboardPreferences">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".TestSessionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
