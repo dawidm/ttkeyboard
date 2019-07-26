@@ -2,10 +2,12 @@ package com.example.taptimingkeyboard;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.Toast;
+
+import androidx.appcompat.view.ContextThemeWrapper;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +35,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     private double pixelSizeMmX;
     private double pixelSizeMmY;
+    private float keyboardHeightPixels;
 
     //which buttons are currently pressed (but not released) and associated MotionEvents
     private Map<TTKeyboardButton,KeyDownParameters> ttButtonsDownParametersMap = Collections.synchronizedMap(new HashMap<TTKeyboardButton, KeyDownParameters>());
@@ -40,10 +45,13 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener) {
         this.clickListener=clickListener;
-        Point point = new Point();
-        ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRealSize(point);
-        Log.i(TAG,"screen size (px): "+point.x+"x"+point.y);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        float screenHeightPixels=point.y;
+        display.getRealSize(point);
+        Log.i(TAG,"screen size (px): "+point.x+"x"+point.y);
         double longerScreenDimension = Double.parseDouble(sharedPreferences.getString("longer_screen_dimension","0"));
         double shorterScreenDimension = Double.parseDouble(sharedPreferences.getString("shorter_screen_dimension","0"));
         if(longerScreenDimension==0 || shorterScreenDimension==0)
@@ -53,6 +61,10 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
             pixelSizeMmY = (point.y > point.x) ? (longerScreenDimension / point.y) : (shorterScreenDimension / point.y);
             Log.i(TAG, "pixel size x (mm) = " + pixelSizeMmX + " pixel size  (mm) = " + pixelSizeMmY);
         }
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            keyboardHeightPixels=sharedPreferences.getFloat("height_landscape",0.4f)*screenHeightPixels;
+        else
+            keyboardHeightPixels=sharedPreferences.getFloat("height_portrait",0.35f)*screenHeightPixels;
         ttKeyboardLayout=TTKeyboardLayout.withLayout(layout);
         tapTimingKeyboardView = createView(context);
     }
@@ -88,7 +100,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     }
 
     private View createView(Context context) {
-        LinearLayout mainLayout = new LinearLayout(context);
+        float rowHeightPixels = keyboardHeightPixels/ttKeyboardLayout.getRows().size();
+        LinearLayout mainLayout = new LinearLayout(new ContextThemeWrapper(context, R.style.Theme_AppCompat_Light));
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         for(Iterator<TTKeyboardRow> itRow = ttKeyboardLayout.getRows().iterator(); itRow.hasNext();) {
             TTKeyboardRow row = itRow.next();
@@ -100,6 +113,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                     Button button = new Button(context);
                     button.setText(ttButton.getLabel());
                     button.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize()));
+                    button.setHeight((int)rowHeightPixels);
                     button.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View view, MotionEvent motionEvent) {

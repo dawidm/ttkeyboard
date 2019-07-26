@@ -4,6 +4,12 @@
         android:key="longer_screen_dimension"></EditTextPreference>
     <EditTextPreference android:title="Shorter screen dimension (mm)"
         android:key="shorter_screen_dimension"></EditTextPreference>
-
-
+    <net.jayschwa.android.preference.SliderPreference
+        android:key="height_landscape"
+        android:title="Height in landscape orientation"
+        android:defaultValue="40" />
+    <net.jayschwa.android.preference.SliderPreference
+        android:key="height_portrait"
+        android:title="Height in portrait orientation"
+        android:defaultValue="35" />
 </PreferenceScreen>

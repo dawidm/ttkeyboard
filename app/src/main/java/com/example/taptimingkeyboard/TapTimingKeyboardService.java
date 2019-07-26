@@ -13,17 +13,17 @@ public class TapTimingKeyboardService extends InputMethodService {
     @Override
     public void onCreate() {
         super.onCreate();
+    }
+
+    @Override
+    public View onCreateInputView() {
+        Log.d(TAG,"onCreateInputView");
         tapTimingKeyboard = new TapTimingKeyboard(this, TTKeyboardLayout.Layout.SIMPLEST_QWERTY_SYMMETRIC, new TTKeyboardClickListener() {
             @Override
             public void onKeyboardClick(TTKeyboardButton ttButton) {
                 handleKeyboardClick(ttButton);
             }
         });
-    }
-
-    @Override
-    public View onCreateInputView() {
-        Log.d(TAG,"onCreateInputView");
         return tapTimingKeyboard.getView();
     }
 
