@@ -20,7 +20,7 @@ public class TapTimingKeyboardService extends InputMethodService {
         Log.d(TAG,"onCreateInputView");
         tapTimingKeyboard = new TapTimingKeyboard(this, TTKeyboardLayout.Layout.SIMPLEST_QWERTY_SYMMETRIC, new TTKeyboardClickListener() {
             @Override
-            public void onKeyboardClick(TTKeyboardButton ttButton) {
+            public void onKeyboardClick(TTKeyboardButton ttButton, long clickId) {
                 handleKeyboardClick(ttButton);
             }
         });
