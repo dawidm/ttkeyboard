@@ -71,7 +71,9 @@ public class TestSessionActivity extends AppCompatActivity {
         });
         tapTimingKeyboard.testSessionMode();
         updateSessionInfo(false);
-        ((ConstraintLayout)findViewById(R.id.keyboard_container)).addView(tapTimingKeyboard.getView());
+        ConstraintLayout keyboardContainer = findViewById(R.id.keyboard_container);
+        keyboardContainer.removeAllViews();
+        keyboardContainer.addView(tapTimingKeyboard.getView());
     }
 
     private void startSession() {
