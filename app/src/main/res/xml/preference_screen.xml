@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference android:title="Keyboard user id"
+        android:key="user_id"></EditTextPreference>
     <EditTextPreference android:title="Longer screen dimension (mm)"
         android:key="longer_screen_dimension"></EditTextPreference>
     <EditTextPreference android:title="Shorter screen dimension (mm)"

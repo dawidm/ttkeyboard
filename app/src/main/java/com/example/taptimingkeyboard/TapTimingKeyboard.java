@@ -32,6 +32,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private TTKeyboardLayout ttKeyboardLayout;
     private TTKeyboardClickListener clickListener;
     private Map<TTKeyboardButton,Button> buttonsMap = new HashMap<>();
+    private String userId;
 
     private double pixelSizeMmX;
     private double pixelSizeMmY;
@@ -49,6 +50,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener) {
         this.clickListener=clickListener;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        userId=sharedPreferences.getString("user_id","test_user");
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -204,4 +206,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         clickId++;
     }
 
+    public String getUserId() {
+        return userId;
+    }
 }

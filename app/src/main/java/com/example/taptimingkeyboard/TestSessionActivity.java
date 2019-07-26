@@ -53,11 +53,12 @@ public class TestSessionActivity extends AppCompatActivity {
             }
         });
         tapTimingKeyboard.testSessionMode();
+        updateSessionInfo(false);
         ((ConstraintLayout)findViewById(R.id.keyboard_container)).addView(tapTimingKeyboard.getView());
     }
 
     private void startSession() {
-        sessionInfoTextView.setText("User id #, session #");
+        updateSessionInfo(true);
         sessionStartButton.setClickable(false);
         sessionStopButton.setClickable(true);
         //TODO generate session id and save timestamp
@@ -71,13 +72,21 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void endSession(boolean aborted) {
-        sessionInfoTextView.setText("User id #");
+        updateSessionInfo(false);
         sessionStartButton.setClickable(true);
         sessionStopButton.setClickable(false);
         testWordTextView.setText("");
+        clicksIds.clear();
         if (!aborted) {
             //TODO save session info
         }
+    }
+
+    private void updateSessionInfo(boolean sessionActive) {
+        if(sessionActive)
+            sessionInfoTextView.setText(String.format("User id: %s, session %s",tapTimingKeyboard.getUserId(),1));
+        else
+            sessionInfoTextView.setText(String.format("User id: %s",tapTimingKeyboard.getUserId()));
     }
 
     private boolean nextWord() {
