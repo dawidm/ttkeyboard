@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 public class FlightTimeCharacteristics {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
     private char charFrom;
     private char charTo;
     private double distanceMm;
@@ -22,5 +22,37 @@ public class FlightTimeCharacteristics {
         this.timeMillis = timeMillis;
         this.userId = userId;
         this.sessionId = sessionId;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public char getCharFrom() {
+        return charFrom;
+    }
+
+    public char getCharTo() {
+        return charTo;
+    }
+
+    public double getDistanceMm() {
+        return distanceMm;
+    }
+
+    public long getTimeMillis() {
+        return timeMillis;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public long getSessionId() {
+        return sessionId;
     }
 }
