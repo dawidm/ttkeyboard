@@ -84,7 +84,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         testSessionMode = false;
     }
 
-    public void acceptButtonClick(long clickId, int sessionId) {
+    public void acceptButtonClick(long clickId, long sessionId) {
 
     }
 

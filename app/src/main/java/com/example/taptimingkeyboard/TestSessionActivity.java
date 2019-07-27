@@ -3,6 +3,7 @@ package com.example.taptimingkeyboard;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private TapTimingKeyboard tapTimingKeyboard;
 
+    private long sessionId;
     private ArrayList<Long> clicksIds = new ArrayList<>();
     private String[] words;
     private int wordsIterator;
@@ -75,12 +77,30 @@ public class TestSessionActivity extends AppCompatActivity {
         keyboardContainer.addView(tapTimingKeyboard.getView());
     }
 
+    private void prepareStartSession() {
+        sessionStartButton.setClickable(false);
+        sessionStopButton.setClickable(true);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                //TODO wordlist name and hash
+                TestSession testSession = new TestSession(tapTimingKeyboard.getUserId(),System.currentTimeMillis(),"test","test".hashCode());
+                sessionId=TapTimingDatabase.instance(getApplicationContext()).testSessionDao().insert(testSession);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startSession();
+                    }
+                });
+            }
+        });
+    }
+
     private void startSession() {
-        tapTimingKeyboard.startTestSession();
+        tapTimingKeyboard.startTestSession(sessionId);
         updateSessionInfo(true);
         sessionStartButton.setClickable(false);
         sessionStopButton.setClickable(true);
-        //TODO generate session id and save timestamp
         words=getResources().getStringArray(R.array.test_words);
         wordsIterator=0;
         currentWord=words[0].toCharArray();
@@ -98,13 +118,21 @@ public class TestSessionActivity extends AppCompatActivity {
         testWordTextView.setText("");
         clicksIds.clear();
         if (!aborted) {
-            //TODO save session info
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    long timestampMs=System.currentTimeMillis();
+                    TestSession testSession = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getById(sessionId);
+                    testSession.setSessionEndTimestampMs(timestampMs);
+                    TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
+                }
+            });
         }
     }
 
     private void updateSessionInfo(boolean sessionActive) {
         if(sessionActive)
-            sessionInfoTextView.setText(String.format("User id: %s, session %s",tapTimingKeyboard.getUserId(),1));
+            sessionInfoTextView.setText(String.format("User id: %s, session %s",tapTimingKeyboard.getUserId(),sessionId));
         else
             sessionInfoTextView.setText(String.format("User id: %s",tapTimingKeyboard.getUserId()));
     }
@@ -138,8 +166,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private void acceptWaitingClicks() {
         Iterator<Long> iterator = clicksIds.iterator();
         while (iterator.hasNext()) {
-            //TODO session id
-            tapTimingKeyboard.acceptButtonClick(iterator.next(),1);
+            tapTimingKeyboard.acceptButtonClick(iterator.next(),sessionId);
             iterator.remove();
         }
     }
@@ -170,7 +197,7 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void startButtonClick(View view) {
-        startSession();
+        prepareStartSession();
     }
 
     private void stopButtonClick(View view) {
