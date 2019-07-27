@@ -69,7 +69,6 @@ public class TestSessionActivity extends AppCompatActivity {
                 checkKeyboardClick(ttButton, clickId);
             }
         });
-        tapTimingKeyboard.testSessionMode();
         updateSessionInfo(false);
         ConstraintLayout keyboardContainer = findViewById(R.id.keyboard_container);
         keyboardContainer.removeAllViews();
@@ -77,6 +76,7 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void startSession() {
+        tapTimingKeyboard.startTestSession();
         updateSessionInfo(true);
         sessionStartButton.setClickable(false);
         sessionStopButton.setClickable(true);
@@ -91,6 +91,7 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void endSession(boolean aborted) {
+        tapTimingKeyboard.stopTestSession();
         updateSessionInfo(false);
         sessionStartButton.setClickable(true);
         sessionStopButton.setClickable(false);

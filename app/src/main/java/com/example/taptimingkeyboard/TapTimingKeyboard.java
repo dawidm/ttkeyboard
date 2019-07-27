@@ -33,6 +33,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private TTKeyboardClickListener clickListener;
     private Map<TTKeyboardButton,Button> buttonsMap = new HashMap<>();
     private String userId;
+    private long sessionId;
 
     private double pixelSizeMmX;
     private double pixelSizeMmY;
@@ -74,8 +75,13 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         tapTimingKeyboardView = createView(context);
     }
 
-    public void testSessionMode() {
-        testSessionMode=true;
+    public void startTestSession(long sessionId) {
+        this.sessionId = sessionId;
+        testSessionMode = true;
+    }
+
+    public void stopTestSession() {
+        testSessionMode = false;
     }
 
     public void acceptButtonClick(long clickId, int sessionId) {
@@ -163,10 +169,13 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
                 KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
                 if(!ttButtonsDownParametersMap.isEmpty()) {
-                    new FlightTimeCharacteristics(lastCommittedTTButton,
-                            lastTTButtonDown,
+                    new FlightTimeCharacteristics(
+                            (char)lastCommittedTTButton.getCode(),
+                            (char)lastTTButtonDown.getCode(),
                             getButtonDistanceMillimeters(lastCommittedTTButton,lastTTButtonDown),
-                            0);
+                            0,
+                            userId,
+                            sessionId);
                     sendClickEvent(lastTTButtonDown);
                     Log.d(TAG,"zero flight time: "+lastCommittedTTButton.getLabel() + "->" + lastTTButtonDown.getLabel());
                     ttButtonsDownParametersMap.get(lastTTButtonDown).setCommitted(true);
@@ -183,7 +192,13 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 KeyDownParameters correspondingKeyDownParameters = ttButtonsDownParametersMap.get(ttButton);
                 if(lastTTButtonDown==ttButton && !correspondingKeyDownParameters.isCommitted()) {
                     if(lastCommittedTTButton != null) {
-                        new FlightTimeCharacteristics(lastCommittedTTButton,ttButton,getButtonDistanceMillimeters(lastCommittedTTButton,ttButton),correspondingKeyDownParameters.getTimeMillis()-lastTTButtonCommitTimeMillis);
+                        new FlightTimeCharacteristics(
+                                (char)lastCommittedTTButton.getCode(),
+                                (char)ttButton.getCode(),
+                                getButtonDistanceMillimeters(lastCommittedTTButton,ttButton),
+                                correspondingKeyDownParameters.getTimeMillis()-lastTTButtonCommitTimeMillis,
+                                userId,
+                                sessionId);
                         Log.d(TAG,"flight time (millis): "+ lastCommittedTTButton.getLabel() + "->" + ttButton.getLabel()+": "+(correspondingKeyDownParameters.getTimeMillis()-lastTTButtonCommitTimeMillis) + " distance (mm): " + getButtonDistanceMillimeters(lastCommittedTTButton,ttButton));
                     }
                     sendClickEvent(ttButton);
@@ -191,7 +206,12 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                     lastTTButtonCommitTimeMillis = motionEvent.getEventTime();
                 }
                 long holdTimeMillis = motionEvent.getEventTime() - correspondingKeyDownParameters.getTimeMillis();
-                KeyTapCharacteristics keyTapCharacteristics = new KeyTapCharacteristics(ttButton,holdTimeMillis,correspondingKeyDownParameters.getPressure());
+                KeyTapCharacteristics keyTapCharacteristics = new KeyTapCharacteristics(
+                        (char)ttButton.getCode(),
+                        holdTimeMillis,
+                        correspondingKeyDownParameters.getPressure(),
+                        userId,
+                        sessionId);
                 Log.d(TAG,"tapped button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + correspondingKeyDownParameters.getPressure());
                 ttButtonsDownParametersMap.remove(ttButton);
                 break;

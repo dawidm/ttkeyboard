@@ -1,15 +1,26 @@
 package com.example.taptimingkeyboard;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "flight_time_characteristics")
 public class FlightTimeCharacteristics {
-    private TTKeyboardButton buttonFrom;
-    private TTKeyboardButton buttonTo;
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private char charFrom;
+    private char charTo;
     private double distanceMm;
     private long timeMillis;
+    private String userId;
+    private long sessionId;
 
-    public FlightTimeCharacteristics(TTKeyboardButton buttonFrom, TTKeyboardButton buttonTo, double distanceMm, long timeMillis) {
-        this.buttonFrom = buttonFrom;
-        this.buttonTo = buttonTo;
+    public FlightTimeCharacteristics(char charFrom, char charTo, double distanceMm, long timeMillis, String userId, long sessionId) {
+        this.charFrom=charFrom;
+        this.charTo=charTo;
         this.distanceMm = distanceMm;
         this.timeMillis = timeMillis;
+        this.userId = userId;
+        this.sessionId = sessionId;
     }
 }
