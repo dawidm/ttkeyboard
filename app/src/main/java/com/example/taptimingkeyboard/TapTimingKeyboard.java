@@ -51,15 +51,15 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener) {
         this.clickListener=clickListener;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        userId=sharedPreferences.getString("user_id","test_user");
+        userId=sharedPreferences.getString("user_id","");
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
         float screenHeightPixels=point.y;
         display.getRealSize(point);
         Log.i(TAG,"screen size (px): "+point.x+"x"+point.y);
-        double longerScreenDimension = Double.parseDouble(sharedPreferences.getString("longer_screen_dimension","0"));
-        double shorterScreenDimension = Double.parseDouble(sharedPreferences.getString("shorter_screen_dimension","0"));
+        double longerScreenDimension = Double.parseDouble(sharedPreferences.getString("longer_screen_dimension",""));
+        double shorterScreenDimension = Double.parseDouble(sharedPreferences.getString("shorter_screen_dimension",""));
         if(longerScreenDimension==0 || shorterScreenDimension==0)
             Toast.makeText(context,"warning: no screen size provided in settings",Toast.LENGTH_SHORT).show();
         else {
@@ -68,9 +68,9 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
             Log.i(TAG, "pixel size x (mm) = " + pixelSizeMmX + " pixel size  (mm) = " + pixelSizeMmY);
         }
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            keyboardHeightPixels=sharedPreferences.getFloat("height_landscape",0.4f)*screenHeightPixels;
+            keyboardHeightPixels=sharedPreferences.getInt("height_landscape",0)*0.01f*screenHeightPixels;
         else
-            keyboardHeightPixels=sharedPreferences.getFloat("height_portrait",0.35f)*screenHeightPixels;
+            keyboardHeightPixels=sharedPreferences.getInt("height_portrait",0)*0.01f*screenHeightPixels;
         ttKeyboardLayout=TTKeyboardLayout.withLayout(layout);
         tapTimingKeyboardView = createView(context);
     }

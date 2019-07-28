@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference android:title="Keyboard user id"
-        android:key="user_id"></EditTextPreference>
+        android:key="user_id"
+        android:defaultValue="default_user"></EditTextPreference>
     <EditTextPreference android:title="Longer screen dimension (mm)"
-        android:key="longer_screen_dimension"></EditTextPreference>
+        android:key="longer_screen_dimension"
+        android:numeric="integer"
+        android:defaultValue="0"></EditTextPreference>
     <EditTextPreference android:title="Shorter screen dimension (mm)"
-        android:key="shorter_screen_dimension"></EditTextPreference>
-    <net.jayschwa.android.preference.SliderPreference
+        android:key="shorter_screen_dimension"
+        android:defaultValue="0"></EditTextPreference>
+    <SeekBarPreference android:title="Height in landscape orientation (%)"
         android:key="height_landscape"
-        android:title="Height in landscape orientation"
-        android:defaultValue="40" />
-    <net.jayschwa.android.preference.SliderPreference
+        android:defaultValue="40"
+        android:min="1"
+        android:max="100"></SeekBarPreference>
+    <SeekBarPreference android:title="Height in portrait orientation (%)"
         android:key="height_portrait"
-        android:title="Height in portrait orientation"
-        android:defaultValue="35" />
+        android:defaultValue="35"
+        android:min="1"
+        android:max="100"></SeekBarPreference>
 </PreferenceScreen>
