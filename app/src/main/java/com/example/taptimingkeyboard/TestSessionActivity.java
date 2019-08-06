@@ -111,7 +111,7 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void endSession(boolean aborted) {
-        tapTimingKeyboard.stopTestSession();
+        tapTimingKeyboard.endTestSession();
         updateSessionInfo(false);
         sessionStartButton.setClickable(true);
         sessionStopButton.setClickable(false);
@@ -166,7 +166,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private void acceptWaitingClicks() {
         Iterator<Long> iterator = clicksIds.iterator();
         while (iterator.hasNext()) {
-            tapTimingKeyboard.acceptButtonClick(iterator.next(),sessionId);
+            tapTimingKeyboard.acceptButtonClick(iterator.next());
             iterator.remove();
         }
     }

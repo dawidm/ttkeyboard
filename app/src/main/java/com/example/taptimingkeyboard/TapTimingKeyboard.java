@@ -28,12 +28,15 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     public static final String TAG = TapTimingKeyboard.class.getName();
 
+    private Context context;
+
     private View tapTimingKeyboardView;
     private TTKeyboardLayout ttKeyboardLayout;
     private TTKeyboardClickListener clickListener;
     private Map<TTKeyboardButton,Button> buttonsMap = new HashMap<>();
     private String userId;
     private long sessionId;
+    private TimingDataManager timingDataManager;
 
     private double pixelSizeMmX;
     private double pixelSizeMmY;
@@ -42,14 +45,17 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     //which buttons are currently pressed (but not released) and associated MotionEvents
     private Map<TTKeyboardButton,KeyDownParameters> ttButtonsDownParametersMap = Collections.synchronizedMap(new HashMap<TTKeyboardButton, KeyDownParameters>());
     private TTKeyboardButton lastTTButtonDown = null;
-    private TTKeyboardButton lastCommittedTTButton = null;
-    private long lastTTButtonCommitTimeMillis = 0;
+    private TTButtonClick lastTTButtonClick = null;
+    private WaitingFlightTimeCharacteristics waitingFlightTimeCharacteristics = null;
 
     private boolean testSessionMode = false;
     private long clickId = 0;
 
     public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener) {
+        this.context=context;
         this.clickListener=clickListener;
+        timingDataManager=new TimingDataManager(context);
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         userId=sharedPreferences.getString("user_id","");
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -76,20 +82,19 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     }
 
     public void startTestSession(long sessionId) {
-        this.sessionId = sessionId;
-        testSessionMode = true;
+        timingDataManager.startTestSession(sessionId);
     }
 
-    public void stopTestSession() {
-        testSessionMode = false;
+    public void endTestSession() {
+        timingDataManager.endTestSession();
     }
 
-    public void acceptButtonClick(long clickId, long sessionId) {
-
+    public void acceptButtonClick(long clickId) {
+        timingDataManager.acceptButtonClick(clickId);
     }
 
     public void rejectButtonClick(long clickId) {
-
+        timingDataManager.rejectButtonClick(clickId);
     }
 
     public View getView() {
@@ -169,18 +174,20 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
                 KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
                 if(!ttButtonsDownParametersMap.isEmpty()) {
-                    new FlightTimeCharacteristics(
-                            (char)lastCommittedTTButton.getCode(),
+                    Log.d(TAG,"zero flight time: "+ lastTTButtonClick.getTtButton().getLabel() + "->" + lastTTButtonDown.getLabel());
+                    long firstClickId = sendClickEvent(lastTTButtonClick.getTtButton());
+                    FlightTimeCharacteristics flightTimeCharacteristics = new FlightTimeCharacteristics(
+                            (char) lastTTButtonClick.getTtButton().getCode(),
                             (char)lastTTButtonDown.getCode(),
-                            getButtonDistanceMillimeters(lastCommittedTTButton,lastTTButtonDown),
+                            getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),lastTTButtonDown),
                             0,
                             userId,
                             sessionId);
-                    sendClickEvent(lastTTButtonDown);
-                    Log.d(TAG,"zero flight time: "+lastCommittedTTButton.getLabel() + "->" + lastTTButtonDown.getLabel());
-                    ttButtonsDownParametersMap.get(lastTTButtonDown).setCommitted(true);
-                    lastCommittedTTButton=lastTTButtonDown;
-                    lastTTButtonCommitTimeMillis = motionEvent.getEventTime();
+                    if(waitingFlightTimeCharacteristics !=null)
+                        timingDataManager.addFlightTimeCharacteristics(waitingFlightTimeCharacteristics.getFlightTimeCharacteristics(), waitingFlightTimeCharacteristics.getFirstClickId(),firstClickId);
+                    waitingFlightTimeCharacteristics =new WaitingFlightTimeCharacteristics(flightTimeCharacteristics,firstClickId);
+                    ttButtonsDownParametersMap.get(lastTTButtonDown).setCommitted(firstClickId);
+                    lastTTButtonClick=new TTButtonClick(lastTTButtonDown,firstClickId,motionEvent.getEventTime());
                 }
                 ttButtonsDownParametersMap.put(ttButton,keyDownParameters);
                 lastTTButtonDown=ttButton;
@@ -190,40 +197,46 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 if(!ttButtonsDownParametersMap.containsKey(ttButton))
                     return;
                 KeyDownParameters correspondingKeyDownParameters = ttButtonsDownParametersMap.get(ttButton);
-                if(lastTTButtonDown==ttButton && !correspondingKeyDownParameters.isCommitted()) {
-                    if(lastCommittedTTButton != null) {
-                        new FlightTimeCharacteristics(
-                                (char)lastCommittedTTButton.getCode(),
-                                (char)ttButton.getCode(),
-                                getButtonDistanceMillimeters(lastCommittedTTButton,ttButton),
-                                correspondingKeyDownParameters.getTimeMillis()-lastTTButtonCommitTimeMillis,
-                                userId,
-                                sessionId);
-                        Log.d(TAG,"flight time (millis): "+ lastCommittedTTButton.getLabel() + "->" + ttButton.getLabel()+": "+(correspondingKeyDownParameters.getTimeMillis()-lastTTButtonCommitTimeMillis) + " distance (mm): " + getButtonDistanceMillimeters(lastCommittedTTButton,ttButton));
-                    }
-                    sendClickEvent(ttButton);
-                    lastCommittedTTButton = ttButton;
-                    lastTTButtonCommitTimeMillis = motionEvent.getEventTime();
-                }
                 long holdTimeMillis = motionEvent.getEventTime() - correspondingKeyDownParameters.getTimeMillis();
+                Log.d(TAG,"tapped button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + correspondingKeyDownParameters.getPressure());
+                long currentActionClickId;
+                if(!correspondingKeyDownParameters.isCommitted()) {
+                    currentActionClickId = sendClickEvent(ttButton);
+                    if(lastTTButtonClick != null) {
+                        if(waitingFlightTimeCharacteristics !=null) { //last click was by pressing a new key without releasing previous
+                            timingDataManager.addFlightTimeCharacteristics(waitingFlightTimeCharacteristics.getFlightTimeCharacteristics(), waitingFlightTimeCharacteristics.getFirstClickId(), currentActionClickId);
+                            waitingFlightTimeCharacteristics = null;
+                        } else { //last click was by pressing and then releasing a key
+                            Log.d(TAG,"flight time (millis): "+ lastTTButtonClick.getTtButton().getLabel() + "->" + ttButton.getLabel()+": "+(correspondingKeyDownParameters.getTimeMillis()-lastTTButtonClick.getClickTimestampMillis()) + " distance (mm): " + getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),ttButton));
+                            FlightTimeCharacteristics flightTimeCharacteristics=new FlightTimeCharacteristics(
+                                    (char)lastTTButtonClick.getTtButton().getCode(),
+                                    (char)ttButton.getCode(),
+                                    getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),ttButton),
+                                    correspondingKeyDownParameters.getTimeMillis()-lastTTButtonClick.getClickTimestampMillis(),
+                                    userId,
+                                    sessionId);
+                            timingDataManager.addFlightTimeCharacteristics(flightTimeCharacteristics, lastTTButtonClick.getClickId(), currentActionClickId);
+                        }
+                    }
+                    lastTTButtonClick = new TTButtonClick(ttButton,currentActionClickId,motionEvent.getEventTime());
+                } else {
+                    currentActionClickId=correspondingKeyDownParameters.getClickId();
+                }
                 KeyTapCharacteristics keyTapCharacteristics = new KeyTapCharacteristics(
                         (char)ttButton.getCode(),
                         holdTimeMillis,
                         correspondingKeyDownParameters.getPressure(),
                         userId,
                         sessionId);
-                Log.d(TAG,"tapped button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + correspondingKeyDownParameters.getPressure());
+                timingDataManager.addKeyTapCharacteristics(keyTapCharacteristics,currentActionClickId);
                 ttButtonsDownParametersMap.remove(ttButton);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.v(TAG, ttButton.getLabel() + " ACTION_MOVE");
                 break;
         }
     }
 
-    private synchronized void sendClickEvent(TTKeyboardButton ttButton) {
+    private long sendClickEvent(TTKeyboardButton ttButton) {
         clickListener.onKeyboardClick(ttButton,clickId);
-        clickId++;
+        return clickId++;
     }
 
     public String getUserId() {

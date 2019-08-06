@@ -2,6 +2,7 @@ package com.example.taptimingkeyboard;
 
 public class KeyDownParameters {
 
+    private long clickId;
     private long timeMillis;
     private float pressure;
     private float x;
@@ -20,8 +21,13 @@ public class KeyDownParameters {
         return committed;
     }
 
-    public void setCommitted(boolean committed) {
-        this.committed = committed;
+    public void setCommitted(long clickId) {
+        committed=true;
+        this.clickId=clickId;
+    }
+
+    public long getClickId() {
+        return clickId;
     }
 
     public long getTimeMillis() {
