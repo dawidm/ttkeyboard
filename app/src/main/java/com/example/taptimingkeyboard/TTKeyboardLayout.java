@@ -72,7 +72,7 @@ public class TTKeyboardLayout {
         thirdRow.addElement(new TTKeyboardSpacer(2.25f));
         TTKeyboardRow fourthRow = new TTKeyboardRow();
         fourthRow.addElement(new TTKeyboardSpacer(2.75f));
-        fourthRow.addElement(new TTKeyboardButton("SPACE",032,5));
+        fourthRow.addElement(new TTKeyboardButton("SPACE",32,5));
         fourthRow.addElement(new TTKeyboardSpacer(2.25f));
         TTKeyboardLayout ttKeyboardLayout = new TTKeyboardLayout();
         ttKeyboardLayout.rows.add(firstRow);
@@ -118,7 +118,7 @@ public class TTKeyboardLayout {
         thirdRow.addElement(new TTKeyboardSpacer(1.5f));
         TTKeyboardRow fourthRow = new TTKeyboardRow();
         fourthRow.addElement(new TTKeyboardSpacer(2.5f));
-        fourthRow.addElement(new TTKeyboardButton("SPACE",032,5));
+        fourthRow.addElement(new TTKeyboardButton("SPACE",32,5));
         fourthRow.addElement(new TTKeyboardSpacer(2.5f));
         TTKeyboardLayout ttKeyboardLayout = new TTKeyboardLayout();
         ttKeyboardLayout.rows.add(firstRow);
