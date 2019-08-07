@@ -184,8 +184,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 if(!ttButtonsDownParametersMap.isEmpty()) {
                     Log.d(TAG,"zero flight time: "+ lastTTButtonDown.getLabel() + "->" + ttButton.getLabel());
                     FlightTimeCharacteristics flightTimeCharacteristics = new FlightTimeCharacteristics(
-                            (char) lastTTButtonClick.getTtButton().getCode(),
                             (char)lastTTButtonDown.getCode(),
+                            (char)ttButton.getCode(),
                             getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),lastTTButtonDown),
                             0,
                             userId,

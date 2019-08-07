@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -30,8 +32,8 @@ public class TimingDataManager {
     //first of second clickId has been accepted TODO hashCode
     private Set<FlightTimeCharacteristics> flightTimeCharacteristicsAcceptedOnce = Collections.synchronizedSet(new HashSet<FlightTimeCharacteristics>());
 
-    private Set<Long> acceptedClickIds = Collections.synchronizedSet(new HashSet<Long>());
-    private Set<Long> rejectedClickIds = Collections.synchronizedSet(new HashSet<Long>());
+    private List<Long> acceptedClickIds = Collections.synchronizedList(new LinkedList<Long>());
+    private List<Long> rejectedClickIds = Collections.synchronizedList(new LinkedList<Long>());
 
     private ScheduledExecutorService scheduledExecutorService;
 
