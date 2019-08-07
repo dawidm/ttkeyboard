@@ -179,10 +179,11 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void checkKeyboardClick(TTKeyboardButton ttButton, long clickId) {
+        clicksIds.add(clickId);
         if(ttButton.getCode()==currentChar) {   //correct keyboard click
-            clicksIds.add(clickId);
             if(!nextChar()) {   //end of word, word correctly typed
                 acceptWaitingClicks();
+                tapTimingKeyboard.abortCurrentFlightTime();
                 if(!nextWord()) { //end of session
                     endSession(false);
                 }
@@ -190,9 +191,10 @@ public class TestSessionActivity extends AppCompatActivity {
         } else {
             if(charsIterator>0) {
                 resetWord();
-                rejectWaitingClicks();
                 checkKeyboardClick(ttButton, clickId);
             }
+            rejectWaitingClicks();
+            tapTimingKeyboard.abortCurrentFlightTime();
         }
     }
 

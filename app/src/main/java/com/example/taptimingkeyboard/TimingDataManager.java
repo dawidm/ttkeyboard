@@ -68,7 +68,7 @@ public class TimingDataManager {
                 }
                 if(flightTimeCharacteristicsByFirstId.containsKey(key)) {
                     if(flightTimeCharacteristicsAcceptedOnce.contains(flightTimeCharacteristicsByFirstId.get(key))) {
-                        flightTimeCharacteristicsAcceptedOnce.remove(key);
+                        flightTimeCharacteristicsAcceptedOnce.remove(flightTimeCharacteristicsByFirstId.get(key));
                         Log.d(TAG,"inserting flightTimeCharacteristics " + flightTimeCharacteristicsByFirstId.get(key).getCharFrom() + "->" + flightTimeCharacteristicsByFirstId.get(key).getCharTo());
                         TapTimingDatabase.instance(context).flightTimeCharacteristicsDao().insertAll(flightTimeCharacteristicsByFirstId.get(key));
                     } else {
@@ -78,7 +78,7 @@ public class TimingDataManager {
                 }
                 if(flightTimeCharacteristicsBySecondId.containsKey(key)) {
                     if(flightTimeCharacteristicsAcceptedOnce.contains(flightTimeCharacteristicsBySecondId.get(key))) {
-                        flightTimeCharacteristicsAcceptedOnce.remove(key);
+                        flightTimeCharacteristicsAcceptedOnce.remove(flightTimeCharacteristicsBySecondId.get(key));
                         Log.d(TAG,"inserting flightTimeCharacteristics " + flightTimeCharacteristicsBySecondId.get(key).getCharFrom() + "->" + flightTimeCharacteristicsBySecondId.get(key).getCharTo());
                         TapTimingDatabase.instance(context).flightTimeCharacteristicsDao().insertAll(flightTimeCharacteristicsBySecondId.get(key));
                     } else {

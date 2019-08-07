@@ -5,6 +5,7 @@ import android.inputmethodservice.InputMethodService;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 
 public class TapTimingKeyboardService extends InputMethodService {
 
@@ -37,6 +38,13 @@ public class TapTimingKeyboardService extends InputMethodService {
             }
         });
         return tapTimingKeyboard.getView();
+    }
+
+    @Override
+    public void onStartInputView(EditorInfo info, boolean restarting) {
+        Log.d(TAG,"onStartInputView");
+        super.onStartInputView(info, restarting);
+        tapTimingKeyboard.abortCurrentFlightTime();
     }
 
     private void handleKeyboardClick(TTKeyboardButton ttButton) {
