@@ -48,7 +48,6 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private TTButtonClick lastTTButtonClick = null;
     private WaitingFlightTimeCharacteristics waitingFlightTimeCharacteristics = null;
 
-    private boolean testSessionMode = false;
     private long clickId = 0;
 
     public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener) {
@@ -82,7 +81,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     }
 
     public void startTestSession(long sessionId) {
-        timingDataManager.startTestSession(sessionId);
+        this.sessionId=sessionId;
+        timingDataManager.startTestSession();
     }
 
     public void endTestSession() {
@@ -174,8 +174,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
                 KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
                 if(!ttButtonsDownParametersMap.isEmpty()) {
-                    Log.d(TAG,"zero flight time: "+ lastTTButtonClick.getTtButton().getLabel() + "->" + lastTTButtonDown.getLabel());
-                    long firstClickId = sendClickEvent(lastTTButtonClick.getTtButton());
+                    Log.d(TAG,"zero flight time: "+ lastTTButtonDown.getLabel() + "->" + ttButton.getLabel());
+                    long firstClickId = sendClickEvent(lastTTButtonDown);
                     FlightTimeCharacteristics flightTimeCharacteristics = new FlightTimeCharacteristics(
                             (char) lastTTButtonClick.getTtButton().getCode(),
                             (char)lastTTButtonDown.getCode(),
