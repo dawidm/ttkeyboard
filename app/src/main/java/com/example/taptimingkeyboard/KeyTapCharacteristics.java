@@ -8,6 +8,7 @@ public class KeyTapCharacteristics {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
+    private long timestamp;
     private char keyCharacter;
     private long holdTimeMillis;
     private float pressure;
@@ -16,7 +17,8 @@ public class KeyTapCharacteristics {
     private String userId;
     private long sessionId;
 
-    public KeyTapCharacteristics(char keyCharacter, long holdTimeMillis, float pressure, float imprecisionX, float imprecisionY, String userId, long sessionId) {
+    public KeyTapCharacteristics(long timestamp, char keyCharacter, long holdTimeMillis, float pressure, float imprecisionX, float imprecisionY, String userId, long sessionId) {
+        this.timestamp = timestamp;
         this.keyCharacter = keyCharacter;
         this.holdTimeMillis = holdTimeMillis;
         this.pressure = pressure;
@@ -32,6 +34,10 @@ public class KeyTapCharacteristics {
 
     public long getId() {
         return id;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     public char getKeyCharacter() {

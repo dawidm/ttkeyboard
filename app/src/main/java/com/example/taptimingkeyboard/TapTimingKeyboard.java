@@ -177,6 +177,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     @Override
     public synchronized void onMotionEvent(TTKeyboardButton ttButton, MotionEvent motionEvent) {
+        long currentTimestampMillis = System.currentTimeMillis();
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
@@ -184,6 +185,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 if(!ttButtonsDownParametersMap.isEmpty()) {
                     Log.d(TAG,"zero flight time: "+ lastTTButtonDown.getLabel() + "->" + ttButton.getLabel());
                     FlightTimeCharacteristics flightTimeCharacteristics = new FlightTimeCharacteristics(
+                            currentTimestampMillis,
                             (char)lastTTButtonDown.getCode(),
                             (char)ttButton.getCode(),
                             getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),lastTTButtonDown),
@@ -211,6 +213,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 double imprecisionY=2*(correspondingKeyDownParameters.getY()/getButtonSizeY(ttButton))-1;
                 Log.d(TAG,"tapped button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + correspondingKeyDownParameters.getPressure()+ " imprecision (x, y): "+imprecisionX+","+imprecisionY);
                 KeyTapCharacteristics keyTapCharacteristics = new KeyTapCharacteristics(
+                        currentTimestampMillis,
                         (char)ttButton.getCode(),
                         holdTimeMillis,
                         correspondingKeyDownParameters.getPressure(),
@@ -227,6 +230,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                         } else { //last click was by pressing and then releasing a key
                             Log.d(TAG,"flight time (millis): "+ lastTTButtonClick.getTtButton().getLabel() + "->" + ttButton.getLabel()+": "+(correspondingKeyDownParameters.getTimeMillis()-lastTTButtonClick.getClickTimestampMillis()) + " distance (mm): " + getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),ttButton));
                             FlightTimeCharacteristics flightTimeCharacteristics=new FlightTimeCharacteristics(
+                                    currentTimestampMillis,
                                     (char)lastTTButtonClick.getTtButton().getCode(),
                                     (char)ttButton.getCode(),
                                     getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),ttButton),

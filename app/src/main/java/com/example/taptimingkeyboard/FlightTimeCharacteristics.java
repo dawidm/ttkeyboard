@@ -8,6 +8,7 @@ public class FlightTimeCharacteristics {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
+    private long timestamp;
     private char charFrom;
     private char charTo;
     private double distanceMm;
@@ -15,9 +16,10 @@ public class FlightTimeCharacteristics {
     private String userId;
     private long sessionId;
 
-    public FlightTimeCharacteristics(char charFrom, char charTo, double distanceMm, long timeMillis, String userId, long sessionId) {
-        this.charFrom=charFrom;
-        this.charTo=charTo;
+    public FlightTimeCharacteristics(long timestamp, char charFrom, char charTo, double distanceMm, long timeMillis, String userId, long sessionId) {
+        this.timestamp = timestamp;
+        this.charFrom = charFrom;
+        this.charTo = charTo;
         this.distanceMm = distanceMm;
         this.timeMillis = timeMillis;
         this.userId = userId;
@@ -30,6 +32,10 @@ public class FlightTimeCharacteristics {
 
     public long getId() {
         return id;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     public char getCharFrom() {
