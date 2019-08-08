@@ -134,8 +134,52 @@ public class TTKeyboardLayout {
     }
 
     private static TTKeyboardLayout simpleQwertyLayoutSymmetric() {
-        //TODO
-        throw new RuntimeException("not implemented");
+        TTKeyboardRow firstRow = new TTKeyboardRow();
+        firstRow.addElement(new TTKeyboardButton('q'));
+        firstRow.addElement(new TTKeyboardButton('w'));
+        firstRow.addElement(new TTKeyboardButton('e'));
+        firstRow.addElement(new TTKeyboardButton('r'));
+        firstRow.addElement(new TTKeyboardButton('t'));
+        firstRow.addElement(new TTKeyboardButton('y'));
+        firstRow.addElement(new TTKeyboardButton('u'));
+        firstRow.addElement(new TTKeyboardButton('i'));
+        firstRow.addElement(new TTKeyboardButton('o'));
+        firstRow.addElement(new TTKeyboardButton('p'));
+        TTKeyboardRow secondRow = new TTKeyboardRow();
+        secondRow.addElement(new TTKeyboardSpacer(0.5f));
+        secondRow.addElement(new TTKeyboardButton('a'));
+        secondRow.addElement(new TTKeyboardButton('s'));
+        secondRow.addElement(new TTKeyboardButton('d'));
+        secondRow.addElement(new TTKeyboardButton('f'));
+        secondRow.addElement(new TTKeyboardButton('g'));
+        secondRow.addElement(new TTKeyboardButton('h'));
+        secondRow.addElement(new TTKeyboardButton('j'));
+        secondRow.addElement(new TTKeyboardButton('k'));
+        secondRow.addElement(new TTKeyboardButton('l'));
+        secondRow.addElement(new TTKeyboardSpacer(0.5f));
+        TTKeyboardRow thirdRow = new TTKeyboardRow();
+        thirdRow.addElement(new TTKeyboardSpacer(1.5f));
+        thirdRow.addElement(new TTKeyboardButton('z'));
+        thirdRow.addElement(new TTKeyboardButton('x'));
+        thirdRow.addElement(new TTKeyboardButton('c'));
+        thirdRow.addElement(new TTKeyboardButton('v'));
+        thirdRow.addElement(new TTKeyboardButton('b'));
+        thirdRow.addElement(new TTKeyboardButton('n'));
+        thirdRow.addElement(new TTKeyboardButton('m'));
+        thirdRow.addElement(new TTKeyboardSpacer(0.5f));
+        thirdRow.addElement(new TTKeyboardButton("<",8,1));
+        TTKeyboardRow fourthRow = new TTKeyboardRow();
+        fourthRow.addElement(new TTKeyboardSpacer(2.0f));
+        fourthRow.addElement(new TTKeyboardButton("SPACE",32,5));
+        fourthRow.addElement(new TTKeyboardButton(','));
+        fourthRow.addElement(new TTKeyboardButton('.'));
+        fourthRow.addElement(new TTKeyboardButton("↵",13,1));
+        TTKeyboardLayout ttKeyboardLayout = new TTKeyboardLayout();
+        ttKeyboardLayout.rows.add(firstRow);
+        ttKeyboardLayout.rows.add(secondRow);
+        ttKeyboardLayout.rows.add(thirdRow);
+        ttKeyboardLayout.rows.add(fourthRow);
+        return ttKeyboardLayout;
     }
 
 }

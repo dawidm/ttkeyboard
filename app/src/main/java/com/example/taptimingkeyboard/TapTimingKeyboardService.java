@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
@@ -31,7 +32,7 @@ public class TapTimingKeyboardService extends InputMethodService {
     @Override
     public View onCreateInputView() {
         Log.d(TAG,"onCreateInputView");
-        tapTimingKeyboard = new TapTimingKeyboard(this, TTKeyboardLayout.Layout.SIMPLEST_QWERTY_SYMMETRIC, new TTKeyboardClickListener() {
+        tapTimingKeyboard = new TapTimingKeyboard(this, TTKeyboardLayout.Layout.SIMPLE_QWERTY_SYMMETRIC, new TTKeyboardClickListener() {
             @Override
             public void onKeyboardClick(TTKeyboardButton ttButton, long clickId) {
                 handleKeyboardClick(ttButton);
@@ -48,7 +49,16 @@ public class TapTimingKeyboardService extends InputMethodService {
     }
 
     private void handleKeyboardClick(TTKeyboardButton ttButton) {
-        getCurrentInputConnection().commitText(""+(char)ttButton.getCode(),1);
+        switch (ttButton.getCode()) {
+            case 8:
+                getCurrentInputConnection().deleteSurroundingText(1, 0);
+                break;
+            case 13:
+                getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_ENTER));
+                break;
+            default:
+                getCurrentInputConnection().commitText("" + (char) ttButton.getCode(), 1);
+        }
     };
 
 }
