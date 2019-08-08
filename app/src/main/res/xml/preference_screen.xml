@@ -20,4 +20,7 @@
         android:defaultValue="35"
         android:min="1"
         android:max="100"></SeekBarPreference>
+    <CheckBoxPreference android:title="Click sound"
+        android:key="click_sound"
+        android:defaultValue="true"></CheckBoxPreference>
 </PreferenceScreen>

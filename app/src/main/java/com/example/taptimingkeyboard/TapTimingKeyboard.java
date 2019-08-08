@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.AudioManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
@@ -29,6 +30,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     public static final String TAG = TapTimingKeyboard.class.getName();
 
     private Context context;
+    private AudioManager audioManager;
 
     private View tapTimingKeyboardView;
     private TTKeyboardLayout ttKeyboardLayout;
@@ -36,6 +38,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private Map<TTKeyboardButton,Button> buttonsMap = new HashMap<>();
     private String userId;
     private long sessionId;
+    private boolean clickSound;
     private TimingDataManager timingDataManager;
 
     private double pixelSizeMmX;
@@ -57,6 +60,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         userId=sharedPreferences.getString("user_id","");
+        clickSound=sharedPreferences.getBoolean("click_sound",true);
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -188,7 +192,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                             currentTimestampMillis,
                             (char)lastTTButtonDown.getCode(),
                             (char)ttButton.getCode(),
-                            getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),lastTTButtonDown),
+                            getButtonDistanceMillimeters(ttButton,lastTTButtonDown),
                             0,
                             userId,
                             sessionId);
@@ -252,6 +256,11 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     }
 
     private long sendClickEvent(TTKeyboardButton ttButton) {
+        if(clickSound) {
+            if (audioManager == null)
+                audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
+        }
         clickListener.onKeyboardClick(ttButton,clickId);
         return clickId++;
     }
