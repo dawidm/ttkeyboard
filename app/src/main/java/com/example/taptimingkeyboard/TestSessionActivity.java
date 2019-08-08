@@ -2,17 +2,33 @@ package com.example.taptimingkeyboard;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.preference.PreferenceManager;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class TestSessionActivity extends AppCompatActivity {
+
+    public static final String TAG = TestSessionActivity.class.getName();
 
     private TapTimingKeyboard tapTimingKeyboard;
 
@@ -29,6 +45,10 @@ public class TestSessionActivity extends AppCompatActivity {
     private TextView sessionInfoTextView;
     private Button sessionStartButton;
     private Button sessionStopButton;
+    private Button settingsButton;
+    private Button updateButton;
+    private Spinner listsSpinner;
+    private LinearLayout listLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +70,24 @@ public class TestSessionActivity extends AppCompatActivity {
                 stopButtonClick(view);
             }
         });
+        settingsButton = findViewById(R.id.setting_button);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
+                startActivity(intent);
+            }
+        });
+        listsSpinner=findViewById(R.id.lists_spinner);
+        updateButton=findViewById(R.id.update_button);
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateWordLists();
+            }
+        });
+        listLinearLayout=findViewById(R.id.lists_linear_layout);
+        loadWordLists();
         initKeyboard();
     }
 
@@ -81,28 +119,27 @@ public class TestSessionActivity extends AppCompatActivity {
     private void prepareStartSession() {
         sessionStartButton.setClickable(false);
         sessionStopButton.setClickable(true);
+        listLinearLayout.setVisibility(View.INVISIBLE);
+        final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                //TODO wordlist name and hash
-                TestSession testSession = new TestSession(tapTimingKeyboard.getUserId(),System.currentTimeMillis(),"test","test".hashCode());
+                TestSession testSession = new TestSession(tapTimingKeyboard.getUserId(),System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode());
                 sessionId=TapTimingDatabase.instance(getApplicationContext()).testSessionDao().insert(testSession);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        startSession();
+                        startSession(wordList);
                     }
                 });
             }
         });
     }
 
-    private void startSession() {
+    private void startSession(WordLists.WordList wordList) {
         tapTimingKeyboard.startTestSession(sessionId);
         updateSessionInfo(true);
-        sessionStartButton.setClickable(false);
-        sessionStopButton.setClickable(true);
-        words=getResources().getStringArray(R.array.test_words);
+        words=wordList.getWordsCsv().split(",");
         wordsIterator=0;
         currentWord=words[0].toCharArray();
         charsIterator=0;
@@ -117,6 +154,7 @@ public class TestSessionActivity extends AppCompatActivity {
         updateSessionInfo(false);
         sessionStartButton.setClickable(true);
         sessionStopButton.setClickable(false);
+        listLinearLayout.setVisibility(View.VISIBLE);
         testWordTextView.setText("");
         clicksIds.clear();
         if (!aborted) {
@@ -208,6 +246,49 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void stopButtonClick(View view) {
         endSession(true);
+    }
+
+    private void updateWordLists() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Gson gson = new Gson();
+                try {
+                    SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String url = sharedPreferences.getString("wordlists_url","");
+                    WordLists wordLists = gson.fromJson(new InputStreamReader(new URL(url).openStream()), WordLists.class);
+                    sharedPreferences.edit().putString("wordlistsJson",gson.toJson(wordLists)).commit();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),"updated wordlists",Toast.LENGTH_LONG).show();
+                            loadWordLists();
+                        }
+                    });
+                    Log.i(TAG,"updated wordlists from" + url);
+                } catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),"error updating wordlists",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    Log.w(TAG,"error updating wordlists",e);
+                }
+            }
+        });
+    }
+
+    private void loadWordLists() {
+        String wordlistJson = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("wordlistsJson","");
+        if(wordlistJson=="")
+            return;
+        WordLists wordLists = new Gson().fromJson(wordlistJson, WordLists.class);
+        ArrayList<WordLists.WordList> lists = new ArrayList<>();
+        Iterator<WordLists.WordList> it = wordLists.getLists().iterator();
+        while(it.hasNext())
+            lists.add(it.next());
+        listsSpinner.setAdapter(new ArrayAdapter<>(getApplicationContext(),R.layout.support_simple_spinner_dropdown_item,lists));
     }
 
 

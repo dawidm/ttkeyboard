@@ -23,4 +23,7 @@
     <CheckBoxPreference android:title="Click sound"
         android:key="click_sound"
         android:defaultValue="true"></CheckBoxPreference>
+    <EditTextPreference android:title="Wordlists url"
+        android:key="wordlists_url"
+        ></EditTextPreference>
 </PreferenceScreen>
