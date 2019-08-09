@@ -259,6 +259,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         if(clickSound) {
             if (audioManager == null)
                 audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            //TODO this plays only when system wide clicks sounds are enabled
             audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
         }
         clickListener.onKeyboardClick(ttButton,clickId);
