@@ -9,6 +9,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -50,8 +53,6 @@ public class TestSessionActivity extends AppCompatActivity {
     private TextView sessionInfoTextView;
     private Button sessionStartButton;
     private Button sessionStopButton;
-    private Button settingsButton;
-    private Button updateButton;
     private Spinner listsSpinner;
     private LinearLayout listLinearLayout;
 
@@ -75,28 +76,35 @@ public class TestSessionActivity extends AppCompatActivity {
                 stopButtonClick(view);
             }
         });
-        settingsButton = findViewById(R.id.setting_button);
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
-                startActivity(intent);
-            }
-        });
         listsSpinner=findViewById(R.id.lists_spinner);
         ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
         emptySpinnerArray.add("(no word lists)");
         listsSpinner.setAdapter(new ArrayAdapter<>(getApplicationContext(),R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
-        updateButton=findViewById(R.id.update_button);
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateWordLists();
-            }
-        });
         listLinearLayout=findViewById(R.id.lists_linear_layout);
         loadWordLists();
         initKeyboard();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_test_session, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_update:
+                updateWordLists();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
