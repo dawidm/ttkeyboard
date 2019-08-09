@@ -25,5 +25,5 @@
         android:defaultValue="true"></CheckBoxPreference>
     <EditTextPreference android:title="Wordlists url"
         android:key="wordlists_url"
-        ></EditTextPreference>
+        android:defaultValue="https://dmotyka.pl/wordlists.json"></EditTextPreference>
 </PreferenceScreen>
