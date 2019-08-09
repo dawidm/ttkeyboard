@@ -147,6 +147,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private View createView(Context context) {
         float rowHeightPixels = keyboardHeightPixels/ttKeyboardLayout.getRows().size();
         LinearLayout mainLayout = new LinearLayout(new ContextThemeWrapper(context, R.style.Theme_AppCompat_Light));
+        mainLayout.setBackgroundColor(context.getResources().getColor(android.R.color.background_light));
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         for(Iterator<TTKeyboardRow> itRow = ttKeyboardLayout.getRows().iterator(); itRow.hasNext();) {
             TTKeyboardRow row = itRow.next();
