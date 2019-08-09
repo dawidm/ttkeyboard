@@ -84,6 +84,9 @@ public class TestSessionActivity extends AppCompatActivity {
             }
         });
         listsSpinner=findViewById(R.id.lists_spinner);
+        ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
+        emptySpinnerArray.add("(no word lists)");
+        listsSpinner.setAdapter(new ArrayAdapter<>(getApplicationContext(),R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
         updateButton=findViewById(R.id.update_button);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,11 +125,11 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void prepareStartSession() {
-        final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
-        if(wordList==null) {
+        if(listsSpinner.getSelectedItem()==null || !(listsSpinner.getSelectedItem() instanceof WordLists.WordList)) {
             Toast.makeText(getApplicationContext(),"no wordlist selected",Toast.LENGTH_LONG).show();
             return;
         }
+        final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
         sessionStartButton.setClickable(false);
         sessionStopButton.setClickable(true);
         listLinearLayout.setVisibility(View.INVISIBLE);
@@ -287,8 +290,9 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void loadWordLists() {
         String wordlistJson = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("wordlistsJson","");
-        if(wordlistJson=="")
+        if(wordlistJson=="") {
             return;
+        }
         WordLists wordLists = new Gson().fromJson(wordlistJson, WordLists.class);
         ArrayList<WordLists.WordList> lists = new ArrayList<>();
         Iterator<WordLists.WordList> it = wordLists.getLists().iterator();
