@@ -1,4 +1,4 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.keyboard;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -19,6 +19,11 @@ import android.widget.Space;
 import android.widget.Toast;
 
 import androidx.appcompat.view.ContextThemeWrapper;
+
+import com.example.taptimingkeyboard.R;
+import com.example.taptimingkeyboard.data.FlightTimeCharacteristics;
+import com.example.taptimingkeyboard.data.KeyTapCharacteristics;
+import com.example.taptimingkeyboard.data.TimingDataManager;
 
 import java.util.Collections;
 import java.util.HashMap;

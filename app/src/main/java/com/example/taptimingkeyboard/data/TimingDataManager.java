@@ -1,4 +1,4 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.data;
 
 import android.content.Context;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +9,8 @@ import androidx.preference.SeekBarPreference;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
+
+import com.example.taptimingkeyboard.R;
 
 public class PreferencesActivity extends AppCompatActivity {
 

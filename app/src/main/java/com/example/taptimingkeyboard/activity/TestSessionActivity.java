@@ -1,4 +1,4 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -17,11 +17,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.taptimingkeyboard.R;
+import com.example.taptimingkeyboard.keyboard.TTKeyboardButton;
+import com.example.taptimingkeyboard.keyboard.TTKeyboardClickListener;
+import com.example.taptimingkeyboard.keyboard.TTKeyboardLayout;
+import com.example.taptimingkeyboard.keyboard.TapTimingKeyboard;
+import com.example.taptimingkeyboard.data.WordLists;
+import com.example.taptimingkeyboard.data.TapTimingDatabase;
+import com.example.taptimingkeyboard.data.TestSession;
 import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;

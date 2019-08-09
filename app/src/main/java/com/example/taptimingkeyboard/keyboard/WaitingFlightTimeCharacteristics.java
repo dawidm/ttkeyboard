@@ -1,4 +1,6 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.keyboard;
+
+import com.example.taptimingkeyboard.data.FlightTimeCharacteristics;
 
 public class WaitingFlightTimeCharacteristics {
 

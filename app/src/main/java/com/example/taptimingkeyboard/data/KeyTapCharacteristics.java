@@ -1,4 +1,4 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.data;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

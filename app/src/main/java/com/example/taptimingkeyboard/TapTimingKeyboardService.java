@@ -8,6 +8,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
+import com.example.taptimingkeyboard.keyboard.TTKeyboardButton;
+import com.example.taptimingkeyboard.keyboard.TTKeyboardClickListener;
+import com.example.taptimingkeyboard.keyboard.TTKeyboardLayout;
+import com.example.taptimingkeyboard.keyboard.TapTimingKeyboard;
+
 public class TapTimingKeyboardService extends InputMethodService {
 
     public static final String TAG = TapTimingKeyboardService.class.getName();

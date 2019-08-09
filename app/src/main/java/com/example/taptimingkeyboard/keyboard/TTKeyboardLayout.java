@@ -1,4 +1,4 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.keyboard;
 
 import java.util.ArrayList;
 import java.util.Collections;

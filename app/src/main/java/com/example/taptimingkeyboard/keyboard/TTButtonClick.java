@@ -1,4 +1,4 @@
-package com.example.taptimingkeyboard;
+package com.example.taptimingkeyboard.keyboard;
 
 public class TTButtonClick {
 
