@@ -45,7 +45,6 @@ public class TestSessionActivity extends AppCompatActivity {
     private char[] currentWord;
     private int charsIterator;
     private char currentChar = 0;
-    private int failedTries;
 
     private TextView testWordTextView;
     private TextView sessionInfoTextView;
@@ -123,10 +122,14 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void prepareStartSession() {
+        final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
+        if(wordList==null) {
+            Toast.makeText(getApplicationContext(),"no wordlist selected",Toast.LENGTH_LONG).show();
+            return;
+        }
         sessionStartButton.setClickable(false);
         sessionStopButton.setClickable(true);
         listLinearLayout.setVisibility(View.INVISIBLE);
-        final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -150,7 +153,6 @@ public class TestSessionActivity extends AppCompatActivity {
         currentWord=words[0].toCharArray();
         charsIterator=0;
         currentChar=currentWord[0];
-        failedTries=0;
         clicksIds.clear();
         loadWord();
     }
@@ -170,7 +172,6 @@ public class TestSessionActivity extends AppCompatActivity {
                     long timestampMs=System.currentTimeMillis();
                     TestSession testSession = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getById(sessionId);
                     testSession.setSessionEndTimestampMs(timestampMs);
-                    testSession.setSessionFailedTries(failedTries);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
                 }
             });
@@ -242,7 +243,6 @@ public class TestSessionActivity extends AppCompatActivity {
             }
             rejectWaitingClicks();
             tapTimingKeyboard.abortCurrentFlightTime();
-            failedTries++;
         }
     }
 

@@ -15,8 +15,6 @@ public class TestSession {
     private long sessionEndTimestampMs;
     private String wordlistName;
     private int wordlistHashCode;
-    @Nullable
-    private int sessionFailedTries;
 
     public TestSession(String userId, long timestampMs, String wordlistName, int wordlistHashCode) {
         this.userId = userId;
@@ -53,15 +51,8 @@ public class TestSession {
         return wordlistHashCode;
     }
 
-    public int getSessionFailedTries() {
-        return sessionFailedTries;
-    }
-
     public void setSessionEndTimestampMs(long sessionEndTimestampMs) {
         this.sessionEndTimestampMs = sessionEndTimestampMs;
     }
 
-    public void setSessionFailedTries(int sessionFailedTries) {
-        this.sessionFailedTries = sessionFailedTries;
-    }
 }
