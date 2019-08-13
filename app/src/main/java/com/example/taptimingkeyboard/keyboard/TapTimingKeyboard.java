@@ -166,12 +166,6 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                     Button button = new Button(new ContextThemeWrapper(context,R.style.ttButton),null,0);
                     button.setText(ttButton.getLabel());
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize());
-                    //TODO horizontal margins should depend on button width
-                    int marginTop = (int)(rowHeightPixels*MARGINS_PROPORTION);
-                    int marginBottom = marginTop;
-                    int marginLeft = marginTop;
-                    int marginRight = marginTop;
-                    layoutParams.setMargins(marginLeft,marginTop,marginRight,marginBottom);
                     button.setLayoutParams(layoutParams);
                     button.setHeight((int)rowHeightPixels);
                     //TODO should be restricted also by button width
@@ -208,7 +202,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
             case MotionEvent.ACTION_DOWN:
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
                 KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
-                if(!ttButtonsDownParametersMap.isEmpty()) {
+                if(!ttButtonsDownParametersMap.isEmpty() && lastTTButtonClick!=null && lastTTButtonClick.getTtButton()!=lastTTButtonDown) {
                     Log.d(TAG,"zero flight time: "+ lastTTButtonDown.getLabel() + "->" + ttButton.getLabel());
                     FlightTimeCharacteristics flightTimeCharacteristics = new FlightTimeCharacteristics(
                             currentTimestampMillis,
