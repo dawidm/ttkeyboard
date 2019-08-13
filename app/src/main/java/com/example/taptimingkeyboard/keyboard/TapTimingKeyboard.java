@@ -48,6 +48,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private String userId;
     private long sessionId;
     private boolean clickSound;
+    private float clickVol;
     private TimingDataManager timingDataManager;
 
     private double pixelSizeMmX;
@@ -70,6 +71,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         userId=sharedPreferences.getString("user_id","");
         clickSound=sharedPreferences.getBoolean("click_sound",true);
+        clickVol=sharedPreferences.getInt("click_volume",0)/100.f;
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -198,6 +200,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         long currentTimestampMillis = System.currentTimeMillis();
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                playClick();
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
                 KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
                 if(!ttButtonsDownParametersMap.isEmpty() && lastTTButtonClick!=null && lastTTButtonClick.getTtButton()!=lastTTButtonDown) {
@@ -270,14 +273,16 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     }
 
     private long sendClickEvent(TTKeyboardButton ttButton) {
+        clickListener.onKeyboardClick(ttButton,clickId);
+        return clickId++;
+    }
+
+    private void playClick() {
         if(clickSound) {
             if (audioManager == null)
                 audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            //TODO this plays only when system wide clicks sounds are enabled
-            audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
+            audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,clickVol);
         }
-        clickListener.onKeyboardClick(ttButton,clickId);
-        return clickId++;
     }
 
     public String getUserId() {

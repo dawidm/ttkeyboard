@@ -23,6 +23,11 @@
     <CheckBoxPreference android:title="Click sound"
         android:key="click_sound"
         android:defaultValue="true"></CheckBoxPreference>
+    <SeekBarPreference android:title="Click sound volume"
+        android:key="click_volume"
+        android:defaultValue="50"
+        android:min="0"
+        android:max="100"></SeekBarPreference>
     <EditTextPreference android:title="Wordlists url"
         android:key="wordlists_url"
         android:defaultValue="https://dmotyka.pl/wordlists.json"></EditTextPreference>
