@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Space;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -34,13 +35,15 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     public static final String TAG = TapTimingKeyboard.class.getName();
 
+    public static final double MARGINS_PROPORTION = 0.05;
+
     private Context context;
     private AudioManager audioManager;
 
     private View tapTimingKeyboardView;
     private TTKeyboardLayout ttKeyboardLayout;
     private TTKeyboardClickListener clickListener;
-    private Map<TTKeyboardButton,Button> buttonsMap = new HashMap<>();
+    private Map<TTKeyboardButton, Button> buttonsMap = new HashMap<>();
     private String userId;
     private long sessionId;
     private boolean clickSound;
@@ -117,8 +120,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     public double getButtonDistanceMillimeters(TTKeyboardButton from, TTKeyboardButton to) {
         if(buttonsMap.isEmpty())
             throw new IllegalStateException("called getButtonDistance before creating layout view");
-        Button buttonFrom = buttonsMap.get(from);
-        Button buttonTo = buttonsMap.get(to);
+        TextView buttonFrom = buttonsMap.get(from);
+        TextView buttonTo = buttonsMap.get(to);
         Rect buttonFromRect = new Rect();
         Rect buttonToRect = new Rect();
         buttonFrom.getDrawingRect(buttonFromRect);
@@ -146,19 +149,27 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     private View createView(Context context) {
         float rowHeightPixels = keyboardHeightPixels/ttKeyboardLayout.getRows().size();
-        LinearLayout mainLayout = new LinearLayout(new ContextThemeWrapper(context, R.style.Theme_AppCompat_Light));
+        LinearLayout mainLayout = new LinearLayout(new ContextThemeWrapper(context, R.style.AppTheme));
+        mainLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mainLayout.setBackgroundColor(context.getResources().getColor(android.R.color.background_light));
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         for(Iterator<TTKeyboardRow> itRow = ttKeyboardLayout.getRows().iterator(); itRow.hasNext();) {
             TTKeyboardRow row = itRow.next();
             LinearLayout rowLinearLayout = new LinearLayout(context);
+            rowLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             for(Iterator<TTKeyboardElement> itElement = row.getElements().iterator(); itElement.hasNext();) {
                 TTKeyboardElement element = itElement.next();
                 if(element instanceof TTKeyboardButton) {
                     final TTKeyboardButton ttButton = (TTKeyboardButton)element;
-                    Button button = new Button(context);
+                    Button button = new Button(new ContextThemeWrapper(context,R.style.ttButton),null,0);
                     button.setText(ttButton.getLabel());
-                    button.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize()));
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize());
+                    int marginTop = (int)(rowHeightPixels*MARGINS_PROPORTION);
+                    int marginBottom = marginTop;
+                    int marginLeft = marginTop;
+                    int marginRight = marginTop;
+                    layoutParams.setMargins(marginLeft,marginTop,marginRight,marginBottom);
+                    button.setLayoutParams(layoutParams);
                     button.setHeight((int)rowHeightPixels);
                     button.setOnTouchListener(new View.OnTouchListener() {
                         @Override
