@@ -36,8 +36,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     public static final String TAG = TapTimingKeyboard.class.getName();
 
-    public static final double MARGINS_PROPORTION = 0.05;
-    public static final float BUTTON_TEXT_PROPORTION = 0.5f;
+    public static final float BUTTON_TEXT_PROPORTION = 0.4f;
 
     private Context context;
     private AudioManager audioManager;
@@ -168,7 +167,6 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize());
                     button.setLayoutParams(layoutParams);
                     button.setHeight((int)rowHeightPixels);
-                    //TODO should be restricted also by button width
                     button.setTextSize(TypedValue.COMPLEX_UNIT_PX,rowHeightPixels*BUTTON_TEXT_PROPORTION);
                     button.setOnTouchListener(new View.OnTouchListener() {
                         @Override

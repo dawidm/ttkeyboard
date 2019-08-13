@@ -2,6 +2,7 @@ package com.example.taptimingkeyboard.keyboard;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class TTKeyboardLayout {
@@ -16,6 +17,7 @@ public class TTKeyboardLayout {
     }
 
     private ArrayList<TTKeyboardRow> rows = new ArrayList<>();
+    private Double width;
 
     public static TTKeyboardLayout withLayout(Layout layout) {
         switch (layout) {
@@ -72,7 +74,7 @@ public class TTKeyboardLayout {
         thirdRow.addElement(new TTKeyboardSpacer(2.25f));
         TTKeyboardRow fourthRow = new TTKeyboardRow();
         fourthRow.addElement(new TTKeyboardSpacer(2.75f));
-        fourthRow.addElement(new TTKeyboardButton("SPACE",32,5));
+        fourthRow.addElement(new TTKeyboardButton("",32,5));
         fourthRow.addElement(new TTKeyboardSpacer(2.25f));
         TTKeyboardLayout ttKeyboardLayout = new TTKeyboardLayout();
         ttKeyboardLayout.rows.add(firstRow);
@@ -118,7 +120,7 @@ public class TTKeyboardLayout {
         thirdRow.addElement(new TTKeyboardSpacer(1.5f));
         TTKeyboardRow fourthRow = new TTKeyboardRow();
         fourthRow.addElement(new TTKeyboardSpacer(2.5f));
-        fourthRow.addElement(new TTKeyboardButton("SPACE",32,5));
+        fourthRow.addElement(new TTKeyboardButton("",32,5));
         fourthRow.addElement(new TTKeyboardSpacer(2.5f));
         TTKeyboardLayout ttKeyboardLayout = new TTKeyboardLayout();
         ttKeyboardLayout.rows.add(firstRow);
@@ -170,7 +172,7 @@ public class TTKeyboardLayout {
         thirdRow.addElement(new TTKeyboardButton("<",8,1));
         TTKeyboardRow fourthRow = new TTKeyboardRow();
         fourthRow.addElement(new TTKeyboardSpacer(2.0f));
-        fourthRow.addElement(new TTKeyboardButton("SPACE",32,5));
+        fourthRow.addElement(new TTKeyboardButton("",32,5));
         fourthRow.addElement(new TTKeyboardButton(','));
         fourthRow.addElement(new TTKeyboardButton('.'));
         fourthRow.addElement(new TTKeyboardButton("↵",13,1));
@@ -180,6 +182,26 @@ public class TTKeyboardLayout {
         ttKeyboardLayout.rows.add(thirdRow);
         ttKeyboardLayout.rows.add(fourthRow);
         return ttKeyboardLayout;
+    }
+
+    public double getWidth() {
+        if(width==null)
+            calcWidth();
+        return width;
+    }
+
+    private void calcWidth() {
+        double maxRowSize=0;
+        Iterator<TTKeyboardRow> it = rows.iterator();
+        while (it.hasNext()) {
+            Iterator<TTKeyboardElement> itElements = it.next().getElements().iterator();
+            double currentRowSize=0;
+            while (itElements.hasNext())
+                currentRowSize+=itElements.next().getSize();
+            if(currentRowSize>maxRowSize)
+                maxRowSize=currentRowSize;
+        }
+        width=maxRowSize;
     }
 
 }
