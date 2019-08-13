@@ -11,6 +11,8 @@
     <style name="ttButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/button_selector</item>
         <item name="android:gravity">center</item>
+        <item name="android:minWidth">0px</item>
+        <item name="android:minHeight">0px</item>
     </style>
 
 </resources>
