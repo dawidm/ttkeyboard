@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +37,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     public static final String TAG = TapTimingKeyboard.class.getName();
 
     public static final double MARGINS_PROPORTION = 0.05;
+    public static final float BUTTON_TEXT_PROPORTION = 0.5f;
 
     private Context context;
     private AudioManager audioManager;
@@ -164,6 +166,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                     Button button = new Button(new ContextThemeWrapper(context,R.style.ttButton),null,0);
                     button.setText(ttButton.getLabel());
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,ttButton.getSize());
+                    //TODO horizontal margins should depend on button width
                     int marginTop = (int)(rowHeightPixels*MARGINS_PROPORTION);
                     int marginBottom = marginTop;
                     int marginLeft = marginTop;
@@ -171,6 +174,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                     layoutParams.setMargins(marginLeft,marginTop,marginRight,marginBottom);
                     button.setLayoutParams(layoutParams);
                     button.setHeight((int)rowHeightPixels);
+                    //TODO should be restricted also by button width
+                    button.setTextSize(TypedValue.COMPLEX_UNIT_PX,rowHeightPixels*BUTTON_TEXT_PROPORTION);
                     button.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View view, MotionEvent motionEvent) {
