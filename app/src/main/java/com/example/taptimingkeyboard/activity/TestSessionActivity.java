@@ -159,7 +159,7 @@ public class TestSessionActivity extends AppCompatActivity {
                 if(sessionActive)
                     checkKeyboardClick(ttButton, clickId);
             }
-        });
+        },null);
         updateSessionInfo(false);
         ConstraintLayout keyboardContainer = findViewById(R.id.keyboard_container);
         keyboardContainer.removeAllViews();

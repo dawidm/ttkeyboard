@@ -20,11 +20,13 @@ import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 
 import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.FlightTimeCharacteristics;
 import com.example.taptimingkeyboard.data.KeyTapCharacteristics;
+import com.example.taptimingkeyboard.data.RemotePreferences;
 import com.example.taptimingkeyboard.data.TimingDataManager;
 
 import java.util.Collections;
@@ -63,15 +65,17 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     private long clickId = 0;
 
-    public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener) {
+    public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener, @Nullable RemotePreferences remotePreferences) {
         this.context=context;
         this.clickListener=clickListener;
         timingDataManager=new TimingDataManager(context);
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         userId=sharedPreferences.getString("user_id","");
-        clickSound=sharedPreferences.getBoolean("click_sound",true);
-        clickVol=sharedPreferences.getInt("click_volume",0)/100.f;
+        clickSound=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
+        clickVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume():sharedPreferences.getInt("click_volume",0)/100.f;
+        int heightPortrait = (remotePreferences!=null&&remotePreferences.getSizePortrait()!=null)?remotePreferences.getSizePortrait():sharedPreferences.getInt("height_portrait",0);
+        int heightLandscape = (remotePreferences!=null&&remotePreferences.getSizeLandscape()!=null)?remotePreferences.getSizeLandscape():sharedPreferences.getInt("height_landscape",0);
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -88,9 +92,9 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
             Log.i(TAG, "pixel size x (mm) = " + pixelSizeMmX + " pixel size  (mm) = " + pixelSizeMmY);
         }
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            keyboardHeightPixels=sharedPreferences.getInt("height_landscape",0)*0.01f*screenHeightPixels;
+            keyboardHeightPixels=heightLandscape*0.01f*screenHeightPixels;
         else
-            keyboardHeightPixels=sharedPreferences.getInt("height_portrait",0)*0.01f*screenHeightPixels;
+            keyboardHeightPixels=heightPortrait*0.01f*screenHeightPixels;
         ttKeyboardLayout=TTKeyboardLayout.withLayout(layout);
         tapTimingKeyboardView = createView(context);
     }
