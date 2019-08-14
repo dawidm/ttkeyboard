@@ -10,8 +10,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -173,10 +175,17 @@ public class TestSessionActivity extends AppCompatActivity {
         sessionStartButton.setClickable(false);
         listLinearLayout.setVisibility(View.INVISIBLE);
         buttonsContainer.setVisibility(View.GONE);
+        Boolean isLandscape=false;
+        if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE)
+            isLandscape=true;
+        if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_UNDEFINED)
+            isLandscape=null;
+        final Boolean isOrientationLandscape=isLandscape;
+        final String phoneInfo = Build.BRAND+","+Build.MODEL+","+Build.PRODUCT+","+Build.DEVICE;
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                TestSession testSession = new TestSession(tapTimingKeyboard.getUserId(),System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode());
+                TestSession testSession = new TestSession(tapTimingKeyboard.getUserId(),System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode(),isOrientationLandscape,phoneInfo);
                 sessionId=TapTimingDatabase.instance(getApplicationContext()).testSessionDao().insert(testSession);
                 runOnUiThread(new Runnable() {
                     @Override

@@ -15,12 +15,18 @@ public class TestSession {
     private long sessionEndTimestampMs;
     private String wordlistName;
     private int wordlistHashCode;
+    @Nullable
+    private Boolean isOrientationLandscape;
+    @Nullable
+    private String phoneInfo;
 
-    public TestSession(String userId, long timestampMs, String wordlistName, int wordlistHashCode) {
+    public TestSession(String userId, long timestampMs, String wordlistName, int wordlistHashCode, @Nullable Boolean isOrientationLandscape, @Nullable String phoneInfo) {
         this.userId = userId;
         this.timestampMs = timestampMs;
         this.wordlistName = wordlistName;
         this.wordlistHashCode = wordlistHashCode;
+        this.isOrientationLandscape = isOrientationLandscape;
+        this.phoneInfo = phoneInfo;
     }
 
     public void setId(long id) {
@@ -49,6 +55,16 @@ public class TestSession {
 
     public int getWordlistHashCode() {
         return wordlistHashCode;
+    }
+
+    @Nullable
+    public Boolean getOrientationLandscape() {
+        return isOrientationLandscape;
+    }
+
+    @Nullable
+    public String getPhoneInfo() {
+        return phoneInfo;
     }
 
     public void setSessionEndTimestampMs(long sessionEndTimestampMs) {
