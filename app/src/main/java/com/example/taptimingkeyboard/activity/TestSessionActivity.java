@@ -63,6 +63,9 @@ public class TestSessionActivity extends AppCompatActivity {
     private int charsIterator;
     private char currentChar = 0;
 
+    private boolean sounds=false;
+    private float soundsVol=0.0f;
+
     private TextView testWordTextView;
     private TextView sessionInfoTextView;
     private Button sessionStartButton;
@@ -77,6 +80,7 @@ public class TestSessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
+        loadPreferences();
         testWordTextView = findViewById(R.id.test_word_textview);
         testWordTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -101,6 +105,12 @@ public class TestSessionActivity extends AppCompatActivity {
         listLinearLayout=findViewById(R.id.lists_linear_layout);
         loadWordLists();
         initKeyboard();
+    }
+
+    private void loadPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sounds=sharedPreferences.getBoolean("click_sound",false);
+        soundsVol=sharedPreferences.getInt("click_volume",0)/100.f;
     }
 
     @Override
@@ -274,7 +284,8 @@ public class TestSessionActivity extends AppCompatActivity {
                 //checkKeyboardClick(ttButton, clickId);
             }
             testWordBlink();
-            errorSound();
+            if (sounds)
+                errorSound();
             rejectWaitingClicks();
             tapTimingKeyboard.abortCurrentFlightTime();
         }
@@ -359,7 +370,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private void errorSound() {
         if (audioManager == null)
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_INVALID,ERROR_SOUND_VOLUME);
+        audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_INVALID,soundsVol);
     }
 
 
