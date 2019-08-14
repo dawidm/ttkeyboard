@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class TestSessionActivity extends AppCompatActivity {
@@ -70,6 +71,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private LinearLayout listLinearLayout;
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture testWordColorFuture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -339,7 +341,9 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void testWordBlink() {
         testWordTextView.setTextColor(ResourcesCompat.getColor(getResources(),R.color.colorTestWordError,null));
-        scheduledExecutorService.schedule(new Runnable() {
+        if(testWordColorFuture!=null && !testWordColorFuture.isDone())
+            testWordColorFuture.cancel(true);
+        testWordColorFuture=scheduledExecutorService.schedule(new Runnable() {
             @Override
             public void run() {
                 runOnUiThread(new Runnable() {
