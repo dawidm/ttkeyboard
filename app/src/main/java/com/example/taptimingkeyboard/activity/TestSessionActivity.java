@@ -49,7 +49,6 @@ public class TestSessionActivity extends AppCompatActivity {
     public static final String TAG = TestSessionActivity.class.getName();
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
-    private static final float ERROR_SOUND_VOLUME = 0.5f;
 
     private TapTimingKeyboard tapTimingKeyboard;
     private AudioManager audioManager;
@@ -111,6 +110,10 @@ public class TestSessionActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sounds=sharedPreferences.getBoolean("click_sound",false);
         soundsVol=sharedPreferences.getInt("click_volume",0)/100.f;
+    }
+
+    private void loadPreferencesFromServer() {
+
     }
 
     @Override

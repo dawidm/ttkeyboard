@@ -1,5 +1,10 @@
 package com.example.taptimingkeyboard.data;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class WordLists {
@@ -29,4 +34,11 @@ public class WordLists {
     public ArrayList<WordList> getLists() {
         return lists;
     }
+
+    public static WordLists fromUrl(String url) throws IOException {
+        Gson gson = new Gson();
+        return gson.fromJson(new InputStreamReader(new URL(url).openStream()), WordLists.class);
+    }
+
+
 }
