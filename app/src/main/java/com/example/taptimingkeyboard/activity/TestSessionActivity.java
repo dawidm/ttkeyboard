@@ -63,7 +63,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private TextView testWordTextView;
     private TextView sessionInfoTextView;
     private Button sessionStartButton;
-    private Button sessionStopButton;
+    private LinearLayout buttonsContainer;
     private Spinner listsSpinner;
     private LinearLayout listLinearLayout;
 
@@ -74,6 +74,13 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
         testWordTextView = findViewById(R.id.test_word_textview);
+        testWordTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                endSession(true);
+                return true;
+            }
+        });
         sessionInfoTextView = findViewById(R.id.session_info_textview);
         sessionStartButton = findViewById(R.id.start_button);
         sessionStartButton.setOnClickListener(new View.OnClickListener() {
@@ -82,13 +89,7 @@ public class TestSessionActivity extends AppCompatActivity {
                 startButtonClick(view);
             }
         });
-        sessionStopButton = findViewById(R.id.stop_button);
-        sessionStopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                stopButtonClick(view);
-            }
-        });
+        buttonsContainer=findViewById(R.id.buttons_container);
         listsSpinner=findViewById(R.id.lists_spinner);
         ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
         emptySpinnerArray.add("(no word lists)");
@@ -153,8 +154,8 @@ public class TestSessionActivity extends AppCompatActivity {
         }
         final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
         sessionStartButton.setClickable(false);
-        sessionStopButton.setClickable(true);
         listLinearLayout.setVisibility(View.INVISIBLE);
+        buttonsContainer.setVisibility(View.GONE);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -188,7 +189,7 @@ public class TestSessionActivity extends AppCompatActivity {
         tapTimingKeyboard.endTestSession();
         updateSessionInfo(false);
         sessionStartButton.setClickable(true);
-        sessionStopButton.setClickable(false);
+        buttonsContainer.setVisibility(View.VISIBLE);
         listLinearLayout.setVisibility(View.VISIBLE);
         testWordTextView.setText("");
         clicksIds.clear();
