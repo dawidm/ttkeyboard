@@ -1,11 +1,13 @@
 package com.example.taptimingkeyboard.activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.PreferenceManager;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -277,11 +279,18 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void startButtonClick(View view) {
-        prepareStartSession();
+        confirmStart();
     }
 
-    private void stopButtonClick(View view) {
-        endSession(true);
+    private void confirmStart() {
+        new AlertDialog.Builder(this)
+                .setTitle("Rozpoczęcie sesji")
+                .setMessage("Czy na pewno chcesz rozpocząć sesję testową?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        prepareStartSession();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     private void updateWordLists() {
