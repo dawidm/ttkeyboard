@@ -107,7 +107,7 @@ public class TestSessionActivity extends AppCompatActivity {
         buttonsContainer=findViewById(R.id.buttons_container);
         listsSpinner=findViewById(R.id.lists_spinner);
         ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
-        emptySpinnerArray.add("(no word lists)");
+        emptySpinnerArray.add(getResources().getString(R.string.wordlist_spinner_empty));
         listsSpinner.setAdapter(new ArrayAdapter<>(getApplicationContext(),R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
         listLinearLayout=findViewById(R.id.lists_linear_layout);
         contentContainer=findViewById(R.id.content_container);
@@ -204,7 +204,7 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void prepareStartSession() {
         if(listsSpinner.getSelectedItem()==null || !(listsSpinner.getSelectedItem() instanceof WordLists.WordList)) {
-            Toast.makeText(getApplicationContext(),"no wordlist selected",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),getResources().getString(R.string.no_wordlist_selected),Toast.LENGTH_LONG).show();
             return;
         }
         final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
@@ -270,9 +270,9 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void updateSessionInfo(boolean sessionActive) {
         if(sessionActive)
-            sessionInfoTextView.setText(String.format("User id: %s, session %s",tapTimingKeyboard.getUserId(),sessionId));
+            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_active),tapTimingKeyboard.getUserId(),sessionId));
         else
-            sessionInfoTextView.setText(String.format("User id: %s",tapTimingKeyboard.getUserId()));
+            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_inactive),tapTimingKeyboard.getUserId()));
     }
 
     private boolean nextWord() {
@@ -345,8 +345,8 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void confirmStart() {
         new AlertDialog.Builder(this)
-                .setTitle("Rozpoczęcie sesji")
-                .setMessage("Czy na pewno chcesz rozpocząć sesję testową?")
+                .setTitle(getResources().getString(R.string.start_session_confirmation_title))
+                .setMessage(getResources().getString(R.string.start_session_confirmation_text))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         prepareStartSession();

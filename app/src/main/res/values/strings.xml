@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="app_name">TapTimingKeyboard</string>
-    <string-array name="test_words">
-        <item>word</item>
-        <item>wordd</item>
-        <item>worddd</item>
-    </string-array>
-    <string name="getting_data">Pobieranie danych...</string>
-    <string name="getting_data_error">Błąd pobierania danych, sprawdź połączenie z internetem</string>
+    <string name="getting_data">Getting data...</string>
+    <string name="getting_data_retry_button">Retry</string>
+    <string name="getting_data_error">Error when getting data, please check your internet connection</string>
+    <string name="wordlist_spinner_empty">No word lists</string>
+    <string name="choose_list">Select list: </string>
+    <string name="no_wordlist_selected">No word list selected</string>
+    <string name="session_info_active">User id: %s, session %d</string>
+    <string name="session_info_inactive">User id: %s</string>
+    <string name="start_session_confirmation_title">Start a session</string>
+    <string name="start_session_confirmation_text">Do you really want to start a test session?</string>
+    <string name="pref_user_id">Keyboard user id</string>
+    <string name="pref_longer_dimension">Longer screen dimension (mm)</string>
+    <string name="pref_shorter_dimension">Shorter screen dimension (mm)</string>
+    <string name="pref_height_landscape">Height in landscape orientation (%)</string>
+    <string name="pref_height_portrait">Height in portrait orientation (%)</string>
+    <string name="pref_enable_sound">Enable sound</string>
+    <string name="pref_sound_volume">Sound volume</string>
+    <string name="pref_server_url">Remote data URL</string>
+    <string name="test_activity_start">Start</string>
 </resources>

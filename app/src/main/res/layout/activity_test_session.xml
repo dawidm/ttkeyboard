@@ -35,7 +35,7 @@
             android:id="@+id/retry_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ponów"
+            android:text="@string/getting_data_retry_button"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,8 +66,7 @@
                 android:id="@+id/session_info_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="(session info)" />
+                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -82,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Start" />
+                android:text="@string/test_activity_start" />
 
         </LinearLayout>
 
@@ -99,8 +98,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Test" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
                 android:id="@+id/lists_linear_layout"
@@ -121,7 +119,6 @@
                     android:layout_weight="0"
                     android:lines="1"
                     android:maxLines="1"
-                    android:text="Select list: "
                     android:textStyle="bold" />
 
                 <Spinner
