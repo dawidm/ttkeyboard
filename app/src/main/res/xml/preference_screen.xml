@@ -28,7 +28,7 @@
         android:defaultValue="50"
         android:min="0"
         android:max="100"></SeekBarPreference>
-    <EditTextPreference android:title="Wordlists url"
-        android:key="wordlists_url"
-        android:defaultValue="https://dmotyka.pl/wordlists.json"></EditTextPreference>
+    <EditTextPreference android:title="Remote data URL"
+        android:key="remote_url"
+        android:defaultValue="https://dmotyka.pl/"></EditTextPreference>
 </PreferenceScreen>

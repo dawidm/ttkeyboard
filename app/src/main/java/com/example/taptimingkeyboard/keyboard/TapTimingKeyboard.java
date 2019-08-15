@@ -73,7 +73,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         userId=sharedPreferences.getString("user_id","");
         clickSound=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
-        clickVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume():sharedPreferences.getInt("click_volume",0)/100.f;
+        clickVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
         int heightPortrait = (remotePreferences!=null&&remotePreferences.getSizePortrait()!=null)?remotePreferences.getSizePortrait():sharedPreferences.getInt("height_portrait",0);
         int heightLandscape = (remotePreferences!=null&&remotePreferences.getSizeLandscape()!=null)?remotePreferences.getSizeLandscape():sharedPreferences.getInt("height_landscape",0);
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();

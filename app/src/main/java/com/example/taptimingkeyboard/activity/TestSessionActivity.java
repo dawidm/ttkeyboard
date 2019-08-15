@@ -8,7 +8,6 @@ import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -16,9 +15,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.taptimingkeyboard.R;
+import com.example.taptimingkeyboard.data.RemotePreferences;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardButton;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardClickListener;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardLayout;
@@ -51,10 +48,14 @@ public class TestSessionActivity extends AppCompatActivity {
     public static final String TAG = TestSessionActivity.class.getName();
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
+    public static final String WORDLIST_REMOTE_JSON_FILE = "wordlists.json";
+    public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
 
     private TapTimingKeyboard tapTimingKeyboard;
     private AudioManager audioManager;
 
+    private WordLists wordLists;
+    private RemotePreferences remotePreferences;
     private long sessionId;
     private boolean sessionActive=false;
     private ArrayList<Long> clicksIds = new ArrayList<>();
@@ -73,6 +74,11 @@ public class TestSessionActivity extends AppCompatActivity {
     private LinearLayout buttonsContainer;
     private Spinner listsSpinner;
     private LinearLayout listLinearLayout;
+    private LinearLayout contentContainer;
+    private ConstraintLayout keyboardContainer;
+    private ConstraintLayout getDataContainer;
+    private TextView getDataTextView;
+    private Button retryButton;
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture testWordColorFuture;
@@ -104,40 +110,20 @@ public class TestSessionActivity extends AppCompatActivity {
         emptySpinnerArray.add("(no word lists)");
         listsSpinner.setAdapter(new ArrayAdapter<>(getApplicationContext(),R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
         listLinearLayout=findViewById(R.id.lists_linear_layout);
-        loadWordLists();
-        initKeyboard();
-    }
-
-    private void loadPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sounds=sharedPreferences.getBoolean("click_sound",false);
-        soundsVol=sharedPreferences.getInt("click_volume",0)/100.f;
-    }
-
-    private void loadPreferencesFromServer() {
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_test_session, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_update:
-                updateWordLists();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        contentContainer=findViewById(R.id.content_container);
+        keyboardContainer=findViewById(R.id.keyboard_container);
+        getDataContainer=findViewById(R.id.get_data_container);
+        getDataTextView=findViewById(R.id.get_data_text_view);
+        retryButton=findViewById(R.id.retry_button);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                retryButton.setVisibility(View.GONE);
+                getDataTextView.setText(R.string.getting_data);
+                getRemoteSettings();
+            }
+        });
+        getRemoteSettings();
     }
 
     @Override
@@ -152,6 +138,56 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    private void loadPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sounds=sharedPreferences.getBoolean("click_sound",false);
+        soundsVol=sharedPreferences.getInt("click_volume",0)/100.f;
+    }
+
+    private void getRemoteSettings() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Gson gson = new Gson();
+                try {
+                    String rstring=gson.toJson(new RemotePreferences(1,1,true,1));
+                    Log.i(TAG,rstring);
+                    SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String serverUrl = sharedPreferences.getString("remote_url","");
+                    if(serverUrl.charAt(serverUrl.length()-1)!='/')
+                        serverUrl=serverUrl+'/';
+                    String wordlistsUrl=serverUrl+WORDLIST_REMOTE_JSON_FILE;
+                    Log.i(TAG,"getting wordlists from" + wordlistsUrl);
+                    wordLists = gson.fromJson(new InputStreamReader(new URL(wordlistsUrl).openStream()), WordLists.class);
+                    Log.i(TAG,"updated wordlists from" + wordlistsUrl);
+                    String settingsUrl = serverUrl+SETTINGS_REMOTE_JSON_FILE;
+                    Log.i(TAG,"getting remote settings from" + settingsUrl);
+                    remotePreferences=gson.fromJson(new InputStreamReader(new URL(settingsUrl).openStream()), RemotePreferences.class);
+                    Log.i(TAG,"updated remote settings from" + settingsUrl);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getDataContainer.setVisibility(View.INVISIBLE);
+                            contentContainer.setVisibility(View.VISIBLE);
+                            keyboardContainer.setVisibility(View.VISIBLE);
+                            initKeyboard();
+                            initWordListsSpinner();
+                        }
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getDataTextView.setText(R.string.getting_data_error);
+                            retryButton.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    Log.w(TAG,"error updating remote data",e);
+                }
+            }
+        });
+    }
+
     private void initKeyboard() {
         tapTimingKeyboard = new TapTimingKeyboard(getApplicationContext(), TTKeyboardLayout.Layout.SIMPLEST_QWERTY_SYMMETRIC, new TTKeyboardClickListener() {
             @Override
@@ -159,7 +195,7 @@ public class TestSessionActivity extends AppCompatActivity {
                 if(sessionActive)
                     checkKeyboardClick(ttButton, clickId);
             }
-        },null);
+        },remotePreferences);
         updateSessionInfo(false);
         ConstraintLayout keyboardContainer = findViewById(R.id.keyboard_container);
         keyboardContainer.removeAllViews();
@@ -318,43 +354,7 @@ public class TestSessionActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
-    private void updateWordLists() {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                Gson gson = new Gson();
-                try {
-                    SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    String url = sharedPreferences.getString("wordlists_url","");
-                    WordLists wordLists = gson.fromJson(new InputStreamReader(new URL(url).openStream()), WordLists.class);
-                    sharedPreferences.edit().putString("wordlistsJson",gson.toJson(wordLists)).commit();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),"updated wordlists",Toast.LENGTH_LONG).show();
-                            loadWordLists();
-                        }
-                    });
-                    Log.i(TAG,"updated wordlists from" + url);
-                } catch (Exception e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),"error updating wordlists",Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    Log.w(TAG,"error updating wordlists",e);
-                }
-            }
-        });
-    }
-
-    private void loadWordLists() {
-        String wordlistJson = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("wordlistsJson","");
-        if(wordlistJson=="") {
-            return;
-        }
-        WordLists wordLists = new Gson().fromJson(wordlistJson, WordLists.class);
+    private void initWordListsSpinner() {
         ArrayList<WordLists.WordList> lists = new ArrayList<>();
         Iterator<WordLists.WordList> it = wordLists.getLists().iterator();
         while(it.hasNext())

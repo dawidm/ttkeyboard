@@ -6,4 +6,6 @@
         <item>wordd</item>
         <item>worddd</item>
     </string-array>
+    <string name="getting_data">Pobieranie danych...</string>
+    <string name="getting_data_error">Błąd pobierania danych, sprawdź połączenie z internetem</string>
 </resources>

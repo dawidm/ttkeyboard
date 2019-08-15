@@ -16,9 +16,9 @@ public class RemotePreferences {
     @Nullable
     private Boolean sound;
     @Nullable
-    private Float volume;
+    private Integer volume;
 
-    public RemotePreferences(@Nullable Integer sizePortrait, @Nullable Integer sizeLandscape, @Nullable Boolean sound, @Nullable Float volume) {
+    public RemotePreferences(@Nullable Integer sizePortrait, @Nullable Integer sizeLandscape, @Nullable Boolean sound, @Nullable Integer volume) {
         this.sizePortrait = sizePortrait;
         this.sizeLandscape = sizeLandscape;
         this.sound = sound;
@@ -41,7 +41,7 @@ public class RemotePreferences {
     }
 
     @Nullable
-    public Float getVolume() {
+    public Integer getVolume() {
         return volume;
     }
 
