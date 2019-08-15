@@ -5,7 +5,7 @@
     <string name="getting_data_retry_button">Retry</string>
     <string name="getting_data_error">Error when getting data, please check your internet connection</string>
     <string name="wordlist_spinner_empty">No word lists</string>
-    <string name="choose_list">Select list: </string>
+    <string name="choose_list">Select list:</string>
     <string name="no_wordlist_selected">No word list selected</string>
     <string name="session_info_active">User id: %s, session %d</string>
     <string name="session_info_inactive">User id: %s</string>

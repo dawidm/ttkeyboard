@@ -5,7 +5,7 @@
     <string name="getting_data_retry_button">Ponów</string>
     <string name="getting_data_error">Błąd pobierania danych, sprawdź połączenie z internetem</string>
     <string name="wordlist_spinner_empty">Brak list</string>
-    <string name="choose_list">Wybierz listę: </string>
+    <string name="choose_list">Wybierz listę:</string>
     <string name="no_wordlist_selected">Nie wybrano listy</string>
     <string name="session_info_active">Id użytkownika: %s, sesja %d</string>
     <string name="session_info_inactive">Id użytkownika: %s</string>

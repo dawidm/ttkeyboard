@@ -118,8 +118,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:lines="1"
+                    android:paddingEnd="3dp"
                     android:maxLines="1"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:text="@string/choose_list"/>
 
                 <Spinner
                     android:id="@+id/lists_spinner"
