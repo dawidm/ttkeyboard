@@ -109,7 +109,7 @@ public class TestSessionActivity extends AppCompatActivity {
         listsSpinner=findViewById(R.id.lists_spinner);
         ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
         emptySpinnerArray.add(getResources().getString(R.string.wordlist_spinner_empty));
-        listsSpinner.setAdapter(new ArrayAdapter<>(getApplicationContext(),R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
+        listsSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
         listLinearLayout=findViewById(R.id.lists_linear_layout);
         contentContainer=findViewById(R.id.content_container);
         keyboardContainer=findViewById(R.id.keyboard_container);
@@ -205,7 +205,7 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void prepareStartSession() {
         if(listsSpinner.getSelectedItem()==null || !(listsSpinner.getSelectedItem() instanceof WordLists.WordList)) {
-            Toast.makeText(getApplicationContext(),getResources().getString(R.string.no_wordlist_selected),Toast.LENGTH_LONG).show();
+            Toast.makeText(this,getResources().getString(R.string.no_wordlist_selected),Toast.LENGTH_LONG).show();
             return;
         }
         final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
@@ -363,7 +363,7 @@ public class TestSessionActivity extends AppCompatActivity {
         Iterator<WordLists.WordList> it = wordLists.getLists().iterator();
         while(it.hasNext())
             lists.add(it.next());
-        listsSpinner.setAdapter(new ArrayAdapter<>(getApplicationContext(),R.layout.support_simple_spinner_dropdown_item,lists));
+        listsSpinner.setAdapter(new ArrayAdapter<>(TestSessionActivity.this,R.layout.support_simple_spinner_dropdown_item,lists));
     }
 
     private void testWordBlink() {
