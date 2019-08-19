@@ -67,7 +67,8 @@ public class UserInfoActivity extends AppCompatActivity {
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validateFields();
+                if(!validateFields())
+                    return;
                 mainLayout.setEnabled(false);
                 AsyncTask.execute(new Runnable() {
                     @Override
@@ -138,7 +139,7 @@ public class UserInfoActivity extends AppCompatActivity {
 
     private boolean validateFields() {
         if(firstNameEditText.getText().length()<1 || lastNameEditText.getText().length()<1 || ageEditText.getText().length()<1) {
-            Toast.makeText(this, getResources().getString(R.string.warning_fill_all_fields), Toast.LENGTH_LONG);
+            Toast.makeText(this, getResources().getString(R.string.warning_fill_all_fields), Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -148,6 +149,7 @@ public class UserInfoActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TestSessionActivity.class);
         intent.putExtra("user_id",id);
         startActivity(intent);
+        finish();
     }
 
 }
