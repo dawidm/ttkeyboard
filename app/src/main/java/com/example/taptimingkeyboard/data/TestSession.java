@@ -16,6 +16,8 @@ public class TestSession {
     private String wordlistName;
     private int wordlistHashCode;
     @Nullable
+    private int numErrors;
+    @Nullable
     private Boolean isOrientationLandscape;
     @Nullable
     private String phoneInfo;
@@ -57,6 +59,10 @@ public class TestSession {
         return wordlistHashCode;
     }
 
+    public int getNumErrors() {
+        return numErrors;
+    }
+
     @Nullable
     public Boolean getOrientationLandscape() {
         return isOrientationLandscape;
@@ -71,4 +77,7 @@ public class TestSession {
         this.sessionEndTimestampMs = sessionEndTimestampMs;
     }
 
+    public void setNumErrors(int numErrors) {
+        this.numErrors = numErrors;
+    }
 }

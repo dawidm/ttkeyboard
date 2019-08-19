@@ -64,6 +64,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private char[] currentWord;
     private int charsIterator;
     private char currentChar = 0;
+    private int numErrors;
 
     private boolean sounds=false;
     private float soundsVol=0.0f;
@@ -238,6 +239,7 @@ public class TestSessionActivity extends AppCompatActivity {
         tapTimingKeyboard.startTestSession(sessionId);
         updateSessionInfo(true);
         words=wordList.getWordsCsv().split(",");
+        numErrors=0;
         wordsIterator=0;
         currentWord=words[0].toCharArray();
         charsIterator=0;
@@ -262,6 +264,7 @@ public class TestSessionActivity extends AppCompatActivity {
                     long timestampMs=System.currentTimeMillis();
                     TestSession testSession = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getById(sessionId);
                     testSession.setSessionEndTimestampMs(timestampMs);
+                    testSession.setNumErrors(numErrors);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
                 }
             });
@@ -331,6 +334,7 @@ public class TestSessionActivity extends AppCompatActivity {
                 resetWord();
                 //checkKeyboardClick(ttButton, clickId);
             }
+            numErrors++;
             testWordBlink();
             if (sounds)
                 errorSound();
