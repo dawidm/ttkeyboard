@@ -183,4 +183,11 @@ public class UserInfoActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(usersListView.getVisibility()==View.VISIBLE)
+            usersListView.setVisibility(View.GONE);
+        else
+            super.onBackPressed();
+    }
 }
