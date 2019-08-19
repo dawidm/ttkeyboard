@@ -47,7 +47,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private TTKeyboardLayout ttKeyboardLayout;
     private TTKeyboardClickListener clickListener;
     private Map<TTKeyboardButton, Button> buttonsMap = new HashMap<>();
-    private String userId;
+    private long userId;
     private long sessionId;
     private boolean clickSound;
     private float clickVol;
@@ -65,13 +65,13 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     private long clickId = 0;
 
-    public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener, @Nullable RemotePreferences remotePreferences) {
+    public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener, @Nullable RemotePreferences remotePreferences, @Nullable Long userId) {
         this.context=context;
         this.clickListener=clickListener;
         timingDataManager=new TimingDataManager(context);
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        userId=sharedPreferences.getString("user_id","");
+        this.userId=(userId!=null)?userId:sharedPreferences.getInt("user_id",0);
         clickSound=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
         clickVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
         int heightPortrait = (remotePreferences!=null&&remotePreferences.getSizePortrait()!=null)?remotePreferences.getSizePortrait():sharedPreferences.getInt("height_portrait",0);
@@ -289,7 +289,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         }
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 }

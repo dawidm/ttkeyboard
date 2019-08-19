@@ -9,7 +9,7 @@ public class TestSession {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
-    private String userId;
+    private long userId;
     private long timestampMs;
     @Nullable
     private long sessionEndTimestampMs;
@@ -22,7 +22,7 @@ public class TestSession {
     @Nullable
     private String phoneInfo;
 
-    public TestSession(String userId, long timestampMs, String wordlistName, int wordlistHashCode, @Nullable Boolean isOrientationLandscape, @Nullable String phoneInfo) {
+    public TestSession(long userId, long timestampMs, String wordlistName, int wordlistHashCode, @Nullable Boolean isOrientationLandscape, @Nullable String phoneInfo) {
         this.userId = userId;
         this.timestampMs = timestampMs;
         this.wordlistName = wordlistName;
@@ -39,7 +39,7 @@ public class TestSession {
         return id;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 

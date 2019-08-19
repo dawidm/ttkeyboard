@@ -42,7 +42,8 @@ public class TapTimingKeyboardService extends InputMethodService {
             public void onKeyboardClick(TTKeyboardButton ttButton, long clickId) {
                 handleKeyboardClick(ttButton);
             }
-        },null);
+        },null,
+                null);
         return tapTimingKeyboard.getView();
     }
 

@@ -13,10 +13,10 @@ public class FlightTimeCharacteristics {
     private char charTo;
     private double distanceMm;
     private long timeMillis;
-    private String userId;
+    private long userId;
     private long sessionId;
 
-    public FlightTimeCharacteristics(long timestamp, char charFrom, char charTo, double distanceMm, long timeMillis, String userId, long sessionId) {
+    public FlightTimeCharacteristics(long timestamp, char charFrom, char charTo, double distanceMm, long timeMillis, long userId, long sessionId) {
         this.timestamp = timestamp;
         this.charFrom = charFrom;
         this.charTo = charTo;
@@ -54,7 +54,7 @@ public class FlightTimeCharacteristics {
         return timeMillis;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 

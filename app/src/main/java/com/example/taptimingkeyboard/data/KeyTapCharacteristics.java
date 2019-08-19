@@ -14,10 +14,10 @@ public class KeyTapCharacteristics {
     private float pressure;
     private float imprecisionX;
     private float imprecisionY;
-    private String userId;
+    private long userId;
     private long sessionId;
 
-    public KeyTapCharacteristics(long timestamp, char keyCharacter, long holdTimeMillis, float pressure, float imprecisionX, float imprecisionY, String userId, long sessionId) {
+    public KeyTapCharacteristics(long timestamp, char keyCharacter, long holdTimeMillis, float pressure, float imprecisionX, float imprecisionY, long userId, long sessionId) {
         this.timestamp = timestamp;
         this.keyCharacter = keyCharacter;
         this.holdTimeMillis = holdTimeMillis;
@@ -60,7 +60,7 @@ public class KeyTapCharacteristics {
         return imprecisionY;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 

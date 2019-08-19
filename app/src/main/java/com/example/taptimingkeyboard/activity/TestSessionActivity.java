@@ -57,6 +57,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private WordLists wordLists;
     private RemotePreferences remotePreferences;
     private long sessionId;
+    private Long userId;
     private boolean sessionActive=false;
     private ArrayList<Long> clicksIds = new ArrayList<>();
     private String[] words;
@@ -89,6 +90,7 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
         loadPreferences();
+        userId=getIntent().getExtras().getLong("user_id");
         testWordTextView = findViewById(R.id.test_word_textview);
         testWordTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -196,7 +198,8 @@ public class TestSessionActivity extends AppCompatActivity {
                 if(sessionActive)
                     checkKeyboardClick(ttButton, clickId);
             }
-        },remotePreferences);
+        },remotePreferences,
+        userId);
         updateSessionInfo(false);
         ConstraintLayout keyboardContainer = findViewById(R.id.keyboard_container);
         keyboardContainer.removeAllViews();
@@ -222,7 +225,7 @@ public class TestSessionActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                TestSession testSession = new TestSession(tapTimingKeyboard.getUserId(),System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode(),isOrientationLandscape,phoneInfo);
+                TestSession testSession = new TestSession(userId,System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode(),isOrientationLandscape,phoneInfo);
                 sessionId=TapTimingDatabase.instance(getApplicationContext()).testSessionDao().insert(testSession);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -273,9 +276,9 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void updateSessionInfo(boolean sessionActive) {
         if(sessionActive)
-            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_active),tapTimingKeyboard.getUserId(),sessionId));
+            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_active),userId,sessionId));
         else
-            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_inactive),tapTimingKeyboard.getUserId()));
+            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_inactive),userId));
     }
 
     private boolean nextWord() {

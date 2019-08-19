@@ -2,7 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference android:title="@string/pref_user_id"
         android:key="user_id"
-        android:defaultValue="default_user"></EditTextPreference>
+        android:numeric="integer"
+        android:defaultValue="0"></EditTextPreference>
     <EditTextPreference android:title="@string/pref_longer_dimension"
         android:key="longer_screen_dimension"
         android:numeric="integer"
