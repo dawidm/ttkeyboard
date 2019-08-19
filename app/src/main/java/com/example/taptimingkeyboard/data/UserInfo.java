@@ -77,4 +77,9 @@ public class UserInfo {
     public boolean isOnMedication() {
         return onMedication;
     }
+
+    @Override
+    public String toString() {
+        return firstName+" "+lastName+", id: " + id;
+    }
 }

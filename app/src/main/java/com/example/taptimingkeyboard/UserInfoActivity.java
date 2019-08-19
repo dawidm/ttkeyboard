@@ -2,15 +2,19 @@ package com.example.taptimingkeyboard;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.room.Database;
 
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -34,6 +38,7 @@ public class UserInfoActivity extends AppCompatActivity {
     private CheckBox onMedicationCheckbox;
     private Button buttonOk;
     private Button buttonLoad;
+    private ListView usersListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,7 @@ public class UserInfoActivity extends AppCompatActivity {
         onMedicationCheckbox=findViewById(R.id.check_box_on_medication);
         buttonOk=findViewById(R.id.button_ok);
         buttonLoad=findViewById(R.id.button_load);
+        usersListView=findViewById(R.id.list_view_users);
         ArrayList<LayoutStringDbString> sexesList = new ArrayList<>(2);
         sexesList.add(new LayoutStringDbString(getSexResourceString(UserInfo.SEX_MALE),UserInfo.SEX_MALE));
         sexesList.add(new LayoutStringDbString(getSexResourceString(UserInfo.SEX_FEMALE),UserInfo.SEX_FEMALE));
@@ -95,7 +101,32 @@ public class UserInfoActivity extends AppCompatActivity {
         buttonLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        final UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getAll();
+                        if(userInfos==null)
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(UserInfoActivity.this, getResources().getString(R.string.warning_no_existing_users),Toast.LENGTH_LONG);
+                                }
+                            });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                usersListView.setVisibility(View.VISIBLE);
+                                usersListView.setAdapter(new ArrayAdapter<>(UserInfoActivity.this,android.R.layout.simple_list_item_1,userInfos));
+                                usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        startTestSessionActivity(((UserInfo)adapterView.getItemAtPosition(i)).getId());
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             }
         });
     }

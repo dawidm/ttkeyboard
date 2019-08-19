@@ -40,4 +40,5 @@
     <string name="asymmetry_not_specified">Not specified</string>
     <string name="asymmetry_no_asymmetry">No asymmetry</string>
     <string name="warning_fill_all_fields">Please fill all fields</string>
+    <string name="warning_no_existing_users">No existing users</string>
 </resources>
