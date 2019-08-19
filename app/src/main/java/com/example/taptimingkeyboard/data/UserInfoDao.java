@@ -8,7 +8,7 @@ import androidx.room.Insert;
 public interface UserInfoDao {
 
         @Insert
-        void insertAll(UserInfo... userInfos);
+        long insert(UserInfo userInfo);
 
         @Delete
         void delete(UserInfo userInfo);

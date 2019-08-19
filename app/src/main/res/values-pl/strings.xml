@@ -35,4 +35,5 @@
     <string name="sex_female">Kobieta</string>
     <string name="handedness_left">Lewa</string>
     <string name="handedness_right">Prawa</string>
+    <string name="warning_fill_all_fields">Proszę wypełnić wszystkie pola</string>
 </resources>

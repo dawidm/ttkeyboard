@@ -39,4 +39,5 @@
     <string name="asymmetry_right">Right</string>
     <string name="asymmetry_not_specified">Not specified</string>
     <string name="asymmetry_no_asymmetry">No asymmetry</string>
+    <string name="warning_fill_all_fields">Please fill all fields</string>
 </resources>

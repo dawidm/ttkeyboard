@@ -21,13 +21,13 @@ public class UserInfo {
     private String firstName;
     private String lastName;
     private int age;
-    private int sex;
+    private String sex;
     private String handedness;
     private boolean diagnosedWithPD;
     private String symptomsAsymmetry;
     private boolean onMedication;
 
-    public UserInfo(String firstName, String lastName, int age, int sex, String handedness, boolean diagnosedWithPD, String symptomsAsymmetry, boolean onMedication) {
+    public UserInfo(String firstName, String lastName, int age, String sex, String handedness, boolean diagnosedWithPD, String symptomsAsymmetry, boolean onMedication) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -58,7 +58,7 @@ public class UserInfo {
         return age;
     }
 
-    public int getSex() {
+    public String getSex() {
         return sex;
     }
 
