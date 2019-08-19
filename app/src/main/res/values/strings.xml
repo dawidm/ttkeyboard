@@ -20,4 +20,23 @@
     <string name="pref_sound_volume">Sound volume</string>
     <string name="pref_server_url">Remote data URL</string>
     <string name="test_activity_start">Start</string>
+    <string name="user_info_label">Enter the user data</string>
+    <string name="description_first_name">First name</string>
+    <string name="description_last_name">Last name</string>
+    <string name="description_age">Age</string>
+    <string name="description_is_diagnosed" >Diagnosed with Parkinson\'s disease</string>
+    <string name="description_on_medication">Currently on medication</string>
+    <string name="label_sex" >Sex</string>
+    <string name="label_handedness">Dominant hand</string>
+    <string name="label_diagnosed_asymmetry">Diagnosed symptoms asymmetry</string>
+    <string name="load_user_existing_info">Load...</string>
+    <string name="save_user_info">Save</string>
+    <string name="sex_male">Male</string>
+    <string name="sex_female">Female</string>
+    <string name="handedness_left">Left</string>
+    <string name="handedness_right">Right</string>
+    <string name="asymmetry_left">Left</string>
+    <string name="asymmetry_right">Right</string>
+    <string name="asymmetry_not_specified">Not specified</string>
+    <string name="asymmetry_no_asymmetry">No asymmetry</string>
 </resources>

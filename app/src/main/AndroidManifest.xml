@@ -29,15 +29,19 @@
 
         <activity
             android:name=".activity.PreferencesActivity"
-            android:label="TapTimingKeyboardPreferences">
-        </activity>
+            android:label="TapTimingKeyboardPreferences"></activity>
         <activity android:name=".activity.TestSessionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.FirstRunActivity">
+        <activity android:name=".activity.FirstRunActivity"></activity>
+        <activity android:name=".UserInfoActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         </activity>
     </application>
 

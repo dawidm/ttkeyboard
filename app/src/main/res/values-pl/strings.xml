@@ -20,4 +20,19 @@
     <string name="pref_sound_volume">Głośność</string>
     <string name="pref_server_url">URL serwera ustawień</string>
     <string name="test_activity_start">Rozpocznij</string>
+    <string name="label_sex">Płeć</string>
+    <string name="user_info_label">Wprowadź dane użytkownika</string>
+    <string name="description_on_medication">"Obecnie przyjmuje leki "</string>
+    <string name="description_last_name">Nazwisko</string>
+    <string name="description_is_diagnosed">Zdignozowany zespół Parkinsona</string>
+    <string name="description_first_name">Imię</string>
+    <string name="description_age">Wiek</string>
+    <string name="label_diagnosed_asymmetry">Zdiagnozowana asymetria objawów</string>
+    <string name="label_handedness">Ręka dominujące</string>
+    <string name="load_user_existing_info">Ładuj...</string>
+    <string name="save_user_info">Zapisz</string>
+    <string name="sex_male">Mężczyzna</string>
+    <string name="sex_female">Kobieta</string>
+    <string name="handedness_left">Lewa</string>
+    <string name="handedness_right">Prawa</string>
 </resources>
