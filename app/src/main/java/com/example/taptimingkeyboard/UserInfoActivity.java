@@ -105,13 +105,15 @@ public class UserInfoActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         final UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getAll();
-                        if(userInfos==null)
+                        if(userInfos==null || userInfos.length==0) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(UserInfoActivity.this, getResources().getString(R.string.warning_no_existing_users),Toast.LENGTH_LONG);
+                                    Toast.makeText(UserInfoActivity.this, getResources().getString(R.string.warning_no_existing_users), Toast.LENGTH_LONG).show();
                                 }
                             });
+                            return;
+                        }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
