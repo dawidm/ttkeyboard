@@ -1,5 +1,6 @@
 package com.example.taptimingkeyboard.activity;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,8 +15,11 @@ import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -222,10 +226,13 @@ public class TestSessionActivity extends AppCompatActivity {
             isLandscape=null;
         final Boolean isOrientationLandscape=isLandscape;
         final String phoneInfo = Build.BRAND+","+Build.MODEL+","+Build.PRODUCT+","+Build.DEVICE;
+        Display display = ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getMetrics(displayMetrics);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                TestSession testSession = new TestSession(userId,System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode(),isOrientationLandscape,phoneInfo);
+                TestSession testSession = new TestSession(userId,System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode(),isOrientationLandscape,phoneInfo,displayMetrics.xdpi,displayMetrics.ydpi);
                 sessionId=TapTimingDatabase.instance(getApplicationContext()).testSessionDao().insert(testSession);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -386,6 +393,7 @@ public class TestSessionActivity extends AppCompatActivity {
         },TEST_WORD_BLINK_TIME_MILLIS, TimeUnit.MILLISECONDS);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void errorSound() {
         if (audioManager == null)
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);

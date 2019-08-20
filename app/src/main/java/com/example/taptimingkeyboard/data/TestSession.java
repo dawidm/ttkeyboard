@@ -19,16 +19,19 @@ public class TestSession {
     private int numErrors;
     @Nullable
     private Boolean isOrientationLandscape;
-    @Nullable
     private String phoneInfo;
+    private float phoneXDpi;
+    private float phoneYDpi;
 
-    public TestSession(long userId, long timestampMs, String wordlistName, int wordlistHashCode, @Nullable Boolean isOrientationLandscape, @Nullable String phoneInfo) {
+    public TestSession(long userId, long timestampMs, String wordlistName, int wordlistHashCode, @Nullable Boolean isOrientationLandscape, String phoneInfo, float phoneXDpi, float phoneYDpi) {
         this.userId = userId;
         this.timestampMs = timestampMs;
         this.wordlistName = wordlistName;
         this.wordlistHashCode = wordlistHashCode;
         this.isOrientationLandscape = isOrientationLandscape;
         this.phoneInfo = phoneInfo;
+        this.phoneXDpi = phoneXDpi;
+        this.phoneYDpi = phoneYDpi;
     }
 
     public void setId(long id) {
@@ -68,9 +71,16 @@ public class TestSession {
         return isOrientationLandscape;
     }
 
-    @Nullable
     public String getPhoneInfo() {
         return phoneInfo;
+    }
+
+    public float getPhoneXDpi() {
+        return phoneXDpi;
+    }
+
+    public float getPhoneYDpi() {
+        return phoneYDpi;
     }
 
     public void setSessionEndTimestampMs(long sessionEndTimestampMs) {
