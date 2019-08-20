@@ -62,12 +62,12 @@ public class UserInfoActivity extends AppCompatActivity {
         sexesList.add(new LayoutStringDbString(getSexResourceString(UserInfo.SEX_FEMALE),UserInfo.SEX_FEMALE));
         sexSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,sexesList));
         ArrayList<LayoutStringDbString> handednessList = new ArrayList<>(2);
-        handednessList.add(new LayoutStringDbString(getHandednessResourceString(UserInfo.HANDEDNESS_LEFT),UserInfo.HANDEDNESS_LEFT));
         handednessList.add(new LayoutStringDbString(getHandednessResourceString(UserInfo.HANDEDNESS_RIGHT),UserInfo.HANDEDNESS_RIGHT));
+        handednessList.add(new LayoutStringDbString(getHandednessResourceString(UserInfo.HANDEDNESS_LEFT),UserInfo.HANDEDNESS_LEFT));
         handednessSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,handednessList));
         ArrayList<LayoutStringDbString> symptomsAsymmetryList = new ArrayList<>(4);
-        symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_LEFT),UserInfo.ASYMMETRY_LEFT));
         symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_RIGHT),UserInfo.ASYMMETRY_RIGHT));
+        symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_LEFT),UserInfo.ASYMMETRY_LEFT));
         symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_NO_ASYMMETRY),UserInfo.ASYMMETRY_NO_ASYMMETRY));
         symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_NOT_SPECIFIED),UserInfo.ASYMMETRY_NOT_SPECIFIED));
         symptomsAsymmetrySpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,symptomsAsymmetryList));

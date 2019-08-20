@@ -29,7 +29,7 @@
     <string name="label_sex" >Sex</string>
     <string name="label_handedness">Dominant hand</string>
     <string name="label_diagnosed_asymmetry">Diagnosed symptoms asymmetry</string>
-    <string name="load_user_existing_info">Load...</string>
+    <string name="load_user_existing_info">Previous entries</string>
     <string name="save_user_info">Save</string>
     <string name="sex_male">Male</string>
     <string name="sex_female">Female</string>
