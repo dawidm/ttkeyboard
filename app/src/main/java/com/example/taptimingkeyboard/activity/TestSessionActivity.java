@@ -1,6 +1,5 @@
 package com.example.taptimingkeyboard.activity;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -11,7 +10,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,7 +60,8 @@ public class TestSessionActivity extends AppCompatActivity {
     public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
 
     private TapTimingKeyboard tapTimingKeyboard;
-    private AudioManager audioManager;
+    SoundPool soundPool;
+    private int errorSoundId;
     private Vibrator vibrator;
 
     private WordLists wordLists;
@@ -91,8 +93,9 @@ public class TestSessionActivity extends AppCompatActivity {
     private TextView getDataTextView;
     private Button retryButton;
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
     private ScheduledFuture testWordColorFuture;
+    private ScheduledFuture errorSoundScheduledFuture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +140,8 @@ public class TestSessionActivity extends AppCompatActivity {
         });
         getRemoteSettings();
         loadPreferences();
+        if(sounds)
+            initSounds();
     }
 
     @Override
@@ -400,13 +405,27 @@ public class TestSessionActivity extends AppCompatActivity {
         },TEST_WORD_BLINK_TIME_MILLIS, TimeUnit.MILLISECONDS);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void errorSound() {
         if (sounds) {
-            if (audioManager == null)
-                audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_INVALID, soundsVol);
+            if(errorSoundScheduledFuture==null || errorSoundScheduledFuture.isDone()) {
+                soundPool.play(errorSoundId, soundsVol, soundsVol, 0, 0, 1);
+                errorSoundScheduledFuture=scheduledExecutorService.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                }, TEST_WORD_BLINK_TIME_MILLIS, TimeUnit.MILLISECONDS);
+            }
         }
+    }
+
+    private void initSounds() {
+        soundPool = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            soundPool = new SoundPool.Builder().setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION).build()).setMaxStreams(1).build();
+        } else
+            soundPool = new SoundPool(1,AudioManager.STREAM_RING,0);
+        errorSoundId = soundPool.load(this,R.raw.beep_short,1);
     }
 
     private void errorVibration() {
