@@ -1,5 +1,6 @@
 package com.example.taptimingkeyboard.data;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -24,10 +25,12 @@ public class UserInfo {
     private String sex;
     private String handedness;
     private boolean diagnosedWithPD;
+    @Nullable
     private String symptomsAsymmetry;
-    private boolean onMedication;
+    @Nullable
+    private Boolean onMedication;
 
-    public UserInfo(String firstName, String lastName, int age, String sex, String handedness, boolean diagnosedWithPD, String symptomsAsymmetry, boolean onMedication) {
+    public UserInfo(String firstName, String lastName, int age, String sex, String handedness, boolean diagnosedWithPD, @Nullable String symptomsAsymmetry, @Nullable Boolean onMedication) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -74,7 +77,8 @@ public class UserInfo {
         return symptomsAsymmetry;
     }
 
-    public boolean isOnMedication() {
+    @Nullable
+    public Boolean getOnMedication() {
         return onMedication;
     }
 

@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -70,6 +71,20 @@ public class UserInfoActivity extends AppCompatActivity {
         symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_NO_ASYMMETRY),UserInfo.ASYMMETRY_NO_ASYMMETRY));
         symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_NOT_SPECIFIED),UserInfo.ASYMMETRY_NOT_SPECIFIED));
         symptomsAsymmetrySpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,symptomsAsymmetryList));
+        symptomsAsymmetrySpinner.setEnabled(false);
+        onMedicationCheckbox.setEnabled(false);
+        diagnosedWithPDCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean diagnosed) {
+                if(diagnosed) {
+                    symptomsAsymmetrySpinner.setEnabled(true);
+                    onMedicationCheckbox.setEnabled(true);
+                } else {
+                    symptomsAsymmetrySpinner.setEnabled(false);
+                    onMedicationCheckbox.setEnabled(false);
+                }
+            }
+        });
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,14 +94,24 @@ public class UserInfoActivity extends AppCompatActivity {
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
+                        String symptomsAsymmetry;
+                        Boolean onMedication;
+                        if(!diagnosedWithPDCheckbox.isSelected()) {
+                            symptomsAsymmetry=null;
+                            onMedication=null;
+                        } else {
+                            symptomsAsymmetry = ((LayoutStringDbString) symptomsAsymmetrySpinner.getSelectedItem()).getDbValue();
+                            onMedication=onMedicationCheckbox.isSelected();
+                        }
+
                         UserInfo userInfo = new UserInfo(firstNameEditText.getText().toString(),
                                 lastNameEditText.getText().toString(),
                                 Integer.parseInt(ageEditText.getText().toString()),
                                 ((LayoutStringDbString)sexSpinner.getSelectedItem()).getDbValue(),
                                 ((LayoutStringDbString)handednessSpinner.getSelectedItem()).getDbValue(),
                                 diagnosedWithPDCheckbox.isSelected(),
-                                ((LayoutStringDbString)symptomsAsymmetrySpinner.getSelectedItem()).getDbValue(),
-                                onMedicationCheckbox.isSelected());
+                                symptomsAsymmetry,
+                                onMedication);
                         final long userId = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().insert(userInfo);
                         runOnUiThread(new Runnable() {
                             @Override
