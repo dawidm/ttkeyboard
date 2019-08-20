@@ -4,13 +4,6 @@
         android:key="user_id"
         android:numeric="integer"
         android:defaultValue="0"></EditTextPreference>
-    <EditTextPreference android:title="@string/pref_longer_dimension"
-        android:key="longer_screen_dimension"
-        android:numeric="integer"
-        android:defaultValue="0"></EditTextPreference>
-    <EditTextPreference android:title="@string/pref_shorter_dimension"
-        android:key="shorter_screen_dimension"
-        android:defaultValue="0"></EditTextPreference>
     <SeekBarPreference android:title="@string/pref_height_landscape"
         android:key="height_landscape"
         android:defaultValue="40"

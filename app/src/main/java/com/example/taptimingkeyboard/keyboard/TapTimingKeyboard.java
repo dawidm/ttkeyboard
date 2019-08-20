@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -18,7 +19,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -39,6 +39,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     public static final String TAG = TapTimingKeyboard.class.getName();
 
     public static final float BUTTON_TEXT_PROPORTION = 0.4f;
+    public static final float INCH_TO_MM = 25.4f;
 
     private Context context;
     private AudioManager audioManager;
@@ -82,15 +83,11 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         float screenHeightPixels=point.y;
         display.getRealSize(point);
         Log.i(TAG,"screen size (px): "+point.x+"x"+point.y);
-        double longerScreenDimension = Double.parseDouble(sharedPreferences.getString("longer_screen_dimension",""));
-        double shorterScreenDimension = Double.parseDouble(sharedPreferences.getString("shorter_screen_dimension",""));
-        if(longerScreenDimension==0 || shorterScreenDimension==0)
-            Toast.makeText(context,"warning: no screen size provided in settings",Toast.LENGTH_SHORT).show();
-        else {
-            pixelSizeMmX = (point.x > point.y) ? (longerScreenDimension / point.x) : (shorterScreenDimension / point.x);
-            pixelSizeMmY = (point.y > point.x) ? (longerScreenDimension / point.y) : (shorterScreenDimension / point.y);
-            Log.i(TAG, "pixel size x (mm) = " + pixelSizeMmX + " pixel size  (mm) = " + pixelSizeMmY);
-        }
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getMetrics(displayMetrics);
+        Log.i(TAG,"screen dpi, x: "+displayMetrics.xdpi+" y: "+displayMetrics.ydpi);
+        pixelSizeMmX=1/(displayMetrics.xdpi/INCH_TO_MM);
+        pixelSizeMmY=1/(displayMetrics.ydpi/INCH_TO_MM);
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
             keyboardHeightPixels=heightLandscape*0.01f*screenHeightPixels;
         else
@@ -125,6 +122,13 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     }
 
     public double getButtonDistanceMillimeters(TTKeyboardButton from, TTKeyboardButton to) {
+        Point distancesPx = getButtonDistancePx(from,to);
+        double distanceXMm=distancesPx.x*pixelSizeMmX;
+        double distanceYMm=distancesPx.y*pixelSizeMmY;
+        return Math.sqrt(Math.pow(distanceXMm,2)+Math.pow(distanceYMm,2));
+    }
+
+    public Point getButtonDistancePx(TTKeyboardButton from, TTKeyboardButton to) {
         if(buttonsMap.isEmpty())
             throw new IllegalStateException("called getButtonDistance before creating layout view");
         TextView buttonFrom = buttonsMap.get(from);
@@ -133,17 +137,13 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         Rect buttonToRect = new Rect();
         buttonFrom.getDrawingRect(buttonFromRect);
         ((LinearLayout)tapTimingKeyboardView).offsetDescendantRectToMyCoords(buttonFrom,buttonFromRect);
-        double xFrom=buttonFromRect.left;
-        double yFrom=buttonFromRect.top;
+        int xFrom=buttonFromRect.left;
+        int yFrom=buttonFromRect.top;
         buttonTo.getDrawingRect(buttonToRect);
         ((LinearLayout)tapTimingKeyboardView).offsetDescendantRectToMyCoords(buttonTo,buttonToRect);
-        double xTo=buttonToRect.left;
-        double yTo=buttonToRect.top;
-        double xFromMm = xFrom*pixelSizeMmX;
-        double xToMm = xTo*pixelSizeMmX;
-        double yFromMm = yFrom*pixelSizeMmY;
-        double yToMm = yTo*pixelSizeMmY;
-        return Math.sqrt(Math.pow(Math.abs(xFromMm-xToMm),2)+Math.pow(Math.abs(yFromMm-yToMm),2));
+        int xTo=buttonToRect.left;
+        int yTo=buttonToRect.top;
+        return new Point(Math.abs(xFrom-xTo),Math.abs(yFrom-yTo));
     }
 
     public double getButtonSizeX(TTKeyboardButton ttButton) {
@@ -213,6 +213,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                             currentTimestampMillis,
                             (char)lastTTButtonDown.getCode(),
                             (char)ttButton.getCode(),
+                            getButtonDistancePx(ttButton,lastTTButtonDown).x,
+                            getButtonDistancePx(ttButton,lastTTButtonDown).y,
                             getButtonDistanceMillimeters(ttButton,lastTTButtonDown),
                             0,
                             userId,
@@ -258,6 +260,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                                     currentTimestampMillis,
                                     (char)lastTTButtonClick.getTtButton().getCode(),
                                     (char)ttButton.getCode(),
+                                    getButtonDistancePx(lastTTButtonClick.getTtButton(),ttButton).x,
+                                    getButtonDistancePx(lastTTButtonClick.getTtButton(),ttButton).y,
                                     getButtonDistanceMillimeters(lastTTButtonClick.getTtButton(),ttButton),
                                     correspondingKeyDownParameters.getTimeMillis()-lastTTButtonClick.getClickTimestampMillis(),
                                     userId,

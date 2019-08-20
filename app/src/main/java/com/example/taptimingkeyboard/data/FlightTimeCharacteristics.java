@@ -11,15 +11,19 @@ public class FlightTimeCharacteristics {
     private long timestamp;
     private char charFrom;
     private char charTo;
+    private double distancePixelsX;
+    private double distancePixelsY;
     private double distanceMm;
     private long timeMillis;
     private long userId;
     private long sessionId;
 
-    public FlightTimeCharacteristics(long timestamp, char charFrom, char charTo, double distanceMm, long timeMillis, long userId, long sessionId) {
+    public FlightTimeCharacteristics(long timestamp, char charFrom, char charTo, double distancePixelsX, double distancePixelsY, double distanceMm, long timeMillis, long userId, long sessionId) {
         this.timestamp = timestamp;
         this.charFrom = charFrom;
         this.charTo = charTo;
+        this.distancePixelsX = distancePixelsX;
+        this.distancePixelsY = distancePixelsY;
         this.distanceMm = distanceMm;
         this.timeMillis = timeMillis;
         this.userId = userId;
@@ -44,6 +48,14 @@ public class FlightTimeCharacteristics {
 
     public char getCharTo() {
         return charTo;
+    }
+
+    public double getDistancePixelsX() {
+        return distancePixelsX;
+    }
+
+    public double getDistancePixelsY() {
+        return distancePixelsY;
     }
 
     public double getDistanceMm() {
