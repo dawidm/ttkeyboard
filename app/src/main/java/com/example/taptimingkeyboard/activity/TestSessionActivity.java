@@ -157,8 +157,6 @@ public class TestSessionActivity extends AppCompatActivity {
             public void run() {
                 Gson gson = new Gson();
                 try {
-                    String rstring=gson.toJson(new RemotePreferences(1,1,true,1));
-                    Log.i(TAG,rstring);
                     SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     String serverUrl = sharedPreferences.getString("remote_url","");
                     if(serverUrl.charAt(serverUrl.length()-1)!='/')

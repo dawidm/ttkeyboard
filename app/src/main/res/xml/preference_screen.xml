@@ -22,6 +22,14 @@
         android:defaultValue="50"
         android:min="0"
         android:max="100"></SeekBarPreference>
+    <CheckBoxPreference android:title="@string/pref_vibrations"
+        android:key="vibrations"
+        android:defaultValue="false"></CheckBoxPreference>
+    <SeekBarPreference android:title="@string/pref_vibration_duration"
+        android:key="vibration_duration"
+        android:defaultValue="30"
+        android:min="10"
+        android:max="60"></SeekBarPreference>
     <EditTextPreference android:title="@string/pref_server_url"
         android:key="remote_url"
         android:defaultValue="https://dmotyka.pl/"></EditTextPreference>

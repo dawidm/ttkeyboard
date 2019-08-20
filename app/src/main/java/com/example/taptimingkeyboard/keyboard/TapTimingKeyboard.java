@@ -6,6 +6,9 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.AudioManager;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -43,6 +46,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     private Context context;
     private AudioManager audioManager;
+    private Vibrator vibrator;
 
     private View tapTimingKeyboardView;
     private TTKeyboardLayout ttKeyboardLayout;
@@ -52,6 +56,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private long sessionId;
     private boolean clickSound;
     private float clickVol;
+    private boolean vibrations;
+    private int vibrationDuration;
     private TimingDataManager timingDataManager;
 
     private double pixelSizeMmX;
@@ -75,6 +81,8 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         this.userId=(userId!=null)?userId:sharedPreferences.getInt("user_id",0);
         clickSound=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
         clickVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
+        vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
+        vibrationDuration=(remotePreferences!=null&&remotePreferences.getVibrationDuration()!=null)?remotePreferences.getVibrationDuration():sharedPreferences.getInt("vibration_duration",0);
         int heightPortrait = (remotePreferences!=null&&remotePreferences.getSizePortrait()!=null)?remotePreferences.getSizePortrait():sharedPreferences.getInt("height_portrait",0);
         int heightLandscape = (remotePreferences!=null&&remotePreferences.getSizeLandscape()!=null)?remotePreferences.getSizeLandscape():sharedPreferences.getInt("height_landscape",0);
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -205,6 +213,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 playClick();
+                vibrate();
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
                 KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
                 if(!ttButtonsDownParametersMap.isEmpty() && lastTTButtonClick!=null && lastTTButtonClick.getTtButton()!=lastTTButtonDown) {
@@ -288,8 +297,21 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     private void playClick() {
         if(clickSound) {
             if (audioManager == null)
-                audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
             audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,clickVol);
+        }
+    }
+
+    private void vibrate() {
+        if(vibrations) {
+            if(vibrator==null) {
+                vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(vibrationDuration,VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                vibrator.vibrate(vibrationDuration);
+            }
         }
     }
 

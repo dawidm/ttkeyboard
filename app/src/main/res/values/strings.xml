@@ -41,4 +41,6 @@
     <string name="asymmetry_no_asymmetry">No asymmetry</string>
     <string name="warning_fill_all_fields">Please fill all fields</string>
     <string name="warning_no_existing_users">No existing users</string>
+    <string name="pref_vibrations">Vibrations</string>
+    <string name="pref_vibration_duration">Vibration duration (ms)</string>
 </resources>
