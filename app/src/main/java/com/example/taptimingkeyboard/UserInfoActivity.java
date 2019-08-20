@@ -104,8 +104,8 @@ public class UserInfoActivity extends AppCompatActivity {
                             onMedication=onMedicationCheckbox.isSelected();
                         }
 
-                        UserInfo userInfo = new UserInfo(firstNameEditText.getText().toString(),
-                                lastNameEditText.getText().toString(),
+                        UserInfo userInfo = new UserInfo(firstNameEditText.getText().toString().trim(),
+                                lastNameEditText.getText().toString().trim(),
                                 Integer.parseInt(ageEditText.getText().toString()),
                                 ((LayoutStringDbString)sexSpinner.getSelectedItem()).getDbValue(),
                                 ((LayoutStringDbString)handednessSpinner.getSelectedItem()).getDbValue(),
@@ -196,7 +196,9 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private boolean validateFields() {
-        if(firstNameEditText.getText().length()<1 || lastNameEditText.getText().length()<1 || ageEditText.getText().length()<1) {
+        if(firstNameEditText.getText().toString().trim().length()<1
+                || lastNameEditText.getText().toString().trim().length()<1
+                || ageEditText.getText().toString().trim().length()<1) {
             Toast.makeText(this, getResources().getString(R.string.warning_fill_all_fields), Toast.LENGTH_LONG).show();
             return false;
         }
