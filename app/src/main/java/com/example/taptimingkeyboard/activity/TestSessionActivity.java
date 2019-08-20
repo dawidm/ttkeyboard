@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.RemotePreferences;
+import com.example.taptimingkeyboard.data.TestSessionWordErrors;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardButton;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardClickListener;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardLayout;
@@ -44,7 +45,9 @@ import com.google.gson.Gson;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -55,6 +58,7 @@ public class TestSessionActivity extends AppCompatActivity {
     public static final String TAG = TestSessionActivity.class.getName();
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
+    private static final int ERROR_TIMEOUT_MILLIS = 1000;
     public static final int VIBRATION_DURATION_MILLIS = 300;
     public static final String WORDLIST_REMOTE_JSON_FILE = "wordlists.json";
     public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
@@ -93,9 +97,12 @@ public class TestSessionActivity extends AppCompatActivity {
     private TextView getDataTextView;
     private Button retryButton;
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3);
     private ScheduledFuture testWordColorFuture;
     private ScheduledFuture errorSoundScheduledFuture;
+    private ScheduledFuture errorTimeoutScheduledFuture;
+
+    private Map<String,Integer> wordsErrorsMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,10 +233,6 @@ public class TestSessionActivity extends AppCompatActivity {
             return;
         }
         final WordLists.WordList wordList = ((WordLists.WordList)listsSpinner.getSelectedItem());
-        sessionStartButton.setClickable(false);
-        listLinearLayout.setVisibility(View.INVISIBLE);
-        buttonsContainer.setVisibility(View.GONE);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         Boolean isLandscape=false;
         if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE)
             isLandscape=true;
@@ -256,6 +259,10 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void startSession(WordLists.WordList wordList) {
+        sessionStartButton.setClickable(false);
+        listLinearLayout.setVisibility(View.INVISIBLE);
+        buttonsContainer.setVisibility(View.GONE);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         sessionActive=true;
         tapTimingKeyboard.startTestSession(sessionId);
         updateSessionInfo(true);
@@ -266,6 +273,7 @@ public class TestSessionActivity extends AppCompatActivity {
         charsIterator=0;
         currentChar=currentWord[0];
         clicksIds.clear();
+        wordsErrorsMap.clear();
         loadWord();
     }
 
@@ -288,6 +296,7 @@ public class TestSessionActivity extends AppCompatActivity {
                     testSession.setSessionEndTimestampMs(timestampMs);
                     testSession.setNumErrors(numErrors);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
+                    TapTimingDatabase.instance(getApplicationContext()).testSessionWordErrorsDao().insertAll(TestSessionWordErrors.fromMap(wordsErrorsMap,sessionId));
                 }
             });
         }
@@ -356,12 +365,29 @@ public class TestSessionActivity extends AppCompatActivity {
                 resetWord();
                 //checkKeyboardClick(ttButton, clickId);
             }
-            numErrors++;
+            countError();
             testWordBlink();
             errorSound();
             errorVibration();
             rejectWaitingClicks();
             tapTimingKeyboard.abortCurrentFlightTime();
+        }
+    }
+
+    private void countError() {
+        if(errorTimeoutScheduledFuture==null || errorSoundScheduledFuture.isDone()) {
+            numErrors++;
+            if(wordsErrorsMap.containsKey(new String(currentWord))) {
+                Integer incrementedInt=wordsErrorsMap.get(new String(currentWord))+1;
+                wordsErrorsMap.put(new String(currentWord),incrementedInt);
+            } else
+                wordsErrorsMap.put(new String(currentWord),1);
+            errorTimeoutScheduledFuture=scheduledExecutorService.schedule(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            },ERROR_TIMEOUT_MILLIS,TimeUnit.MILLISECONDS);
         }
     }
 
@@ -414,7 +440,7 @@ public class TestSessionActivity extends AppCompatActivity {
                     public void run() {
 
                     }
-                }, TEST_WORD_BLINK_TIME_MILLIS, TimeUnit.MILLISECONDS);
+                }, ERROR_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             }
         }
     }

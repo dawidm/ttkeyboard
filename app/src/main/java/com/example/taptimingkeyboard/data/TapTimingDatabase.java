@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, UserInfo.class}, version = 17)
+@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 18)
 public abstract class TapTimingDatabase extends RoomDatabase {
 
     public static final String DB_NAME = "tt_database";
@@ -26,5 +26,6 @@ public abstract class TapTimingDatabase extends RoomDatabase {
     public abstract FlightTimeCharacteristicsDao flightTimeCharacteristicsDao();
     public abstract KeyTapCharacteristicsDao keyTapCharacteristicsDao();
     public abstract UserInfoDao userInfoDao();
+    public abstract TestSessionWordErrorsDao testSessionWordErrorsDao();
 
 }
