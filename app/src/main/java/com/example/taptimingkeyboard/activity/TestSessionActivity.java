@@ -52,6 +52,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TestSessionActivity extends AppCompatActivity {
 
@@ -62,6 +63,8 @@ public class TestSessionActivity extends AppCompatActivity {
     public static final int VIBRATION_DURATION_MILLIS = 300;
     public static final String WORDLIST_REMOTE_JSON_FILE = "wordlists.json";
     public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
+
+    private AtomicBoolean settingsInitialized = new AtomicBoolean(false);
 
     private TapTimingKeyboard tapTimingKeyboard;
     SoundPool soundPool;
@@ -145,7 +148,10 @@ public class TestSessionActivity extends AppCompatActivity {
                 getRemoteSettingsLoadPrefs();
             }
         });
-        getRemoteSettingsLoadPrefs();
+        if(settingsInitialized.get())
+            useSettings();
+        else
+            getRemoteSettingsLoadPrefs();
     }
 
     @Override
@@ -178,14 +184,12 @@ public class TestSessionActivity extends AppCompatActivity {
                     Log.i(TAG,"getting remote settings from" + settingsUrl);
                     remotePreferences=gson.fromJson(new InputStreamReader(new URL(settingsUrl).openStream()), RemotePreferences.class);
                     Log.i(TAG,"updated remote settings from" + settingsUrl);
+                    settingsInitialized.set(true);
+                    loadPreferences();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            getDataContainer.setVisibility(View.INVISIBLE);
-                            contentContainer.setVisibility(View.VISIBLE);
-                            keyboardContainer.setVisibility(View.VISIBLE);
-                            initKeyboard();
-                            initWordListsSpinner();
+                            useSettings();
                         }
                     });
                 } catch (Exception e) {
@@ -197,11 +201,17 @@ public class TestSessionActivity extends AppCompatActivity {
                         }
                     });
                     Log.w(TAG,"error updating remote data",e);
-                } finally {
-                    loadPreferences();
                 }
             }
         });
+    }
+
+    private void useSettings() {
+        getDataContainer.setVisibility(View.INVISIBLE);
+        contentContainer.setVisibility(View.VISIBLE);
+        keyboardContainer.setVisibility(View.VISIBLE);
+        initKeyboard();
+        initWordListsSpinner();
     }
 
     private void loadPreferences() {
