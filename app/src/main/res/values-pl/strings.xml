@@ -8,7 +8,7 @@
     <string name="choose_list">Wybierz listę:</string>
     <string name="no_wordlist_selected">Nie wybrano listy</string>
     <string name="session_info_active">Id użytkownika: %d, sesja %d</string>
-    <string name="session_info_inactive">Id użytkownika: %s</string>
+    <string name="session_info_inactive">Id użytkownika: %d</string>
     <string name="start_session_confirmation_title">Rozpoczęcie sesji</string>
     <string name="start_session_confirmation_text">Czy na pewno chcesz rozpocząć sesję testową?</string>
     <string name="pref_user_id">Id użytkownika klawiatur</string>
