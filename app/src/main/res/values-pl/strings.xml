@@ -36,4 +36,11 @@
     <string name="handedness_left">Lewa</string>
     <string name="handedness_right">Prawa</string>
     <string name="warning_fill_all_fields">Proszę wypełnić wszystkie pola</string>
+    <string name="asymmetry_left">Lewostronna</string>
+    <string name="asymmetry_no_asymmetry">Brak asymetrii</string>
+    <string name="asymmetry_not_specified">Nie ustalono</string>
+    <string name="asymmetry_right">Prawostronna</string>
+    <string name="pref_vibration_duration">Długość wibracji (ms)</string>
+    <string name="pref_vibrations">Wibracje</string>
+    <string name="warning_no_existing_users">Brak istniejących użytkowników</string>
 </resources>
