@@ -142,13 +142,10 @@ public class TestSessionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 retryButton.setVisibility(View.GONE);
                 getDataTextView.setText(R.string.getting_data);
-                getRemoteSettings();
+                getRemoteSettingsLoadPrefs();
             }
         });
-        getRemoteSettings();
-        loadPreferences();
-        if(sounds)
-            initSounds();
+        getRemoteSettingsLoadPrefs();
     }
 
     @Override
@@ -163,14 +160,7 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void loadPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sounds=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
-        soundsVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
-        vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
-    }
-
-    private void getRemoteSettings() {
+    private void getRemoteSettingsLoadPrefs() {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -207,9 +197,20 @@ public class TestSessionActivity extends AppCompatActivity {
                         }
                     });
                     Log.w(TAG,"error updating remote data",e);
+                } finally {
+                    loadPreferences();
                 }
             }
         });
+    }
+
+    private void loadPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sounds=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
+        soundsVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
+        vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
+        if(sounds)
+            initSounds();
     }
 
     private void initKeyboard() {
