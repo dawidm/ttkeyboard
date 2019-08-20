@@ -78,7 +78,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         timingDataManager=new TimingDataManager(context);
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.userId=(userId!=null)?userId:sharedPreferences.getInt("user_id",0);
+        this.userId=(userId!=null)?userId:Long.parseLong(sharedPreferences.getString("user_id","0"));
         clickSound=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
         clickVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
         vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
