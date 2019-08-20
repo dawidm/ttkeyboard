@@ -93,6 +93,7 @@ public class TestSessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
+        getSupportActionBar().hide();
         loadPreferences();
         userId=getIntent().getExtras().getLong("user_id");
         testWordTextView = findViewById(R.id.test_word_textview);
@@ -217,6 +218,7 @@ public class TestSessionActivity extends AppCompatActivity {
         sessionStartButton.setClickable(false);
         listLinearLayout.setVisibility(View.INVISIBLE);
         buttonsContainer.setVisibility(View.GONE);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         Boolean isLandscape=false;
         if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE)
             isLandscape=true;
@@ -264,6 +266,7 @@ public class TestSessionActivity extends AppCompatActivity {
         buttonsContainer.setVisibility(View.VISIBLE);
         listLinearLayout.setVisibility(View.VISIBLE);
         testWordTextView.setText("");
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         clicksIds.clear();
         if (!aborted) {
             AsyncTask.execute(new Runnable() {
