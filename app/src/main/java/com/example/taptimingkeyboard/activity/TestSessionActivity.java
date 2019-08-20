@@ -15,6 +15,8 @@ import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -52,11 +54,13 @@ public class TestSessionActivity extends AppCompatActivity {
     public static final String TAG = TestSessionActivity.class.getName();
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
+    public static final int VIBRATION_DURATION_MILLIS = 300;
     public static final String WORDLIST_REMOTE_JSON_FILE = "wordlists.json";
     public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
 
     private TapTimingKeyboard tapTimingKeyboard;
     private AudioManager audioManager;
+    private Vibrator vibrator;
 
     private WordLists wordLists;
     private RemotePreferences remotePreferences;
@@ -71,8 +75,9 @@ public class TestSessionActivity extends AppCompatActivity {
     private char currentChar = 0;
     private int numErrors;
 
-    private boolean sounds=false;
-    private float soundsVol=0.0f;
+    private boolean sounds;
+    private float soundsVol;
+    private boolean vibrations;
 
     private TextView testWordTextView;
     private TextView sessionInfoTextView;
@@ -94,7 +99,6 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
         getSupportActionBar().hide();
-        loadPreferences();
         userId=getIntent().getExtras().getLong("user_id");
         testWordTextView = findViewById(R.id.test_word_textview);
         testWordTextView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -132,6 +136,7 @@ public class TestSessionActivity extends AppCompatActivity {
             }
         });
         getRemoteSettings();
+        loadPreferences();
     }
 
     @Override
@@ -148,8 +153,9 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void loadPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sounds=sharedPreferences.getBoolean("click_sound",false);
-        soundsVol=sharedPreferences.getInt("click_volume",0)/100.f;
+        sounds=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
+        soundsVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
+        vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
     }
 
     private void getRemoteSettings() {
@@ -347,8 +353,8 @@ public class TestSessionActivity extends AppCompatActivity {
             }
             numErrors++;
             testWordBlink();
-            if (sounds)
-                errorSound();
+            errorSound();
+            errorVibration();
             rejectWaitingClicks();
             tapTimingKeyboard.abortCurrentFlightTime();
         }
@@ -396,10 +402,23 @@ public class TestSessionActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void errorSound() {
-        if (audioManager == null)
-            audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_INVALID,soundsVol);
+        if (sounds) {
+            if (audioManager == null)
+                audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_INVALID, soundsVol);
+        }
     }
 
-
+    private void errorVibration() {
+        if (vibrations) {
+            if(vibrator==null) {
+                vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(VIBRATION_DURATION_MILLIS,VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                vibrator.vibrate(VIBRATION_DURATION_MILLIS);
+            }
+        }
+    }
 }
