@@ -375,7 +375,7 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void countError() {
-        if(errorTimeoutScheduledFuture==null || errorSoundScheduledFuture.isDone()) {
+        if(errorTimeoutScheduledFuture==null || errorTimeoutScheduledFuture.isDone()) {
             numErrors++;
             if(wordsErrorsMap.containsKey(new String(currentWord))) {
                 Integer incrementedInt=wordsErrorsMap.get(new String(currentWord))+1;
@@ -433,7 +433,7 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private void errorSound() {
         if (sounds) {
-            if(errorSoundScheduledFuture==null || errorSoundScheduledFuture.isDone()) {
+            if(errorSoundScheduledFuture==null || (errorSoundScheduledFuture!=null && errorSoundScheduledFuture.isDone())) {
                 soundPool.play(errorSoundId, soundsVol, soundsVol, 0, 0, 1);
                 errorSoundScheduledFuture=scheduledExecutorService.schedule(new Runnable() {
                     @Override
