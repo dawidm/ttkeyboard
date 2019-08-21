@@ -178,8 +178,6 @@ public class TestSessionActivity extends AppCompatActivity {
                 try {
                     SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     String serverUrl = sharedPreferences.getString("remote_url","");
-                    if(serverUrl.charAt(serverUrl.length()-1)!='/')
-                        serverUrl=serverUrl+'/';
                     String wordlistsUrl=serverUrl+WORDLIST_REMOTE_JSON_FILE;
                     Log.i(TAG,"getting wordlists from" + wordlistsUrl);
                     wordLists=WordLists.fromUrl(wordlistsUrl);
