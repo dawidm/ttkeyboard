@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.RemotePreferences;
 import com.example.taptimingkeyboard.data.TestSessionWordErrors;
+import com.example.taptimingkeyboard.data.UserInfo;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardButton;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardClickListener;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardLayout;
@@ -40,10 +41,7 @@ import com.example.taptimingkeyboard.keyboard.TapTimingKeyboard;
 import com.example.taptimingkeyboard.data.WordLists;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 import com.example.taptimingkeyboard.data.TestSession;
-import com.google.gson.Gson;
 
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,6 +73,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private RemotePreferences remotePreferences;
     private long sessionId;
     private Long userId;
+    private UserInfo userInfo;
     private boolean sessionActive=false;
     private ArrayList<Long> clicksIds = new ArrayList<>();
     private String[] words;
@@ -152,6 +151,12 @@ public class TestSessionActivity extends AppCompatActivity {
             useSettings();
         else
             getRemoteSettingsLoadPrefs();
+        loadUserName(userId, new Runnable() {
+            @Override
+            public void run() {
+                updateSessionInfo();
+            }
+        });
     }
 
     @Override
@@ -170,7 +175,6 @@ public class TestSessionActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                Gson gson = new Gson();
                 try {
                     SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     String serverUrl = sharedPreferences.getString("remote_url","");
@@ -178,11 +182,11 @@ public class TestSessionActivity extends AppCompatActivity {
                         serverUrl=serverUrl+'/';
                     String wordlistsUrl=serverUrl+WORDLIST_REMOTE_JSON_FILE;
                     Log.i(TAG,"getting wordlists from" + wordlistsUrl);
-                    wordLists = gson.fromJson(new InputStreamReader(new URL(wordlistsUrl).openStream()), WordLists.class);
+                    wordLists=WordLists.fromUrl(wordlistsUrl);
                     Log.i(TAG,"updated wordlists from" + wordlistsUrl);
                     String settingsUrl = serverUrl+SETTINGS_REMOTE_JSON_FILE;
                     Log.i(TAG,"getting remote settings from" + settingsUrl);
-                    remotePreferences=gson.fromJson(new InputStreamReader(new URL(settingsUrl).openStream()), RemotePreferences.class);
+                    remotePreferences=RemotePreferences.fromUrl(settingsUrl);
                     Log.i(TAG,"updated remote settings from" + settingsUrl);
                     settingsInitialized.set(true);
                     loadPreferences();
@@ -232,7 +236,6 @@ public class TestSessionActivity extends AppCompatActivity {
             }
         },remotePreferences,
         userId);
-        updateSessionInfo(false);
         ConstraintLayout keyboardContainer = findViewById(R.id.keyboard_container);
         keyboardContainer.removeAllViews();
         keyboardContainer.addView(tapTimingKeyboard.getView());
@@ -276,7 +279,7 @@ public class TestSessionActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         sessionActive=true;
         tapTimingKeyboard.startTestSession(sessionId);
-        updateSessionInfo(true);
+        updateSessionInfo();
         words=wordList.getWordsCsv().split(",");
         numErrors=0;
         wordsIterator=0;
@@ -291,7 +294,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private void endSession(boolean aborted) {
         sessionActive=false;
         tapTimingKeyboard.endTestSession();
-        updateSessionInfo(false);
+        updateSessionInfo();
         sessionStartButton.setClickable(true);
         buttonsContainer.setVisibility(View.VISIBLE);
         listLinearLayout.setVisibility(View.VISIBLE);
@@ -313,11 +316,11 @@ public class TestSessionActivity extends AppCompatActivity {
         }
     }
 
-    private void updateSessionInfo(boolean sessionActive) {
+    private void updateSessionInfo() {
         if(sessionActive)
-            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_active),userId,sessionId));
+            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_active),userInfo.toString(),sessionId));
         else
-            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_inactive),userId));
+            sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_inactive),userInfo.toString()));
     }
 
     private boolean nextWord() {
@@ -476,5 +479,15 @@ public class TestSessionActivity extends AppCompatActivity {
                 vibrator.vibrate(VIBRATION_DURATION_MILLIS);
             }
         }
+    }
+
+    private void loadUserName(final long userId, final Runnable afterUpdateRunnable) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                userInfo=TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getById(userId);
+                runOnUiThread(afterUpdateRunnable);
+            }
+        });
     }
 }

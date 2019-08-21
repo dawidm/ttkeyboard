@@ -16,4 +16,7 @@ public interface UserInfoDao {
 
         @Query("SELECT * FROM user_info ;")
         UserInfo[] getAll();
+
+        @Query("SELECT * FROM user_info WHERE id == :id")
+        UserInfo getById(long id);
 }
