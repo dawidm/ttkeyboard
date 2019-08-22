@@ -10,14 +10,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -58,16 +53,13 @@ public class TestSessionActivity extends AppCompatActivity {
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
     private static final int ERROR_TIMEOUT_MILLIS = 1000;
-    public static final int VIBRATION_DURATION_MILLIS = 300;
     public static final String WORDLIST_REMOTE_JSON_FILE = "wordlists.json";
     public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
 
     private AtomicBoolean settingsInitialized = new AtomicBoolean(false);
 
     private TapTimingKeyboard tapTimingKeyboard;
-    SoundPool soundPool;
-    private int errorSoundId;
-    private Vibrator vibrator;
+    private UiSounds uiSounds;
 
     private WordLists wordLists;
     private RemotePreferences remotePreferences;
@@ -101,7 +93,6 @@ public class TestSessionActivity extends AppCompatActivity {
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3);
     private ScheduledFuture testWordColorFuture;
-    private ScheduledFuture errorSoundScheduledFuture;
     private ScheduledFuture errorTimeoutScheduledFuture;
 
     private Map<String,Integer> wordsErrorsMap = new HashMap<>();
@@ -111,6 +102,7 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
         getSupportActionBar().hide();
+        uiSounds = new UiSounds(this);
         userId=getIntent().getExtras().getLong("user_id");
         testWordTextView = findViewById(R.id.test_word_textview);
         testWordTextView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -222,7 +214,7 @@ public class TestSessionActivity extends AppCompatActivity {
         soundsVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
         vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
         if(sounds)
-            initSounds();
+            uiSounds.initSounds();
     }
 
     private void initKeyboard() {
@@ -379,8 +371,10 @@ public class TestSessionActivity extends AppCompatActivity {
             }
             countError();
             testWordBlink();
-            errorSound();
-            errorVibration();
+            if(sounds)
+                uiSounds.playSound(UiSounds.SOUND_WORD_ERROR,soundsVol,ERROR_TIMEOUT_MILLIS);
+            if(vibrations)
+                uiSounds.vibrate(UiSounds.VIBRATION_WORD_ERROR,ERROR_TIMEOUT_MILLIS);
             rejectWaitingClicks();
             tapTimingKeyboard.abortCurrentFlightTime();
         }
@@ -443,41 +437,6 @@ public class TestSessionActivity extends AppCompatActivity {
         },TEST_WORD_BLINK_TIME_MILLIS, TimeUnit.MILLISECONDS);
     }
 
-    private void errorSound() {
-        if (sounds) {
-            if(errorSoundScheduledFuture==null || (errorSoundScheduledFuture!=null && errorSoundScheduledFuture.isDone())) {
-                soundPool.play(errorSoundId, soundsVol, soundsVol, 0, 0, 1);
-                errorSoundScheduledFuture=scheduledExecutorService.schedule(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                }, ERROR_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-            }
-        }
-    }
-
-    private void initSounds() {
-        soundPool = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            soundPool = new SoundPool.Builder().setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION).build()).setMaxStreams(1).build();
-        } else
-            soundPool = new SoundPool(1,AudioManager.STREAM_RING,0);
-        errorSoundId = soundPool.load(this,R.raw.beep_short,1);
-    }
-
-    private void errorVibration() {
-        if (vibrations) {
-            if(vibrator==null) {
-                vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(VIBRATION_DURATION_MILLIS,VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                vibrator.vibrate(VIBRATION_DURATION_MILLIS);
-            }
-        }
-    }
 
     private void loadUserName(final long userId, final Runnable afterUpdateRunnable) {
         AsyncTask.execute(new Runnable() {
