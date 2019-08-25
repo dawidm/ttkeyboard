@@ -5,11 +5,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.media.AudioManager;
-import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -25,14 +20,15 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.preference.PreferenceManager;
 
 import com.example.taptimingkeyboard.R;
+import com.example.taptimingkeyboard.activity.UiSounds;
 import com.example.taptimingkeyboard.data.FlightTimeCharacteristics;
 import com.example.taptimingkeyboard.data.KeyTapCharacteristics;
 import com.example.taptimingkeyboard.data.RemotePreferences;
 import com.example.taptimingkeyboard.data.TimingDataManager;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -45,46 +41,62 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
     public static final float INCH_TO_MM = 25.4f;
 
     private Context context;
-    private AudioManager audioManager;
-    private Vibrator vibrator;
+    private UiSounds uiSounds;
+    private TimingDataManager timingDataManager;
 
     private View tapTimingKeyboardView;
     private TTKeyboardLayout ttKeyboardLayout;
     private TTKeyboardClickListener clickListener;
     private Map<TTKeyboardButton, Button> buttonsMap = new HashMap<>();
+
+    private double pixelSizeMmX;
+    private double pixelSizeMmY;
+    private float keyboardHeightPixels;
+
     private long userId;
     private long sessionId;
     private boolean clickSound;
     private float clickVol;
     private boolean vibrations;
     private int vibrationDuration;
-    private TimingDataManager timingDataManager;
-
-    private double pixelSizeMmX;
-    private double pixelSizeMmY;
-    private float keyboardHeightPixels;
+    private int heightPortrait;
+    private int heightLandscape;
 
     //which buttons are currently pressed (but not released) and associated MotionEvents
-    private Map<TTKeyboardButton,KeyDownParameters> ttButtonsDownParametersMap = Collections.synchronizedMap(new HashMap<TTKeyboardButton, KeyDownParameters>());
+    private Map<TTKeyboardButton,KeyDownParameters> ttButtonsDownParametersMap = new HashMap<>();
     private TTKeyboardButton lastTTButtonDown = null;
     private TTButtonClick lastTTButtonClick = null;
+    //flight times of which second key have not been released yet
     private WaitingFlightTimeCharacteristics waitingFlightTimeCharacteristics = null;
-
     private long clickId = 0;
 
     public TapTimingKeyboard(Context context, TTKeyboardLayout.Layout layout, TTKeyboardClickListener clickListener, @Nullable RemotePreferences remotePreferences, @Nullable Long userId) {
         this.context=context;
         this.clickListener=clickListener;
         timingDataManager=new TimingDataManager(context);
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        loadPreferences(remotePreferences,userId);
+        loadDisplayRelatedParameters();
+        uiSounds=new UiSounds(context);
+        if(clickSound)
+            uiSounds.initClickSound();
+        if(vibrations)
+            uiSounds.initVibrator();
+        ttKeyboardLayout=TTKeyboardLayout.withLayout(layout);
+        tapTimingKeyboardView = createView(context);
+    }
+
+    private void loadPreferences(@Nullable RemotePreferences remotePreferences, @Nullable Long userId) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.userId=(userId!=null)?userId:Long.parseLong(sharedPreferences.getString("user_id","0"));
         clickSound=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
         clickVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
         vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
         vibrationDuration=(remotePreferences!=null&&remotePreferences.getVibrationDuration()!=null)?remotePreferences.getVibrationDuration():sharedPreferences.getInt("vibration_duration",0);
-        int heightPortrait = (remotePreferences!=null&&remotePreferences.getSizePortrait()!=null)?remotePreferences.getSizePortrait():sharedPreferences.getInt("height_portrait",0);
-        int heightLandscape = (remotePreferences!=null&&remotePreferences.getSizeLandscape()!=null)?remotePreferences.getSizeLandscape():sharedPreferences.getInt("height_landscape",0);
+        heightPortrait=(remotePreferences!=null&&remotePreferences.getSizePortrait()!=null)?remotePreferences.getSizePortrait():sharedPreferences.getInt("height_portrait",0);
+        heightLandscape=(remotePreferences!=null&&remotePreferences.getSizeLandscape()!=null)?remotePreferences.getSizeLandscape():sharedPreferences.getInt("height_landscape",0);
+    }
+
+    private void loadDisplayRelatedParameters() {
         Display display = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -100,66 +112,6 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
             keyboardHeightPixels=heightLandscape*0.01f*screenHeightPixels;
         else
             keyboardHeightPixels=heightPortrait*0.01f*screenHeightPixels;
-        ttKeyboardLayout=TTKeyboardLayout.withLayout(layout);
-        tapTimingKeyboardView = createView(context);
-    }
-
-    public void startTestSession(long sessionId) {
-        this.sessionId=sessionId;
-        timingDataManager.startTestSession();
-    }
-
-    public void endTestSession() {
-        timingDataManager.endTestSession();
-    }
-
-    public void acceptButtonClick(long clickId) {
-        timingDataManager.acceptButtonClick(clickId);
-    }
-
-    public void rejectButtonClick(long clickId) {
-        timingDataManager.rejectButtonClick(clickId);
-    }
-
-    public View getView() {
-        return tapTimingKeyboardView;
-    }
-
-    public TTKeyboardLayout getLayout() {
-        return ttKeyboardLayout;
-    }
-
-    public double getButtonDistanceMillimeters(TTKeyboardButton from, TTKeyboardButton to) {
-        Point distancesPx = getButtonDistancePx(from,to);
-        double distanceXMm=distancesPx.x*pixelSizeMmX;
-        double distanceYMm=distancesPx.y*pixelSizeMmY;
-        return Math.sqrt(Math.pow(distanceXMm,2)+Math.pow(distanceYMm,2));
-    }
-
-    public Point getButtonDistancePx(TTKeyboardButton from, TTKeyboardButton to) {
-        if(buttonsMap.isEmpty())
-            throw new IllegalStateException("called getButtonDistance before creating layout view");
-        TextView buttonFrom = buttonsMap.get(from);
-        TextView buttonTo = buttonsMap.get(to);
-        Rect buttonFromRect = new Rect();
-        Rect buttonToRect = new Rect();
-        buttonFrom.getDrawingRect(buttonFromRect);
-        ((LinearLayout)tapTimingKeyboardView).offsetDescendantRectToMyCoords(buttonFrom,buttonFromRect);
-        int xFrom=buttonFromRect.left;
-        int yFrom=buttonFromRect.top;
-        buttonTo.getDrawingRect(buttonToRect);
-        ((LinearLayout)tapTimingKeyboardView).offsetDescendantRectToMyCoords(buttonTo,buttonToRect);
-        int xTo=buttonToRect.left;
-        int yTo=buttonToRect.top;
-        return new Point(Math.abs(xFrom-xTo),Math.abs(yFrom-yTo));
-    }
-
-    public double getButtonSizeX(TTKeyboardButton ttButton) {
-        return buttonsMap.get(ttButton).getWidth();
-    }
-
-    public double getButtonSizeY(TTKeyboardButton ttButton) {
-        return buttonsMap.get(ttButton).getHeight();
     }
 
     private View createView(Context context) {
@@ -207,13 +159,67 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
         return mainLayout;
     }
 
+    public void startTestSession(long sessionId) {
+        this.sessionId=sessionId;
+        timingDataManager.startTestSession();
+    }
+
+    public void endTestSession() {
+        timingDataManager.endTestSession();
+    }
+
+    public void acceptButtonClick(long clickId) {
+        timingDataManager.acceptButtonClick(clickId);
+    }
+
+    public void rejectButtonClick(long clickId) {
+        timingDataManager.rejectButtonClick(clickId);
+    }
+
+    public View getView() {
+        return tapTimingKeyboardView;
+    }
+
+    private double getButtonDistanceMillimeters(TTKeyboardButton from, TTKeyboardButton to) {
+        Point distancesPx = getButtonDistancePx(from,to);
+        double distanceXMm=distancesPx.x*pixelSizeMmX;
+        double distanceYMm=distancesPx.y*pixelSizeMmY;
+        return Math.sqrt(Math.pow(distanceXMm,2)+Math.pow(distanceYMm,2));
+    }
+
+    private Point getButtonDistancePx(TTKeyboardButton from, TTKeyboardButton to) {
+        if(buttonsMap.isEmpty())
+            throw new IllegalStateException("called getButtonDistance before creating layout view");
+        TextView buttonFrom = buttonsMap.get(from);
+        TextView buttonTo = buttonsMap.get(to);
+        Rect buttonFromRect = new Rect();
+        Rect buttonToRect = new Rect();
+        buttonFrom.getDrawingRect(buttonFromRect);
+        ((LinearLayout)tapTimingKeyboardView).offsetDescendantRectToMyCoords(buttonFrom,buttonFromRect);
+        int xFrom=buttonFromRect.left;
+        int yFrom=buttonFromRect.top;
+        buttonTo.getDrawingRect(buttonToRect);
+        ((LinearLayout)tapTimingKeyboardView).offsetDescendantRectToMyCoords(buttonTo,buttonToRect);
+        int xTo=buttonToRect.left;
+        int yTo=buttonToRect.top;
+        return new Point(Math.abs(xFrom-xTo),Math.abs(yFrom-yTo));
+    }
+
+    private double getButtonSizeX(TTKeyboardButton ttButton) {
+        return buttonsMap.get(ttButton).getWidth();
+    }
+
+    private double getButtonSizeY(TTKeyboardButton ttButton) {
+        return buttonsMap.get(ttButton).getHeight();
+    }
+
     @Override
     public synchronized void onMotionEvent(TTKeyboardButton ttButton, MotionEvent motionEvent) {
         long currentTimestampMillis = System.currentTimeMillis();
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 playClick();
-                vibrate();
+                vibrateClick();
                 Log.v(TAG, ttButton.getLabel() + " ACTION_DOWN");
                 KeyDownParameters keyDownParameters = new KeyDownParameters(motionEvent.getEventTime(),motionEvent.getPressure(),motionEvent.getX(),motionEvent.getY());
                 if(!ttButtonsDownParametersMap.isEmpty() && lastTTButtonClick!=null && lastTTButtonClick.getTtButton()!=lastTTButtonDown) {
@@ -247,7 +253,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 long holdTimeMillis = motionEvent.getEventTime() - correspondingKeyDownParameters.getTimeMillis();
                 double imprecisionX=2*(correspondingKeyDownParameters.getX()/getButtonSizeX(ttButton))-1;
                 double imprecisionY=2*(correspondingKeyDownParameters.getY()/getButtonSizeY(ttButton))-1;
-                Log.d(TAG,"tapped button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + correspondingKeyDownParameters.getPressure()+ " imprecision (x, y): "+imprecisionX+","+imprecisionY);
+                Log.d(TAG,"tapped (up+down) button: " + ttButton.getLabel() + " hold time (millis): " + holdTimeMillis + " pressure: " + correspondingKeyDownParameters.getPressure()+ " imprecision (x, y): "+imprecisionX+","+imprecisionY);
                 KeyTapCharacteristics keyTapCharacteristics = new KeyTapCharacteristics(
                         currentTimestampMillis,
                         (char)ttButton.getCode(),
@@ -260,7 +266,7 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
                 timingDataManager.addKeyTapCharacteristics(keyTapCharacteristics,correspondingKeyDownParameters.isCommitted()?correspondingKeyDownParameters.getClickId():clickId);
                 if(!correspondingKeyDownParameters.isCommitted()) {
                     if(lastTTButtonClick != null) {
-                        if(waitingFlightTimeCharacteristics !=null) { //last click was by pressing a new key without releasing previous
+                        if(waitingFlightTimeCharacteristics !=null) { //last click was by pressing a new key without releasing previous (zero flight time)
                             timingDataManager.addFlightTimeCharacteristics(waitingFlightTimeCharacteristics.getFlightTimeCharacteristics(), waitingFlightTimeCharacteristics.getFirstClickId(), clickId);
                             waitingFlightTimeCharacteristics = null;
                         } else { //last click was by pressing and then releasing a key
@@ -296,26 +302,14 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
 
     private void playClick() {
         if(clickSound) {
-            if (audioManager == null)
-                audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-            audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,clickVol);
+            uiSounds.playClickSound(clickVol);
         }
     }
 
-    private void vibrate() {
+    private void vibrateClick() {
         if(vibrations) {
-            if(vibrator==null) {
-                vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(vibrationDuration,VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                vibrator.vibrate(vibrationDuration);
-            }
+            uiSounds.vibrateMs(vibrationDuration);
         }
     }
 
-    public long getUserId() {
-        return userId;
-    }
 }

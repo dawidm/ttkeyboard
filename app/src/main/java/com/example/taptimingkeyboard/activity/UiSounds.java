@@ -21,8 +21,10 @@ public class UiSounds {
 
     public static final int SOUND_WORD_ERROR=0;
     public static final int VIBRATION_WORD_ERROR=0;
+    public static final int VIBRATION_KEYBOARD_CLICK=1;
 
     private static final int VIBRATION_WORD_ERROR_DURATION=300;
+    private static final int VIBRATION_KEYBOARD_CLICK_DURATION=1;
 
     private Context activityContext;
 
@@ -32,10 +34,11 @@ public class UiSounds {
     private Map<Integer, ScheduledFuture> vibrationTimeoutScheduledFutureMap = new HashMap<>();
 
     private SoundPool soundPool;
+    private AudioManager audioManager;
     private Vibrator vibrator;
 
-    public UiSounds(Context activityContext) {
-        this.activityContext=activityContext;
+    public UiSounds(Context context) {
+        this.activityContext=context;
     }
 
     public void initSounds() {
@@ -45,6 +48,16 @@ public class UiSounds {
         } else
             soundPool = new SoundPool(1, AudioManager.STREAM_RING,0);
         errorCodeToSoundIdMap.put(SOUND_WORD_ERROR,soundPool.load(activityContext, R.raw.beep_short,1));
+    }
+
+    public void initClickSound() {
+        if (audioManager == null)
+            audioManager = (AudioManager)activityContext.getSystemService(Context.AUDIO_SERVICE);
+    }
+
+    public void initVibrator() {
+        if(vibrator==null)
+            initVibrator();
     }
 
     public void playSound(int sound, float volume) {
@@ -66,15 +79,25 @@ public class UiSounds {
         }
     }
 
-    public void vibrate(int vibration) {
+    public void playClickSound(float clickVol) {
+        if (audioManager == null)
+            initClickSound();
+        audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,clickVol);
+    }
+
+    public void vibrateMs(int durationMs) {
         if(vibrator==null) {
             vibrator = (Vibrator)activityContext.getSystemService(Context.VIBRATOR_SERVICE);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(getVibrationDurationMs(vibration),VibrationEffect.DEFAULT_AMPLITUDE));
+            vibrator.vibrate(VibrationEffect.createOneShot(durationMs,VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
-            vibrator.vibrate(getVibrationDurationMs(vibration));
+            vibrator.vibrate(durationMs);
         }
+    }
+
+    public void vibrate(int vibration) {
+        vibrateMs(getVibrationDurationMs(vibration));
     }
 
     public void vibrate(int vibration, int timeoutMs) {
