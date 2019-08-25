@@ -21,10 +21,8 @@ public class UiSounds {
 
     public static final int SOUND_WORD_ERROR=0;
     public static final int VIBRATION_WORD_ERROR=0;
-    public static final int VIBRATION_KEYBOARD_CLICK=1;
 
     private static final int VIBRATION_WORD_ERROR_DURATION=300;
-    private static final int VIBRATION_KEYBOARD_CLICK_DURATION=1;
 
     private Context activityContext;
 
