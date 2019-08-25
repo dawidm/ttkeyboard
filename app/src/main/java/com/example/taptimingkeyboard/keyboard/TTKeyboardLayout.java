@@ -112,13 +112,13 @@ public class TTKeyboardLayout {
         thirdRow.addElement(new TTKeyboardButton('n'));
         thirdRow.addElement(new TTKeyboardButton('m'));
         thirdRow.addElement(new TTKeyboardSpacer(0.5f));
-        thirdRow.addElement(new TTKeyboardButton("<",8,1));
+        thirdRow.addElement(new TTKeyboardButton("⌫",8,1));
         TTKeyboardRow fourthRow = new TTKeyboardRow();
         fourthRow.addElement(new TTKeyboardSpacer(2.0f));
         fourthRow.addElement(new TTKeyboardButton("",32,5));
         fourthRow.addElement(new TTKeyboardButton(','));
         fourthRow.addElement(new TTKeyboardButton('.'));
-        fourthRow.addElement(new TTKeyboardButton("↵",13,1));
+        fourthRow.addElement(new TTKeyboardButton("⏎",13,1));
         TTKeyboardLayout ttKeyboardLayout = new TTKeyboardLayout();
         ttKeyboardLayout.rows.add(firstRow);
         ttKeyboardLayout.rows.add(secondRow);
