@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -100,6 +101,17 @@ public class TestSessionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_session);
         getSupportActionBar().hide();
         userId=getIntent().getExtras().getLong("user_id");
+        testWordTextView = findViewById(R.id.test_word_textview);
+        sessionInfoTextView = findViewById(R.id.session_info_textview);
+        sessionStartButton = findViewById(R.id.start_button);
+        buttonsContainer=findViewById(R.id.buttons_container);
+        listsSpinner=findViewById(R.id.lists_spinner);
+        listLinearLayout=findViewById(R.id.lists_linear_layout);
+        contentContainer=findViewById(R.id.content_container);
+        keyboardContainer=findViewById(R.id.keyboard_container);
+        getDataContainer=findViewById(R.id.get_data_container);
+        getDataTextView=findViewById(R.id.get_data_text_view);
+        retryButton=findViewById(R.id.retry_button);
         uiSounds = new UiSounds(this);
         remoteSettingsLoader=new RemoteSettingsLoader(getApplicationContext());
         remoteSettingsLoader.subscribeOnSuccessfulLoad(new RemoteSettingsLoader.SuccessfulLoadListener() {
@@ -129,17 +141,6 @@ public class TestSessionActivity extends AppCompatActivity {
                 });
             }
         });
-        testWordTextView = findViewById(R.id.test_word_textview);
-        sessionInfoTextView = findViewById(R.id.session_info_textview);
-        sessionStartButton = findViewById(R.id.start_button);
-        buttonsContainer=findViewById(R.id.buttons_container);
-        listsSpinner=findViewById(R.id.lists_spinner);
-        listLinearLayout=findViewById(R.id.lists_linear_layout);
-        contentContainer=findViewById(R.id.content_container);
-        keyboardContainer=findViewById(R.id.keyboard_container);
-        getDataContainer=findViewById(R.id.get_data_container);
-        getDataTextView=findViewById(R.id.get_data_text_view);
-        retryButton=findViewById(R.id.retry_button);
         sessionStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -189,6 +190,12 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void useSettings() {
+        if(remotePreferences.getOrientation()!=null) {
+            if(remotePreferences.getOrientation()==RemotePreferences.ORIENTATION_PORTRAIT)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            if(remotePreferences.getOrientation()==RemotePreferences.ORIENTATION_LANDSCAPE)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
         getDataContainer.setVisibility(View.INVISIBLE);
         contentContainer.setVisibility(View.VISIBLE);
         keyboardContainer.setVisibility(View.VISIBLE);

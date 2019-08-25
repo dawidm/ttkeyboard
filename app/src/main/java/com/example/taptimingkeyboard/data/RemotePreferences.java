@@ -1,7 +1,5 @@
 package com.example.taptimingkeyboard.data;
 
-import android.content.Intent;
-
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -11,6 +9,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class RemotePreferences {
+
+    public static final int ORIENTATION_PORTRAIT=0;
+    public static final int ORIENTATION_LANDSCAPE=1;
+
     @Nullable
     private Integer sizePortrait;
     @Nullable
@@ -23,14 +25,17 @@ public class RemotePreferences {
     private Boolean vibrations;
     @Nullable
     private Integer vibrationDuration;
+    @Nullable
+    private Integer orientation;
 
-    public RemotePreferences(@Nullable Integer sizePortrait, @Nullable Integer sizeLandscape, @Nullable Boolean sound, @Nullable Integer volume, @Nullable Boolean vibrations, @Nullable Integer vibrationDuration) {
+    public RemotePreferences(@Nullable Integer sizePortrait, @Nullable Integer sizeLandscape, @Nullable Boolean sound, @Nullable Integer volume, @Nullable Boolean vibrations, @Nullable Integer vibrationDuration, Integer orientation) {
         this.sizePortrait = sizePortrait;
         this.sizeLandscape = sizeLandscape;
         this.sound = sound;
         this.volume = volume;
         this.vibrations = vibrations;
         this.vibrationDuration = vibrationDuration;
+        this.orientation = orientation;
     }
 
     @Nullable
@@ -61,6 +66,10 @@ public class RemotePreferences {
     @Nullable
     public Integer getVibrationDuration() {
         return vibrationDuration;
+    }
+
+    public Integer getOrientation() {
+        return orientation;
     }
 
     public static RemotePreferences fromUrl(String url) throws IOException {
