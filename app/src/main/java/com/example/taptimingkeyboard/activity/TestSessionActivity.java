@@ -14,7 +14,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,13 +52,12 @@ public class TestSessionActivity extends AppCompatActivity {
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
     private static final int ERROR_TIMEOUT_MILLIS = 1000;
-    public static final String WORDLIST_REMOTE_JSON_FILE = "wordlists.json";
-    public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
 
     private AtomicBoolean settingsInitialized = new AtomicBoolean(false);
 
     private TapTimingKeyboard tapTimingKeyboard;
     private UiSounds uiSounds;
+    private RemoteSettingsLoader remoteSettingsLoader;
 
     private WordLists wordLists;
     private RemotePreferences remotePreferences;
@@ -74,6 +72,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private int charsIterator;
     private char currentChar = 0;
     private int numErrors;
+    private Map<String,Integer> wordsErrorsMap = new HashMap<>();
 
     private boolean sounds;
     private float soundsVol;
@@ -95,16 +94,66 @@ public class TestSessionActivity extends AppCompatActivity {
     private ScheduledFuture testWordColorFuture;
     private ScheduledFuture errorTimeoutScheduledFuture;
 
-    private Map<String,Integer> wordsErrorsMap = new HashMap<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
         getSupportActionBar().hide();
-        uiSounds = new UiSounds(this);
         userId=getIntent().getExtras().getLong("user_id");
+        uiSounds = new UiSounds(this);
+        remoteSettingsLoader=new RemoteSettingsLoader(getApplicationContext());
+        remoteSettingsLoader.subscribeOnSuccessfulLoad(new RemoteSettingsLoader.SuccessfulLoadListener() {
+            @Override
+            public void onSettingsLoaded(RemotePreferences remotePreferences, WordLists wordLists) {
+                TestSessionActivity.this.remotePreferences=remotePreferences;
+                TestSessionActivity.this.wordLists=wordLists;
+                settingsInitialized.set(true);
+                loadPreferences();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        useSettings();
+                    }
+                });
+            }
+        });
+        remoteSettingsLoader.subscribeOnFailure(new RemoteSettingsLoader.FailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getDataTextView.setText(R.string.getting_data_error);
+                        retryButton.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
         testWordTextView = findViewById(R.id.test_word_textview);
+        sessionInfoTextView = findViewById(R.id.session_info_textview);
+        sessionStartButton = findViewById(R.id.start_button);
+        buttonsContainer=findViewById(R.id.buttons_container);
+        listsSpinner=findViewById(R.id.lists_spinner);
+        listLinearLayout=findViewById(R.id.lists_linear_layout);
+        contentContainer=findViewById(R.id.content_container);
+        keyboardContainer=findViewById(R.id.keyboard_container);
+        getDataContainer=findViewById(R.id.get_data_container);
+        getDataTextView=findViewById(R.id.get_data_text_view);
+        retryButton=findViewById(R.id.retry_button);
+        sessionStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmStart();
+            }
+        });
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                retryButton.setVisibility(View.GONE);
+                getDataTextView.setText(R.string.getting_data);
+                remoteSettingsLoader.loadAsync();
+            }
+        });
         testWordTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -112,37 +161,13 @@ public class TestSessionActivity extends AppCompatActivity {
                 return true;
             }
         });
-        sessionInfoTextView = findViewById(R.id.session_info_textview);
-        sessionStartButton = findViewById(R.id.start_button);
-        sessionStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startButtonClick(view);
-            }
-        });
-        buttonsContainer=findViewById(R.id.buttons_container);
-        listsSpinner=findViewById(R.id.lists_spinner);
         ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
         emptySpinnerArray.add(getResources().getString(R.string.wordlist_spinner_empty));
         listsSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
-        listLinearLayout=findViewById(R.id.lists_linear_layout);
-        contentContainer=findViewById(R.id.content_container);
-        keyboardContainer=findViewById(R.id.keyboard_container);
-        getDataContainer=findViewById(R.id.get_data_container);
-        getDataTextView=findViewById(R.id.get_data_text_view);
-        retryButton=findViewById(R.id.retry_button);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                retryButton.setVisibility(View.GONE);
-                getDataTextView.setText(R.string.getting_data);
-                getRemoteSettingsLoadPrefs();
-            }
-        });
         if(settingsInitialized.get())
             useSettings();
         else
-            getRemoteSettingsLoadPrefs();
+            remoteSettingsLoader.loadAsync();
         loadUserName(userId, new Runnable() {
             @Override
             public void run() {
@@ -163,49 +188,20 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void getRemoteSettingsLoadPrefs() {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    String serverUrl = sharedPreferences.getString("remote_url","");
-                    String wordlistsUrl=serverUrl+WORDLIST_REMOTE_JSON_FILE;
-                    Log.i(TAG,"getting wordlists from" + wordlistsUrl);
-                    wordLists=WordLists.fromUrl(wordlistsUrl);
-                    Log.i(TAG,"updated wordlists from" + wordlistsUrl);
-                    String settingsUrl = serverUrl+SETTINGS_REMOTE_JSON_FILE;
-                    Log.i(TAG,"getting remote settings from" + settingsUrl);
-                    remotePreferences=RemotePreferences.fromUrl(settingsUrl);
-                    Log.i(TAG,"updated remote settings from" + settingsUrl);
-                    settingsInitialized.set(true);
-                    loadPreferences();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            useSettings();
-                        }
-                    });
-                } catch (Exception e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getDataTextView.setText(R.string.getting_data_error);
-                            retryButton.setVisibility(View.VISIBLE);
-                        }
-                    });
-                    Log.w(TAG,"error updating remote data",e);
-                }
-            }
-        });
-    }
-
     private void useSettings() {
         getDataContainer.setVisibility(View.INVISIBLE);
         contentContainer.setVisibility(View.VISIBLE);
         keyboardContainer.setVisibility(View.VISIBLE);
         initKeyboard();
         initWordListsSpinner();
+    }
+
+    private void initWordListsSpinner() {
+        ArrayList<WordLists.WordList> lists = new ArrayList<>();
+        Iterator<WordLists.WordList> it = wordLists.getLists().iterator();
+        while(it.hasNext())
+            lists.add(it.next());
+        listsSpinner.setAdapter(new ArrayAdapter<>(TestSessionActivity.this,R.layout.support_simple_spinner_dropdown_item,lists));
     }
 
     private void loadPreferences() {
@@ -229,6 +225,27 @@ public class TestSessionActivity extends AppCompatActivity {
         ConstraintLayout keyboardContainer = findViewById(R.id.keyboard_container);
         keyboardContainer.removeAllViews();
         keyboardContainer.addView(tapTimingKeyboard.getView());
+    }
+
+    private void loadUserName(final long userId, final Runnable afterUpdateRunnable) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                userInfo=TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getById(userId);
+                runOnUiThread(afterUpdateRunnable);
+            }
+        });
+    }
+
+    private void confirmStart() {
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.start_session_confirmation_title))
+                .setMessage(getResources().getString(R.string.start_session_confirmation_text))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        prepareStartSession();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     private void prepareStartSession() {
@@ -339,21 +356,6 @@ public class TestSessionActivity extends AppCompatActivity {
         currentChar=currentWord[0];
     }
 
-    private void acceptWaitingClicks() {
-        Iterator<Long> iterator = clicksIds.iterator();
-        while (iterator.hasNext()) {
-            tapTimingKeyboard.acceptButtonClick(iterator.next());
-            iterator.remove();
-        }
-    }
-    private void rejectWaitingClicks() {
-        Iterator<Long> iterator = clicksIds.iterator();
-        while (iterator.hasNext()) {
-            tapTimingKeyboard.rejectButtonClick(iterator.next());
-            iterator.remove();
-        }
-    }
-
     private void checkKeyboardClick(TTKeyboardButton ttButton, long clickId) {
         clicksIds.add(clickId);
         if(ttButton.getCode()==currentChar) {   //correct keyboard click
@@ -367,7 +369,6 @@ public class TestSessionActivity extends AppCompatActivity {
         } else {
             if(charsIterator>0) {
                 resetWord();
-                //checkKeyboardClick(ttButton, clickId);
             }
             countError();
             testWordBlink();
@@ -377,6 +378,21 @@ public class TestSessionActivity extends AppCompatActivity {
                 uiSounds.vibrate(UiSounds.VIBRATION_WORD_ERROR,ERROR_TIMEOUT_MILLIS);
             rejectWaitingClicks();
             tapTimingKeyboard.abortCurrentFlightTime();
+        }
+    }
+
+    private void acceptWaitingClicks() {
+        Iterator<Long> iterator = clicksIds.iterator();
+        while (iterator.hasNext()) {
+            tapTimingKeyboard.acceptButtonClick(iterator.next());
+            iterator.remove();
+        }
+    }
+    private void rejectWaitingClicks() {
+        Iterator<Long> iterator = clicksIds.iterator();
+        while (iterator.hasNext()) {
+            tapTimingKeyboard.rejectButtonClick(iterator.next());
+            iterator.remove();
         }
     }
 
@@ -397,29 +413,6 @@ public class TestSessionActivity extends AppCompatActivity {
         }
     }
 
-    private void startButtonClick(View view) {
-        confirmStart();
-    }
-
-    private void confirmStart() {
-        new AlertDialog.Builder(this)
-                .setTitle(getResources().getString(R.string.start_session_confirmation_title))
-                .setMessage(getResources().getString(R.string.start_session_confirmation_text))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        prepareStartSession();
-                    }})
-                .setNegativeButton(android.R.string.no, null).show();
-    }
-
-    private void initWordListsSpinner() {
-        ArrayList<WordLists.WordList> lists = new ArrayList<>();
-        Iterator<WordLists.WordList> it = wordLists.getLists().iterator();
-        while(it.hasNext())
-            lists.add(it.next());
-        listsSpinner.setAdapter(new ArrayAdapter<>(TestSessionActivity.this,R.layout.support_simple_spinner_dropdown_item,lists));
-    }
-
     private void testWordBlink() {
         testWordTextView.setTextColor(ResourcesCompat.getColor(getResources(),R.color.colorTestWordError,null));
         if(testWordColorFuture!=null && !testWordColorFuture.isDone())
@@ -437,14 +430,4 @@ public class TestSessionActivity extends AppCompatActivity {
         },TEST_WORD_BLINK_TIME_MILLIS, TimeUnit.MILLISECONDS);
     }
 
-
-    private void loadUserName(final long userId, final Runnable afterUpdateRunnable) {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                userInfo=TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getById(userId);
-                runOnUiThread(afterUpdateRunnable);
-            }
-        });
-    }
 }
