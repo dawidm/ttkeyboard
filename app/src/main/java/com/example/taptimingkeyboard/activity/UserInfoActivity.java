@@ -86,72 +86,13 @@ public class UserInfoActivity extends AppCompatActivity {
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!validateFields())
-                    return;
-                mainLayout.setEnabled(false);
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        String symptomsAsymmetry;
-                        Boolean onMedication;
-                        if(!diagnosedWithPDCheckbox.isSelected()) {
-                            symptomsAsymmetry=null;
-                            onMedication=null;
-                        } else {
-                            symptomsAsymmetry = ((LayoutStringDbString) symptomsAsymmetrySpinner.getSelectedItem()).getDbValue();
-                            onMedication=onMedicationCheckbox.isSelected();
-                        }
-
-                        UserInfo userInfo = new UserInfo(firstNameEditText.getText().toString().trim(),
-                                lastNameEditText.getText().toString().trim(),
-                                Integer.parseInt(ageEditText.getText().toString()),
-                                ((LayoutStringDbString)sexSpinner.getSelectedItem()).getDbValue(),
-                                ((LayoutStringDbString)handednessSpinner.getSelectedItem()).getDbValue(),
-                                diagnosedWithPDCheckbox.isSelected(),
-                                symptomsAsymmetry,
-                                onMedication);
-                        final long userId = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().insert(userInfo);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                startTestSessionActivity(userId);
-                            }
-                        });
-                    }
-                });
+                saveForm();
             }
         });
         buttonLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        final UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getAll();
-                        if(userInfos==null || userInfos.length==0) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(UserInfoActivity.this, getResources().getString(R.string.warning_no_existing_users), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                            return;
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                usersListView.setVisibility(View.VISIBLE);
-                                usersListView.setAdapter(new ArrayAdapter<>(UserInfoActivity.this,android.R.layout.simple_list_item_1,userInfos));
-                                usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                        startTestSessionActivity(((UserInfo)adapterView.getItemAtPosition(i)).getId());
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
+                showPreviousEntryList();
             }
         });
     }
@@ -191,6 +132,72 @@ public class UserInfoActivity extends AppCompatActivity {
             default:
                 throw new RuntimeException("unknown asymmetry string: " + dbString);
         }
+    }
+
+    private void saveForm() {
+        if(!validateFields())
+            return;
+        mainLayout.setEnabled(false);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String symptomsAsymmetry;
+                Boolean onMedication;
+                if(!diagnosedWithPDCheckbox.isSelected()) {
+                    symptomsAsymmetry=null;
+                    onMedication=null;
+                } else {
+                    symptomsAsymmetry = ((LayoutStringDbString) symptomsAsymmetrySpinner.getSelectedItem()).getDbValue();
+                    onMedication=onMedicationCheckbox.isSelected();
+                }
+                UserInfo userInfo = new UserInfo(firstNameEditText.getText().toString().trim(),
+                        lastNameEditText.getText().toString().trim(),
+                        Integer.parseInt(ageEditText.getText().toString()),
+                        ((LayoutStringDbString)sexSpinner.getSelectedItem()).getDbValue(),
+                        ((LayoutStringDbString)handednessSpinner.getSelectedItem()).getDbValue(),
+                        diagnosedWithPDCheckbox.isSelected(),
+                        symptomsAsymmetry,
+                        onMedication);
+                final long userId = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().insert(userInfo);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startTestSessionActivity(userId);
+                    }
+                });
+            }
+        });
+    }
+
+    private void showPreviousEntryList() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                final UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getAll();
+                if(userInfos==null || userInfos.length==0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(UserInfoActivity.this, getResources().getString(R.string.warning_no_existing_users), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        usersListView.setVisibility(View.VISIBLE);
+                        usersListView.setAdapter(new ArrayAdapter<>(UserInfoActivity.this,android.R.layout.simple_list_item_1,userInfos));
+                        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                startTestSessionActivity(((UserInfo)adapterView.getItemAtPosition(i)).getId());
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     private boolean validateFields() {
