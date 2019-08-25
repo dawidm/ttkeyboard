@@ -1,7 +1,8 @@
 package com.example.taptimingkeyboard;
 
 import android.app.Application;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 public class TapTimingKeyboardApplication extends Application {
     @Override
