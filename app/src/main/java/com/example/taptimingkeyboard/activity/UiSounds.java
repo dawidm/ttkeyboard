@@ -55,7 +55,7 @@ public class UiSounds {
 
     public void initVibrator() {
         if(vibrator==null)
-            initVibrator();
+            vibrator = (Vibrator)activityContext.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public void playSound(int sound, float volume) {
@@ -85,7 +85,7 @@ public class UiSounds {
 
     public void vibrateMs(int durationMs) {
         if(vibrator==null) {
-            vibrator = (Vibrator)activityContext.getSystemService(Context.VIBRATOR_SERVICE);
+            initVibrator();
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(durationMs,VibrationEffect.DEFAULT_AMPLITUDE));
