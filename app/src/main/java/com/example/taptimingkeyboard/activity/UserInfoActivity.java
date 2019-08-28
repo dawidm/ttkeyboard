@@ -38,11 +38,14 @@ public class UserInfoActivity extends AppCompatActivity {
     private Button buttonOk;
     private Button buttonLoad;
     private ListView usersListView;
+    private Boolean startedFromPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
+        if(getIntent().getExtras()!=null)
+            startedFromPreferences=getIntent().getExtras().getBoolean("started_from_preferences");
         mainLayout=findViewById(R.id.main_layout);
         firstNameEditText=findViewById(R.id.edit_text_name);
         lastNameEditText=findViewById(R.id.edit_text_last_name);
@@ -162,7 +165,10 @@ public class UserInfoActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        startTestSessionActivity(userId);
+                        if(startedFromPreferences!=null&&startedFromPreferences.booleanValue()==true)
+                            returnResultToPrefrences(userId);
+                        else
+                            startTestSessionActivity(userId);
                     }
                 });
             }
@@ -191,7 +197,11 @@ public class UserInfoActivity extends AppCompatActivity {
                         usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                startTestSessionActivity(((UserInfo)adapterView.getItemAtPosition(i)).getId());
+                                long userId=((UserInfo)adapterView.getItemAtPosition(i)).getId();
+                                if(startedFromPreferences!=null&&startedFromPreferences.booleanValue()==true)
+                                    returnResultToPrefrences(userId);
+                                else
+                                    startTestSessionActivity(userId);
                             }
                         });
                     }
@@ -217,10 +227,20 @@ public class UserInfoActivity extends AppCompatActivity {
         finish();
     }
 
+    private void returnResultToPrefrences(long userId) {
+        Intent intent = new Intent();
+        intent.putExtra("user_id",userId);
+        setResult(PreferencesActivity.CODE_RESULT_USER_ID,intent);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
         if(usersListView.getVisibility()==View.VISIBLE)
             usersListView.setVisibility(View.GONE);
+        else
+        if(startedFromPreferences!=null&&startedFromPreferences.booleanValue()==true)
+            finish();
         else
             super.onBackPressed();
     }

@@ -1,32 +1,67 @@
 package com.example.taptimingkeyboard.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
 
 import com.example.taptimingkeyboard.R;
+import com.example.taptimingkeyboard.data.TapTimingDatabase;
+import com.example.taptimingkeyboard.data.UserInfo;
 
 public class PreferencesActivity extends AppCompatActivity {
+
+    public static final int CODE_USER_ID=1;
+    public static final int CODE_RESULT_USER_ID=1;
 
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
     public static class TapTimingKeyboardPreferenceFragment extends PreferenceFragmentCompat
     {
         @Override
+        public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if(requestCode==CODE_USER_ID && resultCode==CODE_RESULT_USER_ID) {
+                long userId=data.getLongExtra("user_id",0);
+                PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putLong("user_id",userId).commit();
+                ((PreferencesActivity)getActivity()).replacePreferencesFragment();
+            }
+        }
+
+        @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preference_screen,rootKey);
-            ((EditTextPreference)findPreference("user_id")).setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
+            final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            AsyncTask.execute(new Runnable() {
                 @Override
-                public void onBindEditText(@NonNull EditText editText) {
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                public void run() {
+                    final UserInfo userInfo=TapTimingDatabase.instance(getContext().getApplicationContext()).userInfoDao().getById(sharedPreferences.getLong("user_id",0));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findPreference("user_id").setSummary(userInfo.toString());
+                        }
+                    });
+                }
+            });
+            findPreference("user_id").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getContext(),UserInfoActivity.class);
+                    intent.putExtra("started_from_preferences",true);
+                    startActivityForResult(intent,CODE_USER_ID);
+                    return false;
                 }
             });
             ((EditTextPreference)findPreference("remote_url")).setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
