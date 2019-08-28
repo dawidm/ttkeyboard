@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,6 +37,7 @@ import com.example.taptimingkeyboard.keyboard.TapTimingKeyboard;
 import com.example.taptimingkeyboard.data.WordLists;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 import com.example.taptimingkeyboard.data.TestSession;
+import com.example.taptimingkeyboard.tools.LimitedFrequencyExecutor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +61,9 @@ public class TestSessionActivity extends AppCompatActivity {
     private TapTimingKeyboard tapTimingKeyboard;
     private UiSounds uiSounds;
     private RemoteSettingsLoader remoteSettingsLoader;
+
+    private LimitedFrequencyExecutor limitedFrequencyExecutor=new LimitedFrequencyExecutor();
+    private static final int COUNT_ERROR_TASK_ID=1;
 
     private WordLists wordLists;
     private RemotePreferences remotePreferences;
@@ -91,9 +96,8 @@ public class TestSessionActivity extends AppCompatActivity {
     private TextView getDataTextView;
     private Button retryButton;
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3);
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
     private ScheduledFuture testWordColorFuture;
-    private ScheduledFuture errorTimeoutScheduledFuture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -404,19 +408,19 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void countError() {
-        if(errorTimeoutScheduledFuture==null || errorTimeoutScheduledFuture.isDone()) {
-            numErrors++;
-            if(wordsErrorsMap.containsKey(new String(currentWord))) {
-                Integer incrementedInt=wordsErrorsMap.get(new String(currentWord))+1;
-                wordsErrorsMap.put(new String(currentWord),incrementedInt);
-            } else
-                wordsErrorsMap.put(new String(currentWord),1);
-            errorTimeoutScheduledFuture=scheduledExecutorService.schedule(new Runnable() {
+        if(limitedFrequencyExecutor.canRunNow(COUNT_ERROR_TASK_ID)) {
+            limitedFrequencyExecutor.run(COUNT_ERROR_TASK_ID, new Runnable() {
                 @Override
                 public void run() {
-
+                    numErrors++;
+                    if(wordsErrorsMap.containsKey(new String(currentWord))) {
+                        Integer incrementedInt=wordsErrorsMap.get(new String(currentWord))+1;
+                        wordsErrorsMap.put(new String(currentWord),incrementedInt);
+                    } else
+                        wordsErrorsMap.put(new String(currentWord),1);
+                    Log.d(TAG,"counted error for word \"" + new String(currentWord) + "\"");
                 }
-            },ERROR_TIMEOUT_MILLIS,TimeUnit.MILLISECONDS);
+            },ERROR_TIMEOUT_MILLIS);
         }
     }
 

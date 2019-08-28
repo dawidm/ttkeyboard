@@ -9,31 +9,26 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 
 import com.example.taptimingkeyboard.R;
+import com.example.taptimingkeyboard.tools.LimitedFrequencyExecutor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 public class UiSounds {
 
-    public static final int SOUND_WORD_ERROR=0;
-    public static final int VIBRATION_WORD_ERROR=0;
+    //positive numbers for sounds, negative for vibrations
+    public static final int SOUND_WORD_ERROR=1;
+    public static final int VIBRATION_WORD_ERROR=-1;
 
     private static final int VIBRATION_WORD_ERROR_DURATION=300;
 
     private Context activityContext;
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
-    private Map<Integer,Integer> errorCodeToSoundIdMap = new HashMap<>();
-    private Map<Integer, ScheduledFuture> soundTimeoutScheduledFutureMap = new HashMap<>();
-    private Map<Integer, ScheduledFuture> vibrationTimeoutScheduledFutureMap = new HashMap<>();
-
     private SoundPool soundPool;
+    private Map<Integer,Integer> errorCodeToSoundIdMap = new HashMap<>();
     private AudioManager audioManager;
     private Vibrator vibrator;
+    private LimitedFrequencyExecutor limitedFrequencyExecutor = new LimitedFrequencyExecutor();
 
     public UiSounds(Context context) {
         this.activityContext=context;
@@ -58,32 +53,30 @@ public class UiSounds {
             vibrator = (Vibrator)activityContext.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    public void playSound(int sound, float volume) {
+    public void playSound(final int sound, final float volume) {
         if(soundPool==null)
             initSounds();
         soundPool.play(errorCodeToSoundIdMap.get(sound), volume, volume, 0, 0, 1);
     }
 
-    public void playSound(int sound, float volume, int timeoutMs) {
-        ScheduledFuture currentSoundScheduledFuture = soundTimeoutScheduledFutureMap.get(sound);
-        if(currentSoundScheduledFuture==null || (currentSoundScheduledFuture!=null && currentSoundScheduledFuture.isDone())) {
-            playSound(sound,volume);
-            soundTimeoutScheduledFutureMap.put(sound,scheduledExecutorService.schedule(new Runnable() {
+    public void playSound(final int sound, final float volume, final int timeoutMs) {
+        if(limitedFrequencyExecutor.canRunNow(sound)) {
+            limitedFrequencyExecutor.run(sound, new Runnable() {
                 @Override
                 public void run() {
-
+                    playSound(sound,volume);
                 }
-            }, timeoutMs, TimeUnit.MILLISECONDS));
+            },timeoutMs);
         }
     }
 
-    public void playClickSound(float clickVol) {
+    public void playClickSound(final float clickVol) {
         if (audioManager == null)
             initClickSound();
         audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,clickVol);
     }
 
-    public void vibrateMs(int durationMs) {
+    public void vibrateMs(final int durationMs) {
         if(vibrator==null) {
             initVibrator();
         }
@@ -94,24 +87,21 @@ public class UiSounds {
         }
     }
 
-    public void vibrate(int vibration) {
+    public void vibrate(final int vibration) {
         vibrateMs(getVibrationDurationMs(vibration));
     }
 
-    public void vibrate(int vibration, int timeoutMs) {
-        ScheduledFuture currentVibrationScheduledFuture = vibrationTimeoutScheduledFutureMap.get(vibration);
-        if(currentVibrationScheduledFuture==null || (currentVibrationScheduledFuture!=null && currentVibrationScheduledFuture.isDone())) {
-            vibrate(vibration);
-            vibrationTimeoutScheduledFutureMap.put(vibration,scheduledExecutorService.schedule(new Runnable() {
+    public void vibrate(final int vibration, final int timeoutMs) {
+        if(limitedFrequencyExecutor.canRunNow(vibration))
+            limitedFrequencyExecutor.run(vibration, new Runnable() {
                 @Override
                 public void run() {
-
+                    vibrate(vibration);
                 }
-            }, timeoutMs, TimeUnit.MILLISECONDS));
-        }
+            },timeoutMs);
     }
 
-    private int getVibrationDurationMs(int vibration) {
+    private int getVibrationDurationMs(final int vibration) {
         switch (vibration) {
             case VIBRATION_WORD_ERROR:
                 return VIBRATION_WORD_ERROR_DURATION;
