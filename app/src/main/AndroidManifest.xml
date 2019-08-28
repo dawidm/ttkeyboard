@@ -36,7 +36,6 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.FirstRunActivity"></activity>
         <activity android:name=".activity.UserInfoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
