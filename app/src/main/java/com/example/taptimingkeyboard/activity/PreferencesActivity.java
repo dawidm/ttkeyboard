@@ -47,12 +47,13 @@ public class PreferencesActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     final UserInfo userInfo=TapTimingDatabase.instance(getContext().getApplicationContext()).userInfoDao().getById(sharedPreferences.getLong("user_id",0));
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            findPreference("user_id").setSummary(userInfo.toString());
-                        }
-                    });
+                    if(userInfo!=null)
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findPreference("user_id").setSummary(userInfo.toString());
+                            }
+                        });
                 }
             });
             findPreference("user_id").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
