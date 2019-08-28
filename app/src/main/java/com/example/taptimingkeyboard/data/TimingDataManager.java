@@ -29,7 +29,7 @@ public class TimingDataManager {
     private Map<Long,FlightTimeCharacteristics> flightTimeCharacteristicsBySecondId = Collections.synchronizedMap(new HashMap<Long, FlightTimeCharacteristics>());
     //key = clickId of the first key
     private Map<Long,FlightTimeCharacteristics> flightTimeCharacteristicsByFirstId = Collections.synchronizedMap(new HashMap<Long, FlightTimeCharacteristics>());
-    //first of second clickId has been accepted TODO hashCode
+    //first of second clickId has been accepted
     private Set<FlightTimeCharacteristics> flightTimeCharacteristicsAcceptedOnce = Collections.synchronizedSet(new HashSet<FlightTimeCharacteristics>());
 
     private List<Long> acceptedClickIds = Collections.synchronizedList(new LinkedList<Long>());

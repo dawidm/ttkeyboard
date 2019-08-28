@@ -73,4 +73,12 @@ public class FlightTimeCharacteristics {
     public long getSessionId() {
         return sessionId;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash=31*hash+(int)id;
+        hash=31*hash+(int)timestamp;
+        return hash;
+    }
 }
