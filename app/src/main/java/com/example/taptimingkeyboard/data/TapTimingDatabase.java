@@ -1,10 +1,15 @@
 package com.example.taptimingkeyboard.data;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import java.util.concurrent.Executors;
 
 @Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 18)
 public abstract class TapTimingDatabase extends RoomDatabase {
@@ -17,9 +22,28 @@ public abstract class TapTimingDatabase extends RoomDatabase {
         if(db!=null)
             return db;
         else {
-            db = Room.databaseBuilder(applicationContext, TapTimingDatabase.class, DB_NAME).fallbackToDestructiveMigration().build();
+            db = buildDatabase(applicationContext);
             return db;
         }
+    }
+
+    private static TapTimingDatabase buildDatabase(final Context context) {
+        return Room.databaseBuilder(context,
+                TapTimingDatabase.class,
+                DB_NAME)
+                .addCallback(new Callback() {
+                    @Override
+                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                        super.onCreate(db);
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                instance(context).userInfoDao().insert(UserInfo.defaultUser());
+                            }
+                        });
+                    }
+                })
+                .fallbackToDestructiveMigration().build();
     }
 
     public abstract TestSessionDao testSessionDao();

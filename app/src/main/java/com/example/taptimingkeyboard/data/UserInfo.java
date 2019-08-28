@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "user_info")
 public class UserInfo {
 
+    public static final String DEFAULT_USER_NAME="default_user";
+
     public static final String SEX_MALE="male";
     public static final String SEX_FEMALE="female";
     public static final String HANDEDNESS_LEFT="left";
@@ -84,6 +86,13 @@ public class UserInfo {
 
     @Override
     public String toString() {
-        return firstName+" "+lastName+", id: " + id;
+        if(this.getFirstName().equals(DEFAULT_USER_NAME))
+            return DEFAULT_USER_NAME;
+        else
+            return firstName+" "+lastName+", id: " + id;
+    }
+
+    public static UserInfo defaultUser() {
+        return new UserInfo(DEFAULT_USER_NAME,"",0,SEX_MALE,HANDEDNESS_RIGHT,false,null,null);
     }
 }

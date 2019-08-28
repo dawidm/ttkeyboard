@@ -46,7 +46,7 @@ public class PreferencesActivity extends AppCompatActivity {
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    final UserInfo userInfo=TapTimingDatabase.instance(getContext().getApplicationContext()).userInfoDao().getById(sharedPreferences.getLong("user_id",0));
+                    final UserInfo userInfo=TapTimingDatabase.instance(getContext().getApplicationContext()).userInfoDao().getById(sharedPreferences.getLong("user_id",1));
                     if(userInfo!=null)
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
