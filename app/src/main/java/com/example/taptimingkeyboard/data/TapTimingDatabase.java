@@ -9,9 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import java.util.concurrent.Executors;
-
-@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 18)
+@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 19)
 public abstract class TapTimingDatabase extends RoomDatabase {
 
     public static final String DB_NAME = "tt_database";

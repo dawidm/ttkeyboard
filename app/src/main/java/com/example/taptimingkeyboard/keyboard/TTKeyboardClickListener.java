@@ -1,5 +1,12 @@
 package com.example.taptimingkeyboard.keyboard;
 
+/**
+ * Used by {@link TapTimingKeyboard} to send click events
+ */
 public interface TTKeyboardClickListener {
-    public void onKeyboardClick(TTKeyboardButton ttButton, long clickId);
+    /**
+     * @param ttButton clicked button
+     * @param clickId unique (for TapTimingKeyboard instance) click id
+     */
+    void onKeyboardClick(TTKeyboardButton ttButton, long clickId);
 }
