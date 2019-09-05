@@ -9,13 +9,22 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 19)
+/**
+ * Application database (Android Room) for storing user, user interaction and test session data.
+ */
+@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 20)
 public abstract class TapTimingDatabase extends RoomDatabase {
 
     public static final String DB_NAME = "tt_database";
 
     private static TapTimingDatabase db = null;
 
+    /**
+     * Get TapTimingDatabase singleton.
+     *
+     * @param applicationContext application context
+     * @return TapTimingDatabase instance
+     */
     public static TapTimingDatabase instance(Context applicationContext) {
         if(db!=null)
             return db;
@@ -25,6 +34,13 @@ public abstract class TapTimingDatabase extends RoomDatabase {
         }
     }
 
+    /**
+     * Creates TapTimingDatabase instance.
+     * Adds callback to populate user_info table with "default" user when database is created
+     *
+     * @param context application context
+     * @return TapTimingDatabase instance
+     */
     private static TapTimingDatabase buildDatabase(final Context context) {
         return Room.databaseBuilder(context,
                 TapTimingDatabase.class,
