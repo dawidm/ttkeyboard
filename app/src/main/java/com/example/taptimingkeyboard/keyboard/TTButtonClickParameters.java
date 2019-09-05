@@ -22,38 +22,12 @@ public class TTButtonClickParameters {
         this.y = y;
     }
 
-    public boolean isCommitted() {
-        return committed;
-    }
-
-    public void setCommitted(long clickId) {
-        committed=true;
-        this.clickId=clickId;
-    }
-
-    public boolean isReleased() {
-        return released;
-    }
-
-    public void setReleased(long releasedEventTime) {
-        this.released = true;
-        this.releasedEventTime=releasedEventTime;
-    }
-
     public boolean isFlightTimeAborted() {
         return flightTimeAborted;
     }
 
     public void abortFlightTime() {
         flightTimeAborted=true;
-    }
-
-    public long getReleasedEventTime() {
-        return releasedEventTime;
-    }
-
-    public long getClickId() {
-        return clickId;
     }
 
     public TTKeyboardButton getTtKeyboardButton() {
@@ -74,5 +48,31 @@ public class TTButtonClickParameters {
 
     public float getY() {
         return y;
+    }
+
+    public long getClickId() {
+        return clickId;
+    }
+
+    public long getReleasedEventTime() {
+        return releasedEventTime;
+    }
+
+    public boolean isCommitted() {
+        return committed;
+    }
+
+    public void setCommitted(long clickId) {
+        committed=true;
+        this.clickId=clickId;
+    }
+
+    public boolean isReleased() {
+        return released;
+    }
+
+    public void setReleased(long releasedEventTime) {
+        this.released = true;
+        this.releasedEventTime=releasedEventTime;
     }
 }
