@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.taptimingkeyboard.R;
+import com.example.taptimingkeyboard.data.Md5Hash;
 import com.example.taptimingkeyboard.data.RemotePreferences;
 import com.example.taptimingkeyboard.data.TestSessionWordErrors;
 import com.example.taptimingkeyboard.data.UserInfo;
@@ -278,7 +279,7 @@ public class TestSessionActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                TestSession testSession = new TestSession(userId,System.currentTimeMillis(),wordList.getName(),wordList.getWordsCsv().hashCode(),isOrientationLandscape,phoneInfo,displayMetrics.xdpi,displayMetrics.ydpi);
+                TestSession testSession = new TestSession(userId,System.currentTimeMillis(),wordList.getName(),Md5Hash.fromString(wordList.getWordsCsv()),isOrientationLandscape,phoneInfo,displayMetrics.xdpi,displayMetrics.ydpi);
                 sessionId=TapTimingDatabase.instance(getApplicationContext()).testSessionDao().insert(testSession);
                 runOnUiThread(new Runnable() {
                     @Override
