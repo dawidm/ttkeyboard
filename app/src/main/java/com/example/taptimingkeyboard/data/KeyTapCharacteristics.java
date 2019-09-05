@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 /**
- * The type Key tap characteristics.
+ * KeyTapCharacteristics stores information about a keyboard button click such as click hold time, pressure, precision
  */
 @Entity(tableName = "key_tap_characteristics")
 public class KeyTapCharacteristics {
@@ -25,14 +25,14 @@ public class KeyTapCharacteristics {
     /**
      * Instantiates a new Key tap characteristics.
      *
-     * @param timestamp      the timestamp
-     * @param keyCharacter   the key character
-     * @param holdTimeMillis the hold time millis
-     * @param pressure       the pressure
-     * @param imprecisionX   the imprecision x
-     * @param imprecisionY   the imprecision y
-     * @param userId         the user id
-     * @param sessionId      the session id
+     * @param timestamp      see {@link #getTimestamp()}
+     * @param keyCharacter   see {@link #getKeyCharacter()}
+     * @param holdTimeMillis see {@link #getHoldTimeMillis()}
+     * @param pressure       see {@link #getPressure()}
+     * @param imprecisionX   see {@link #getImprecisionX()}
+     * @param imprecisionY   see {@link #getImprecisionY()}
+     * @param userId         see {@link #getUserId()}
+     * @param sessionId      see {@link #getSessionId()}
      */
     public KeyTapCharacteristics(long timestamp, char keyCharacter, long holdTimeMillis, float pressure, float imprecisionX, float imprecisionY, long userId, long sessionId) {
         this.timestamp = timestamp;
