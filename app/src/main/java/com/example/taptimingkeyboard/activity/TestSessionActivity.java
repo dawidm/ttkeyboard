@@ -299,7 +299,7 @@ public class TestSessionActivity extends AppCompatActivity {
         sessionActive=true;
         tapTimingKeyboard.startTestSession(sessionId);
         updateSessionInfo();
-        words=wordList.getWordsCsv().split(",");
+        words=wordList.getWords();
         numErrors=0;
         wordsIterator=0;
         currentWord=words[0].toCharArray();

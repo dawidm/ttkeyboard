@@ -12,7 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 /**
  * Application database (Android Room) for storing user, user interaction and test session data.
  */
-@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 20)
+@Database(entities = {FlightTimeCharacteristics.class,KeyTapCharacteristics.class, TestSession.class, TestSessionWordErrors.class, UserInfo.class}, version = 21)
 public abstract class TapTimingDatabase extends RoomDatabase {
 
     public static final String DB_NAME = "tt_database";

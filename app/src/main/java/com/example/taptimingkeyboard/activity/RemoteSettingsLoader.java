@@ -22,7 +22,7 @@ public class RemoteSettingsLoader {
         void onFailure(Exception e);
     }
 
-    public static final String WORDLIST_REMOTE_JSON_FILE = "wordlists.json";
+    public static final String WORDLIST_REMOTE_JSON_FILE = "ttwordlists.json";
     public static final String SETTINGS_REMOTE_JSON_FILE = "ttsettings.json";
 
     private Context applicationContext;
