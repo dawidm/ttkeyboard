@@ -40,7 +40,7 @@ import java.util.Map;
  * This class creates keyboard View based on {@link TTKeyboardLayout} , maintains touch events and sends click events to {@link TTKeyboardClickListener}.
  * The most important functionality of TapTimingKeyboard is saving data about user interaction with keys such as times between subsequent clicks, times of button hold, pressure of clicks, precision of clicks ({@link FlightTimeCharacteristics}, {@link KeyTapCharacteristics}).
  */
-public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
+public class TapTimingKeyboard {
 
     private static final String TAG = TapTimingKeyboard.class.getName();
     private static final float BUTTON_TEXT_PROPORTION = 0.4f;
@@ -290,7 +290,6 @@ public class TapTimingKeyboard implements TTKeyboardMotionEventListener {
      * @param ttButton button for which {@link MotionEvent} happened
      * @param motionEvent motion event specification
      */
-    @Override
     public synchronized void onMotionEvent(TTKeyboardButton ttButton, MotionEvent motionEvent) {
         long currentTimestampMillis = System.currentTimeMillis();
         switch (motionEvent.getAction()) {
