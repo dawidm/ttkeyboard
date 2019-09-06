@@ -15,10 +15,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Collects data about interaction with keyboard ({@link KeyTapCharacteristics} and {@link FlightTimeCharacteristics}) and saves it in database.
+ *
+ * In normal (not test session) mode, the received data is saved in database immediately.
+ * In test session mode, the received data is saved periodically (interval: {@link #CHECK_ACCEPTED_CLICKS_INTERVAL_MS}).
+ * Only data associated with accepted clicks (see {@link #acceptButtonClick(long)}, {@link #rejectButtonClick(long)}) is saved.
+ */
 public class TimingDataManager {
 
     public static final String TAG = TimingDataManager.class.getName();
-    public static final long CHECK_ACCEPTED_CLICKS_INTERVAL_MS=100;
+    public static final long CHECK_ACCEPTED_CLICKS_INTERVAL_MS=1000;
 
     private Context context;
     private boolean testSessionMode = false;
@@ -41,6 +48,9 @@ public class TimingDataManager {
         this.context = context;
     }
 
+    /**
+     * Sets TimingDataManager in test session mode. Only data for accepted clicks is saved.
+     */
     public void startTestSession() {
         testSessionMode=true;
         scheduledExecutorService=Executors.newScheduledThreadPool(1);
@@ -56,6 +66,42 @@ public class TimingDataManager {
         },CHECK_ACCEPTED_CLICKS_INTERVAL_MS,CHECK_ACCEPTED_CLICKS_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Ends test session mode.
+     */
+    public void endTestSession() {
+        testSessionMode=false;
+        if(scheduledExecutorService!=null && !scheduledExecutorService.isShutdown())
+            scheduledExecutorService.shutdown();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                checkAcceptedClicks();
+            }
+        }).start();
+    }
+
+    /**
+     * Mark data associated with specific button click as accepted so it will be saved into the database.
+     * @param clickId The id of button click.
+     */
+    public void acceptButtonClick(long clickId) {
+        Log.d(TAG, "test session accepted click id: " + clickId);
+        acceptedClickIds.add(clickId);
+    }
+
+    /**
+     * Mark data associated with specific button click as rejected so it won't be saved into the database.
+     * @param clickId The id of button click.
+     */
+    public void rejectButtonClick(long clickId) {
+        Log.d(TAG, "test session rejected click id: " + clickId);
+        rejectedClickIds.add(clickId);
+    }
+
+    /**
+     * Checks whether any part of temporary stored data could be saved into database (as associated button clicks were accepted)
+     */
     private void checkAcceptedClicks() {
         boolean clicksChecked=false;
         if(!acceptedClickIds.isEmpty()) {
@@ -115,18 +161,14 @@ public class TimingDataManager {
                     flightTimeCharacteristicsAcceptedOnce.size()));
     }
 
-    public void endTestSession() {
-        testSessionMode=false;
-        if(scheduledExecutorService!=null && !scheduledExecutorService.isShutdown())
-            scheduledExecutorService.shutdown();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                checkAcceptedClicks();
-            }
-        }).start();
-    }
-
+    /**
+     * Add {@link KeyTapCharacteristics} data.
+     * If TimingDataManager is in normal (not test session mode) it will be saved to the database immediately.
+     * If TimingDataManager is in test session mode it will be stored till associated click id is accepted or rejected.
+     *
+     * @param keyTapCharacteristics The keyTapCharacteristics.
+     * @param clickId A clickId associated with specified keyTapCharacteristics
+     */
     public void addKeyTapCharacteristics(final KeyTapCharacteristics keyTapCharacteristics, final long clickId) {
         Log.d(TAG,"keyTapCharacteristics: " + keyTapCharacteristics.getKeyCharacter());
         if(!testSessionMode) {
@@ -141,6 +183,15 @@ public class TimingDataManager {
         }
     }
 
+    /**
+     * Add {@link FlightTimeCharacteristics} data.
+     * If TimingDataManager is in normal (not test session mode) it will be saved to the database immediately.
+     * If TimingDataManager is in test session mode it will be stored till associated click ids are accepted or rejected.
+     *
+     * @param flightTimeCharacteristics The flightTimeCharacteristics.
+     * @param firstClickId First clickId associated with specified flightTimeCharacteristics
+     * @param secondClickId Second clickId associated with specified flightTimeCharacteristics
+     */
     public void addFlightTimeCharacteristics(final FlightTimeCharacteristics flightTimeCharacteristics, final long firstClickId, final long secondClickId) {
         Log.d(TAG,"flightTimeCharacteristics: " + flightTimeCharacteristics.getCharFrom() + "->" + flightTimeCharacteristics.getCharTo());
         if(!testSessionMode) {
@@ -154,16 +205,6 @@ public class TimingDataManager {
             flightTimeCharacteristicsByFirstId.put(firstClickId,flightTimeCharacteristics);
             flightTimeCharacteristicsBySecondId.put(secondClickId,flightTimeCharacteristics);
         }
-    }
-
-    public void acceptButtonClick(long clickId) {
-        Log.d(TAG, "test session accepted click id: " + clickId);
-        acceptedClickIds.add(clickId);
-    }
-
-    public void rejectButtonClick(long clickId) {
-        Log.d(TAG, "test session rejected click id: " + clickId);
-        rejectedClickIds.add(clickId);
     }
 
 }
