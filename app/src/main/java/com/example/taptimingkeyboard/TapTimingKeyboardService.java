@@ -54,6 +54,10 @@ public class TapTimingKeyboardService extends InputMethodService {
         tapTimingKeyboard.abortCurrentFlightTime();
     }
 
+    /**
+     * Generates {@link android.view.inputmethod.InputConnection} actions for {@link TTKeyboardButton}.
+     * @param ttButton Clicked button.
+     */
     private void handleKeyboardClick(TTKeyboardButton ttButton) {
         switch (ttButton.getCode()) {
             case 8:
@@ -65,6 +69,6 @@ public class TapTimingKeyboardService extends InputMethodService {
             default:
                 getCurrentInputConnection().commitText("" + (char) ttButton.getCode(), 1);
         }
-    };
+    }
 
 }

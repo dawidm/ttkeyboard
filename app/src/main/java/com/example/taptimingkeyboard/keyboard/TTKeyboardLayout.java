@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Generates {@link TapTimingKeyboard} layout.
+ * The layout contains instances of {@link TTKeyboardRow} and rows contain instances of {@link TTKeyboardElement} - buttons or spacers.
+ */
 public class TTKeyboardLayout {
 
     public static final String TAG = TTKeyboardLayout.class.getName();
@@ -17,6 +21,11 @@ public class TTKeyboardLayout {
     private ArrayList<TTKeyboardRow> rows = new ArrayList<>();
     private Double width;
 
+    /**
+     * Get an instance of {@link TTKeyboardLayout} with specified buttons layout.
+     * @param layout The layout.
+     * @return Instance of TTKeyboardLayout
+     */
     public static TTKeyboardLayout withLayout(Layout layout) {
         switch (layout) {
             case SIMPLEST_QWERTY_SYMMETRIC:
@@ -28,10 +37,18 @@ public class TTKeyboardLayout {
         }
     }
 
+    /**
+     * Get the rows (containing layout elements) of this layout.
+     * @return
+     */
     public List<TTKeyboardRow> getRows() {
         return Collections.unmodifiableList(rows);
     }
 
+    /**
+     * QWERTY layout with small cap characters and space only. Used by {@link com.example.taptimingkeyboard.activity.TestSessionActivity}.
+     * @return TTKeyboardLayout instance.
+     */
     private static TTKeyboardLayout simplestQwertyLayoutSymmetric() {
         TTKeyboardRow firstRow = new TTKeyboardRow();
         firstRow.addElement(new TTKeyboardButton('q'));
@@ -78,6 +95,10 @@ public class TTKeyboardLayout {
         return ttKeyboardLayout;
     }
 
+    /**
+     * Simple QWERTY layout with small cap characters and space, backspace and return.
+     * @return TTKeyboardLayout instance.
+     */
     private static TTKeyboardLayout simpleQwertyLayoutSymmetric() {
         TTKeyboardRow firstRow = new TTKeyboardRow();
         firstRow.addElement(new TTKeyboardButton('q'));
@@ -127,12 +148,19 @@ public class TTKeyboardLayout {
         return ttKeyboardLayout;
     }
 
+    /**
+     * Get the maximum value of the sums of the sizes of elements in each TTKeyboardRow.
+     * @return
+     */
     public double getWidth() {
         if(width==null)
             calcWidth();
         return width;
     }
 
+    /**
+     * See {@link #getWidth()}
+     */
     private void calcWidth() {
         double maxRowSize=0;
         Iterator<TTKeyboardRow> it = rows.iterator();
