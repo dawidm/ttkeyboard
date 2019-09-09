@@ -50,6 +50,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * An activity for performing test sessions
+ */
 public class TestSessionActivity extends AppCompatActivity {
 
     public static final String TAG = TestSessionActivity.class.getName();
@@ -194,6 +197,9 @@ public class TestSessionActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    /**
+     * Use remote and local settings to init UI
+     */
     private void useSettings() {
         if(remotePreferences.getOrientation()!=null) {
             if(remotePreferences.getOrientation()==RemotePreferences.ORIENTATION_PORTRAIT)
@@ -208,6 +214,9 @@ public class TestSessionActivity extends AppCompatActivity {
         initWordListsSpinner();
     }
 
+    /**
+     * Populate word list spinner with word lists names
+     */
     private void initWordListsSpinner() {
         ArrayList<WordLists.WordList> lists = new ArrayList<>();
         Iterator<WordLists.WordList> it = wordLists.getLists().iterator();
@@ -216,6 +225,9 @@ public class TestSessionActivity extends AppCompatActivity {
         listsSpinner.setAdapter(new ArrayAdapter<>(TestSessionActivity.this,R.layout.support_simple_spinner_dropdown_item,lists));
     }
 
+    /**
+     * Set settings variables using remote settings values (if available) or application's SharedPreferences
+     */
     private void loadPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sounds=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
@@ -225,6 +237,9 @@ public class TestSessionActivity extends AppCompatActivity {
             uiSounds.initSounds();
     }
 
+    /**
+     * Instantiate TapTimingKeyboard (choose layout, set click listener, pass RemotePreferences and user id) and add it's View to the UI.
+     */
     private void initKeyboard() {
         tapTimingKeyboard = new TapTimingKeyboard(getApplicationContext(), TTKeyboardLayout.Layout.SIMPLEST_QWERTY_SYMMETRIC, new TTKeyboardClickListener() {
             @Override
@@ -239,6 +254,11 @@ public class TestSessionActivity extends AppCompatActivity {
         keyboardContainer.addView(tapTimingKeyboard.getView());
     }
 
+    /**
+     * Asynchronously load user information from the database.
+     * @param userId Id of the user to load.
+     * @param afterUpdateRunnable What to do after updating.
+     */
     private void loadUserName(final long userId, final Runnable afterUpdateRunnable) {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -249,6 +269,9 @@ public class TestSessionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Show dialog to confirm starting test session, run {@link #prepareStartSession()}
+     */
     private void confirmStart() {
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.start_session_confirmation_title))
@@ -260,6 +283,9 @@ public class TestSessionActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
+    /**
+     * Create instance of {@link TestSession} with required data and save it to the database.
+     */
     private void prepareStartSession() {
         if(listsSpinner.getSelectedItem()==null || !(listsSpinner.getSelectedItem() instanceof WordLists.WordList)) {
             Toast.makeText(this,getResources().getString(R.string.no_wordlist_selected),Toast.LENGTH_LONG).show();
@@ -291,6 +317,11 @@ public class TestSessionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Start a new test session.
+     * Prepare layout for test session. Set TapTimingKeyboard to test session mode. Init variables associated with test session process.
+     * @param wordList Word list to use in the session.
+     */
     private void startSession(WordLists.WordList wordList) {
         sessionStartButton.setClickable(false);
         listLinearLayout.setVisibility(View.INVISIBLE);
@@ -310,6 +341,11 @@ public class TestSessionActivity extends AppCompatActivity {
         loadWord();
     }
 
+    /**
+     * End test session.
+     * Update interface and database entry with session info
+     * @param aborted
+     */
     private void endSession(boolean aborted) {
         sessionActive=false;
         tapTimingKeyboard.endTestSession();
@@ -335,6 +371,9 @@ public class TestSessionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Update TextView with session info
+     */
     private void updateSessionInfo() {
         if(sessionActive)
             sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_active),userInfo.toString(),sessionId));
@@ -342,6 +381,10 @@ public class TestSessionActivity extends AppCompatActivity {
             sessionInfoTextView.setText(String.format(getResources().getString(R.string.session_info_inactive),userInfo.toString()));
     }
 
+    /**
+     * Try to load next word
+     * @return True if next word exists, false if it doesn't.
+     */
     private boolean nextWord() {
         if(++wordsIterator>=words.length)
             return false;
@@ -352,6 +395,10 @@ public class TestSessionActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Go to next character in current word.
+     * @return True if next character exists, false if it doesn't.
+     */
     private boolean nextChar() {
         if (++charsIterator>=currentWord.length)
             return false;
@@ -363,12 +410,21 @@ public class TestSessionActivity extends AppCompatActivity {
         testWordTextView.setText(words[wordsIterator]);
     }
 
+    /**
+     * Reset the progress of typing current word.
+     */
     private void resetWord() {
         charsIterator=0;
         currentChar=currentWord[0];
     }
 
-    private void checkKeyboardClick(TTKeyboardButton ttButton, long clickId) {
+    /**
+     * Check if the typed character if correct.
+     * Go to next character or next word if correct, notify about error if not correct.
+     * @param ttButton The button clicked.
+     * @param clickId Id of the click.
+     */
+    private void checkKeyboardClick(TTKeyboardButton ttButton, long clickId) { //TODO change ttbutton to character
         clicksIds.add(clickId);
         if(ttButton.getCode()==currentChar) {   //correct keyboard click
             if(!nextChar()) {   //end of word, word correctly typed
@@ -393,6 +449,11 @@ public class TestSessionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * For every word click ids are collected until word is typed correctly or wrong character is clicked.
+     * If a word is typed correctly all waiting clicks are sent to TapTimingKeyboard as accepted
+     * (associated user interaction data will be saved to the database).
+     */
     private void acceptWaitingClicks() {
         Iterator<Long> iterator = clicksIds.iterator();
         while (iterator.hasNext()) {
@@ -400,6 +461,11 @@ public class TestSessionActivity extends AppCompatActivity {
             iterator.remove();
         }
     }
+
+    /**
+     * See {@link #acceptWaitingClicks()}
+     * If a mistake occurs when typing a word, all previous correctly typed characters for this word are sent to TapTimingKeyboard as rejected.
+     */
     private void rejectWaitingClicks() {
         Iterator<Long> iterator = clicksIds.iterator();
         while (iterator.hasNext()) {
@@ -408,6 +474,10 @@ public class TestSessionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Count error (but only if specified amount of time {@link #ERROR_TIMEOUT_MILLIS} hasn't passed since previous count)
+     * Save information about numbers of errors for specific words in test session.
+     */
     private void countError() {
         if(limitedFrequencyExecutor.canRunNow(COUNT_ERROR_TASK_ID)) {
             limitedFrequencyExecutor.run(COUNT_ERROR_TASK_ID, new Runnable() {
@@ -425,6 +495,9 @@ public class TestSessionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Change the color of the test word for specified amount of time after a mistake in typing
+     */
     private void testWordBlink() {
         testWordTextView.setTextColor(ResourcesCompat.getColor(getResources(),R.color.colorTestWordError,null));
         if(testWordColorFuture!=null && !testWordColorFuture.isDone())

@@ -10,14 +10,23 @@ import androidx.preference.PreferenceManager;
 import com.example.taptimingkeyboard.data.RemotePreferences;
 import com.example.taptimingkeyboard.data.WordLists;
 
+/**
+ * Gets remote settings and word list from server.
+ */
 public class RemoteSettingsLoader {
 
     public static final String TAG = RemoteSettingsLoader.class.getName();
 
+    /**
+     * For notification about getting settings and word lists successfully and sending passing objects containing data.
+     */
     public interface SuccessfulLoadListener {
         void onSettingsLoaded (RemotePreferences remotePreferences, WordLists wordLists);
     }
 
+    /**
+     * For notification about failure when getting data from server.
+     */
     public interface FailureListener {
         void onFailure(Exception e);
     }
@@ -30,10 +39,19 @@ public class RemoteSettingsLoader {
     private SuccessfulLoadListener successfulLoadListener;
     private FailureListener failureListener;
 
+
+    /**
+     * Instantiates a new Remote settings loader.
+     *
+     * @param applicationContext The application context.
+     */
     public RemoteSettingsLoader(Context applicationContext) {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Loads settings from remote url stored in application's SharedPreferences. Notifies listeners about the result.
+     */
     public void loadAsync() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -60,11 +78,21 @@ public class RemoteSettingsLoader {
         });
     }
 
+    /**
+     * Sets the {@link SuccessfulLoadListener} to be notified about results.
+     * @param successfulLoadListener The listener.
+     * @return This RemotePreferences instance.
+     */
     public RemoteSettingsLoader subscribeOnSuccessfulLoad(SuccessfulLoadListener successfulLoadListener) {
         this.successfulLoadListener = successfulLoadListener;
         return this;
     }
 
+    /**
+     * Sets {@link FailureListener} to be notified about results.
+     * @param failureListener The listener.
+     * @return This RemotePreferences instance.
+     */
     public RemoteSettingsLoader subscribeOnFailure(FailureListener failureListener) {
         this.failureListener=failureListener;
         return this;

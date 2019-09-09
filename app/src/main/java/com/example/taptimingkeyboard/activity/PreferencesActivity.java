@@ -20,6 +20,9 @@ import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 import com.example.taptimingkeyboard.data.UserInfo;
 
+/**
+ * An activity for changing application's preferences.
+ */
 public class PreferencesActivity extends AppCompatActivity {
 
     public static final int CODE_USER_ID=1;

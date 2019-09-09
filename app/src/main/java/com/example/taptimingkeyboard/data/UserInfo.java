@@ -65,14 +65,14 @@ public class UserInfo {
     /**
      * Instantiates a new User info.
      *
-     * @param firstName         the first name
-     * @param lastName          the last name
-     * @param age               the age
-     * @param sex               the sex
-     * @param handedness        the handedness
-     * @param diagnosedWithPD   the diagnosed with pd
-     * @param symptomsAsymmetry the symptoms asymmetry
-     * @param onMedication      the on medication
+     * @param firstName         see {@link #getFirstName()}
+     * @param lastName          see {@link #getLastName()}
+     * @param age               see {@link #getAge()}
+     * @param sex               see {@link #getSex()}
+     * @param handedness        see {@link #getHandedness()}
+     * @param diagnosedWithPD   see {@link #diagnosedWithPD}
+     * @param symptomsAsymmetry see {@link #symptomsAsymmetry}
+     * @param onMedication      see {@link #getOnMedication()}
      */
     public UserInfo(String firstName, String lastName, int age, String sex, String handedness, boolean diagnosedWithPD, @Nullable String symptomsAsymmetry, @Nullable Boolean onMedication) {
         this.firstName = firstName;

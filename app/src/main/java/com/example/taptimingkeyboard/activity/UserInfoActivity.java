@@ -24,6 +24,9 @@ import com.example.taptimingkeyboard.data.UserInfo;
 
 import java.util.ArrayList;
 
+/**
+ * An activity for choosing keyboard user or creating new user
+ */
 public class UserInfoActivity extends AppCompatActivity {
 
     private ConstraintLayout mainLayout;
@@ -100,6 +103,11 @@ public class UserInfoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Get layout string in correct language for string stored in database
+     * @param dbString Value taken from application's database.
+     * @return Layout string taken from application's strings resources.
+     */
     private String getSexResourceString(String dbString) {
         switch (dbString) {
             case UserInfo.SEX_MALE:
@@ -111,6 +119,11 @@ public class UserInfoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get layout string in correct language for string stored in database
+     * @param dbString Value taken from application's database.
+     * @return Layout string taken from application's strings resources.
+     */
     private String getHandednessResourceString(String dbString) {
         switch (dbString) {
             case UserInfo.HANDEDNESS_LEFT:
@@ -122,6 +135,11 @@ public class UserInfoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get layout string in correct language for string stored in database
+     * @param dbString Value taken from application's database.
+     * @return Layout string taken from application's strings resources.
+     */
     private String getAsymmetryResourceString(String dbString) {
         switch (dbString) {
             case UserInfo.ASYMMETRY_LEFT:
@@ -137,6 +155,9 @@ public class UserInfoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Check user input and save data to the database if correct.
+     */
     private void saveForm() {
         if(!validateFields())
             return;
@@ -175,6 +196,9 @@ public class UserInfoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Get all {@link UserInfo} from the database, show on a list, run {@link TestSessionActivity} for clicked position.
+     */
     private void showPreviousEntryList() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -210,6 +234,10 @@ public class UserInfoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Validate's form's fields.
+     * @return True if all fields are filled correctly, false if not.
+     */
     private boolean validateFields() {
         if(firstNameEditText.getText().toString().trim().length()<1
                 || lastNameEditText.getText().toString().trim().length()<1
@@ -220,6 +248,10 @@ public class UserInfoActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Starts test session activity for specified user.
+     * @param id User id.
+     */
     private void startTestSessionActivity(long id) {
         Intent intent = new Intent(this, TestSessionActivity.class);
         intent.putExtra("user_id",id);
@@ -227,6 +259,10 @@ public class UserInfoActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * If started by {@link PreferencesActivity} sends back chosen or created user's id.
+     * @param userId User id.
+     */
     private void returnResultToPrefrences(long userId) {
         Intent intent = new Intent();
         intent.putExtra("user_id",userId);
@@ -234,6 +270,9 @@ public class UserInfoActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Hide users list if visible or go back.
+     */
     @Override
     public void onBackPressed() {
         if(usersListView.getVisibility()==View.VISIBLE)
