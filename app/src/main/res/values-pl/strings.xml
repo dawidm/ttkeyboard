@@ -43,4 +43,5 @@
     <string name="pref_vibration_duration">Długość wibracji (ms)</string>
     <string name="pref_vibrations">Wibracje</string>
     <string name="warning_no_existing_users">Brak istniejących użytkowników</string>
+    <string name="preference_word_progress">Postęp pisania słowa</string>
 </resources>

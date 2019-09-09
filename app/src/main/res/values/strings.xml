@@ -43,4 +43,5 @@
     <string name="warning_no_existing_users">No existing users</string>
     <string name="pref_vibrations">Vibrations</string>
     <string name="pref_vibration_duration">Vibration duration (ms)</string>
+    <string name="preference_word_progress">Word typing progress</string>
 </resources>

@@ -29,6 +29,9 @@
         android:defaultValue="30"
         android:min="10"
         android:max="60"></SeekBarPreference>
+    <CheckBoxPreference android:title="@string/preference_word_progress"
+        android:key="typing_progress"
+        android:defaultValue="false"></CheckBoxPreference>
     <EditTextPreference android:title="@string/pref_server_url"
         android:key="remote_url"
         android:defaultValue="https://dmotyka.pl/"></EditTextPreference>

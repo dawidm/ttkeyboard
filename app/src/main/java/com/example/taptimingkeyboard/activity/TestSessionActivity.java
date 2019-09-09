@@ -87,8 +87,10 @@ public class TestSessionActivity extends AppCompatActivity {
     private boolean sounds;
     private float soundsVol;
     private boolean vibrations;
+    private boolean showTypingProgress;
 
     private TextView testWordTextView;
+    private TextView testWordCorrectTextView;
     private TextView sessionInfoTextView;
     private Button sessionStartButton;
     private LinearLayout buttonsContainer;
@@ -110,6 +112,7 @@ public class TestSessionActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         userId=getIntent().getExtras().getLong("user_id");
         testWordTextView = findViewById(R.id.test_word_textview);
+        testWordCorrectTextView = findViewById(R.id.test_word_correct_chars_textview);
         sessionInfoTextView = findViewById(R.id.session_info_textview);
         sessionStartButton = findViewById(R.id.start_button);
         buttonsContainer=findViewById(R.id.buttons_container);
@@ -188,6 +191,7 @@ public class TestSessionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loadPreferences();
         initKeyboard();
     }
 
@@ -233,6 +237,7 @@ public class TestSessionActivity extends AppCompatActivity {
         sounds=(remotePreferences!=null&&remotePreferences.getSound()!=null)?remotePreferences.getSound():sharedPreferences.getBoolean("click_sound",true);
         soundsVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
         vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
+        showTypingProgress=sharedPreferences.getBoolean("typing_progress",false);
         if(sounds)
             uiSounds.initSounds();
     }
@@ -354,6 +359,7 @@ public class TestSessionActivity extends AppCompatActivity {
         buttonsContainer.setVisibility(View.VISIBLE);
         listLinearLayout.setVisibility(View.VISIBLE);
         testWordTextView.setText("");
+        testWordCorrectTextView.setText("");
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         clicksIds.clear();
         if (!aborted) {
@@ -402,12 +408,18 @@ public class TestSessionActivity extends AppCompatActivity {
     private boolean nextChar() {
         if (++charsIterator>=currentWord.length)
             return false;
+        if(showTypingProgress)
+            loadWord();
         currentChar=currentWord[charsIterator];
         return true;
     }
 
     private void loadWord() {
-        testWordTextView.setText(words[wordsIterator]);
+        if(showTypingProgress) {
+            testWordCorrectTextView.setText(words[wordsIterator].substring(0,charsIterator));
+            testWordTextView.setText(words[wordsIterator].substring(charsIterator));
+        } else
+            testWordTextView.setText(words[wordsIterator]);
     }
 
     /**
@@ -499,6 +511,8 @@ public class TestSessionActivity extends AppCompatActivity {
      * Change the color of the test word for specified amount of time after a mistake in typing
      */
     private void testWordBlink() {
+        if(showTypingProgress)
+            loadWord();
         testWordTextView.setTextColor(ResourcesCompat.getColor(getResources(),R.color.colorTestWordError,null));
         if(testWordColorFuture!=null && !testWordColorFuture.isDone())
             testWordColorFuture.cancel(true);
