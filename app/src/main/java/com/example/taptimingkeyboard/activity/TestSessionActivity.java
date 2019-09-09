@@ -245,7 +245,7 @@ public class TestSessionActivity extends AppCompatActivity {
             @Override
             public void onKeyboardClick(TTKeyboardButton ttButton, long clickId) {
                 if(sessionActive)
-                    checkKeyboardClick(ttButton, clickId);
+                    checkKeyboardClick((char)ttButton.getCode(), clickId);
             }
         },remotePreferences,
         userId);
@@ -421,12 +421,12 @@ public class TestSessionActivity extends AppCompatActivity {
     /**
      * Check if the typed character if correct.
      * Go to next character or next word if correct, notify about error if not correct.
-     * @param ttButton The button clicked.
+     * @param character The character of the button clicked.
      * @param clickId Id of the click.
      */
-    private void checkKeyboardClick(TTKeyboardButton ttButton, long clickId) { //TODO change ttbutton to character
+    private void checkKeyboardClick(char character, long clickId) {
         clicksIds.add(clickId);
-        if(ttButton.getCode()==currentChar) {   //correct keyboard click
+        if(character==currentChar) {   //correct keyboard click
             if(!nextChar()) {   //end of word, word correctly typed
                 acceptWaitingClicks();
                 tapTimingKeyboard.abortCurrentFlightTime();
