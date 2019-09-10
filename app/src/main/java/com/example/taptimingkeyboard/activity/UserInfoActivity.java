@@ -18,7 +18,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.taptimingkeyboard.R;
-import com.example.taptimingkeyboard.data.LayoutStringDbString;
+import com.example.taptimingkeyboard.data.LayoutStringEnum;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 import com.example.taptimingkeyboard.data.UserInfo;
 
@@ -61,19 +61,19 @@ public class UserInfoActivity extends AppCompatActivity {
         buttonOk=findViewById(R.id.button_ok);
         buttonLoad=findViewById(R.id.button_load);
         usersListView=findViewById(R.id.list_view_users);
-        ArrayList<LayoutStringDbString> sexesList = new ArrayList<>(2);
-        sexesList.add(new LayoutStringDbString(getSexResourceString(UserInfo.SEX_MALE),UserInfo.SEX_MALE));
-        sexesList.add(new LayoutStringDbString(getSexResourceString(UserInfo.SEX_FEMALE),UserInfo.SEX_FEMALE));
+        ArrayList<LayoutStringEnum> sexesList = new ArrayList<>(2);
+        sexesList.add(new LayoutStringEnum(getSexResourceString(UserInfo.Sex.MALE), UserInfo.Sex.MALE));
+        sexesList.add(new LayoutStringEnum(getSexResourceString(UserInfo.Sex.FEMALE),UserInfo.Sex.FEMALE));
         sexSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,sexesList));
-        ArrayList<LayoutStringDbString> handednessList = new ArrayList<>(2);
-        handednessList.add(new LayoutStringDbString(getHandednessResourceString(UserInfo.HANDEDNESS_RIGHT),UserInfo.HANDEDNESS_RIGHT));
-        handednessList.add(new LayoutStringDbString(getHandednessResourceString(UserInfo.HANDEDNESS_LEFT),UserInfo.HANDEDNESS_LEFT));
+        ArrayList<LayoutStringEnum> handednessList = new ArrayList<>(2);
+        handednessList.add(new LayoutStringEnum(getHandednessResourceString(UserInfo.Handedness.RIGHT),UserInfo.Handedness.RIGHT));
+        handednessList.add(new LayoutStringEnum(getHandednessResourceString(UserInfo.Handedness.LEFT),UserInfo.Handedness.LEFT));
         handednessSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,handednessList));
-        ArrayList<LayoutStringDbString> symptomsAsymmetryList = new ArrayList<>(4);
-        symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_RIGHT),UserInfo.ASYMMETRY_RIGHT));
-        symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_LEFT),UserInfo.ASYMMETRY_LEFT));
-        symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_NO_ASYMMETRY),UserInfo.ASYMMETRY_NO_ASYMMETRY));
-        symptomsAsymmetryList.add(new LayoutStringDbString(getAsymmetryResourceString(UserInfo.ASYMMETRY_NOT_SPECIFIED),UserInfo.ASYMMETRY_NOT_SPECIFIED));
+        ArrayList<LayoutStringEnum> symptomsAsymmetryList = new ArrayList<>(4);
+        symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.RIGHT),UserInfo.Asymmetry.RIGHT));
+        symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.LEFT),UserInfo.Asymmetry.LEFT));
+        symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.NO_ASYMMETRY),UserInfo.Asymmetry.NO_ASYMMETRY));
+        symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.NOT_SPECIFIED),UserInfo.Asymmetry.NOT_SPECIFIED));
         symptomsAsymmetrySpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,symptomsAsymmetryList));
         symptomsAsymmetrySpinner.setEnabled(false);
         onMedicationCheckbox.setEnabled(false);
@@ -104,54 +104,54 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     /**
-     * Get layout string in correct language for string stored in database
-     * @param dbString Value taken from application's database.
+     * Get layout string in correct language Sex enum.
+     * @param sex Sex enum.
      * @return Layout string taken from application's strings resources.
      */
-    private String getSexResourceString(String dbString) {
-        switch (dbString) {
-            case UserInfo.SEX_MALE:
+    private String getSexResourceString(UserInfo.Sex sex) {
+        switch (sex) {
+            case MALE:
                 return getResources().getString(R.string.sex_male);
-            case UserInfo.SEX_FEMALE:
+            case FEMALE:
                 return getResources().getString(R.string.sex_female);
             default:
-                throw new RuntimeException("unknown sex string: " + dbString);
+                throw new RuntimeException("unknown sex enum: " + sex.name());
         }
     }
 
     /**
-     * Get layout string in correct language for string stored in database
-     * @param dbString Value taken from application's database.
+     * Get layout string in correct language for Handedness enum
+     * @param handedness Handedness enum.
      * @return Layout string taken from application's strings resources.
      */
-    private String getHandednessResourceString(String dbString) {
-        switch (dbString) {
-            case UserInfo.HANDEDNESS_LEFT:
+    private String getHandednessResourceString(UserInfo.Handedness handedness) {
+        switch (handedness) {
+            case LEFT:
                 return getResources().getString(R.string.handedness_left);
-            case UserInfo.HANDEDNESS_RIGHT:
+            case RIGHT:
                 return getResources().getString(R.string.handedness_right);
             default:
-                throw new RuntimeException("unknown handedness string: " + dbString);
+                throw new RuntimeException("unknown handedness string: " + handedness.name());
         }
     }
 
     /**
-     * Get layout string in correct language for string stored in database
-     * @param dbString Value taken from application's database.
+     * Get layout string in correct language for Asymmetry enum.
+     * @param asymmetry Asymmetry enum.
      * @return Layout string taken from application's strings resources.
      */
-    private String getAsymmetryResourceString(String dbString) {
-        switch (dbString) {
-            case UserInfo.ASYMMETRY_LEFT:
+    private String getAsymmetryResourceString(UserInfo.Asymmetry asymmetry) {
+        switch (asymmetry) {
+            case LEFT:
                 return getResources().getString(R.string.asymmetry_left);
-            case UserInfo.ASYMMETRY_RIGHT:
+            case RIGHT:
                 return getResources().getString(R.string.asymmetry_right);
-            case UserInfo.ASYMMETRY_NOT_SPECIFIED:
+            case NOT_SPECIFIED:
                 return getResources().getString(R.string.asymmetry_not_specified);
-            case UserInfo.ASYMMETRY_NO_ASYMMETRY:
+            case NO_ASYMMETRY:
                 return getResources().getString(R.string.asymmetry_no_asymmetry);
             default:
-                throw new RuntimeException("unknown asymmetry string: " + dbString);
+                throw new RuntimeException("unknown asymmetry string: " + asymmetry.name());
         }
     }
 
@@ -165,20 +165,20 @@ public class UserInfoActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                String symptomsAsymmetry;
+                UserInfo.Asymmetry symptomsAsymmetry;
                 Boolean onMedication;
                 if(!diagnosedWithPDCheckbox.isSelected()) {
                     symptomsAsymmetry=null;
                     onMedication=null;
                 } else {
-                    symptomsAsymmetry = ((LayoutStringDbString) symptomsAsymmetrySpinner.getSelectedItem()).getDbValue();
+                    symptomsAsymmetry = (UserInfo.Asymmetry)((LayoutStringEnum)symptomsAsymmetrySpinner.getSelectedItem()).getEnumValue();
                     onMedication=onMedicationCheckbox.isSelected();
                 }
                 UserInfo userInfo = new UserInfo(firstNameEditText.getText().toString().trim(),
                         lastNameEditText.getText().toString().trim(),
                         Integer.parseInt(ageEditText.getText().toString()),
-                        ((LayoutStringDbString)sexSpinner.getSelectedItem()).getDbValue(),
-                        ((LayoutStringDbString)handednessSpinner.getSelectedItem()).getDbValue(),
+                        (UserInfo.Sex)((LayoutStringEnum)sexSpinner.getSelectedItem()).getEnumValue(),
+                        (UserInfo.Handedness)((LayoutStringEnum)handednessSpinner.getSelectedItem()).getEnumValue(),
                         diagnosedWithPDCheckbox.isSelected(),
                         symptomsAsymmetry,
                         onMedication);
