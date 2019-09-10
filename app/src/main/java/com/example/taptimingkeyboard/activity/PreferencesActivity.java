@@ -77,6 +77,7 @@ public class PreferencesActivity extends AppCompatActivity {
             ((SeekBarPreference)findPreference("height_landscape")).setShowSeekBarValue(true);
             ((SeekBarPreference)findPreference("height_portrait")).setShowSeekBarValue(true);
             ((SeekBarPreference)findPreference("click_volume")).setShowSeekBarValue(true);
+            ((SeekBarPreference)findPreference("vibration_duration")).setShowSeekBarValue(true);
         }
     }
 
