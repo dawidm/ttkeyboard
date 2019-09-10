@@ -176,6 +176,7 @@ public class TestSessionActivity extends AppCompatActivity {
         ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
         emptySpinnerArray.add(getResources().getString(R.string.wordlist_spinner_empty));
         listsSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
+        getDataContainer.bringToFront();
         if(settingsInitialized.get())
             useSettings();
         else

@@ -40,6 +40,7 @@ public class UserInfoActivity extends AppCompatActivity {
     private CheckBox onMedicationCheckbox;
     private Button buttonOk;
     private Button buttonLoad;
+    private ConstraintLayout usersListViewContainer;
     private ListView usersListView;
     private Boolean startedFromPreferences;
 
@@ -60,6 +61,7 @@ public class UserInfoActivity extends AppCompatActivity {
         onMedicationCheckbox=findViewById(R.id.check_box_on_medication);
         buttonOk=findViewById(R.id.button_ok);
         buttonLoad=findViewById(R.id.button_load);
+        usersListViewContainer=findViewById(R.id.list_view_users_container);
         usersListView=findViewById(R.id.list_view_users);
         ArrayList<LayoutStringEnum> sexesList = new ArrayList<>(2);
         sexesList.add(new LayoutStringEnum(getSexResourceString(UserInfo.Sex.MALE), UserInfo.Sex.MALE));
@@ -101,6 +103,7 @@ public class UserInfoActivity extends AppCompatActivity {
                 showPreviousEntryList();
             }
         });
+        usersListViewContainer.bringToFront();
     }
 
     /**
@@ -216,7 +219,7 @@ public class UserInfoActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        usersListView.setVisibility(View.VISIBLE);
+                        usersListViewContainer.setVisibility(View.VISIBLE);
                         usersListView.setAdapter(new ArrayAdapter<>(UserInfoActivity.this,android.R.layout.simple_list_item_1,userInfos));
                         usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
@@ -275,8 +278,8 @@ public class UserInfoActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        if(usersListView.getVisibility()==View.VISIBLE)
-            usersListView.setVisibility(View.GONE);
+        if(usersListViewContainer.getVisibility()==View.VISIBLE)
+            usersListViewContainer.setVisibility(View.GONE);
         else
         if(startedFromPreferences!=null&&startedFromPreferences.booleanValue()==true)
             finish();
