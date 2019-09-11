@@ -380,7 +380,7 @@ public class TestSessionActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(TestSessionActivity.this,"Results sent to firesync",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(TestSessionActivity.this, getString(R.string.toast_session_results_sent),Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

@@ -48,4 +48,5 @@
     <string name="button_sync_results">Wyślij wyniki</string>
     <string name="preference_unsent_results">Niewysłane wyniki</string>
     <string name="info_no_unsent_results">Brak niewysłanych wyników</string>
+    <string name="toast_session_results_sent">Wyniki wyłsłane na serwer</string>
 </resources>
