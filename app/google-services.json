@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "118980442457",
+    "firebase_url": "https://ttkeyboard-data.firebaseio.com",
+    "project_id": "ttkeyboard-data",
+    "storage_bucket": "ttkeyboard-data.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118980442457:android:7e3d5d3dc6110e68883448",
+        "android_client_info": {
+          "package_name": "com.example.taptimingkeyboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "118980442457-j94i29363dq3e39tscb35appg7r7c8e8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6NF-Panh-T6pJ7c__PGF8oZQEJhzSd4U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "118980442457-j94i29363dq3e39tscb35appg7r7c8e8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
