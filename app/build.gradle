@@ -37,6 +37,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.1.0'
     // add SDKs for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
 }
 
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
