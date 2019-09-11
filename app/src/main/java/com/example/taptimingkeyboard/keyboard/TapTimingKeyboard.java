@@ -360,8 +360,8 @@ public class TapTimingKeyboard {
         long secondHoldTime = secondButtonClickParameters.getReleasedEventTime()- secondButtonClickParameters.getPressEventTimeMillis();
         timingDataManager.addFlightTimeCharacteristics(new FlightTimeCharacteristics(
                 currentTimestampMillis-secondHoldTime,
-                (char) firstButtonClickParameters.getTtKeyboardButton().getCode(),
-                (char) secondButtonClickParameters.getTtKeyboardButton().getCode(),
+                firstButtonClickParameters.getTtKeyboardButton().getCode(),
+                secondButtonClickParameters.getTtKeyboardButton().getCode(),
                 getButtonDistancePx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).x,
                 getButtonDistancePx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).y,
                 getButtonDistanceMillimeters(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()),
@@ -385,7 +385,7 @@ public class TapTimingKeyboard {
         float imprecisionY=(float)(2*(buttonClickParameters.getY()/getButtonSizeY(buttonClickParameters.getTtKeyboardButton()))-1);
         timingDataManager.addKeyTapCharacteristics(new KeyTapCharacteristics(
                 currentTimestampMillis,
-                (char) buttonClickParameters.getTtKeyboardButton().getCode(),
+                buttonClickParameters.getTtKeyboardButton().getCode(),
                 buttonClickParameters.getReleasedEventTime()- buttonClickParameters.getPressEventTimeMillis(),
                 buttonClickParameters.getPressure(),
                 imprecisionX,

@@ -13,8 +13,8 @@ public class FlightTimeCharacteristics {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private long timestamp;
-    private char charFrom;
-    private char charTo;
+    private int charFrom;
+    private int charTo;
     private double distancePixelsX;
     private double distancePixelsY;
     private double distanceMm;
@@ -35,7 +35,7 @@ public class FlightTimeCharacteristics {
      * @param userId          see {@link #getUserId()}
      * @param sessionId       see {@link #getSessionId()}
      */
-    public FlightTimeCharacteristics(long timestamp, char charFrom, char charTo, double distancePixelsX, double distancePixelsY, double distanceMm, long flightTimeMillis, long userId, long sessionId) {
+    public FlightTimeCharacteristics(long timestamp, int charFrom, int charTo, double distancePixelsX, double distancePixelsY, double distanceMm, long flightTimeMillis, long userId, long sessionId) {
         this.timestamp = timestamp;
         this.charFrom = charFrom;
         this.charTo = charTo;
@@ -79,7 +79,7 @@ public class FlightTimeCharacteristics {
      *
      * @return The character of the the button pressed (tapped down) earlier
      */
-    public char getCharFrom() {
+    public int getCharFrom() {
         return charFrom;
     }
 
@@ -88,7 +88,7 @@ public class FlightTimeCharacteristics {
      *
      * @return The character of the the button pressed (tapped down) later
      */
-    public char getCharTo() {
+    public int getCharTo() {
         return charTo;
     }
 

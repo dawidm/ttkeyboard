@@ -110,14 +110,14 @@ public class TimingDataManager {
             while (acceptedClicksIterator.hasNext()) {
                 Long key = acceptedClicksIterator.next();
                 if(keyTapCharacteristicsQueue.containsKey(key)) {
-                    Log.d(TAG,"inserting keyTapCharacteristics " + keyTapCharacteristicsQueue.get(key).getKeyCharacter());
+                    Log.d(TAG,"inserting keyTapCharacteristics " + (char)keyTapCharacteristicsQueue.get(key).getKeyCharacter());
                     TapTimingDatabase.instance(context).keyTapCharacteristicsDao().insertAll(keyTapCharacteristicsQueue.get(key));
                     keyTapCharacteristicsQueue.remove(key);
                 }
                 if(flightTimeCharacteristicsByFirstId.containsKey(key)) {
                     if(flightTimeCharacteristicsAcceptedOnce.contains(flightTimeCharacteristicsByFirstId.get(key))) {
                         flightTimeCharacteristicsAcceptedOnce.remove(flightTimeCharacteristicsByFirstId.get(key));
-                        Log.d(TAG,"inserting flightTimeCharacteristics " + flightTimeCharacteristicsByFirstId.get(key).getCharFrom() + "->" + flightTimeCharacteristicsByFirstId.get(key).getCharTo());
+                        Log.d(TAG,"inserting flightTimeCharacteristics " + (char)flightTimeCharacteristicsByFirstId.get(key).getCharFrom() + "->" + (char)flightTimeCharacteristicsByFirstId.get(key).getCharTo());
                         TapTimingDatabase.instance(context).flightTimeCharacteristicsDao().insertAll(flightTimeCharacteristicsByFirstId.get(key));
                     } else {
                         flightTimeCharacteristicsAcceptedOnce.add(flightTimeCharacteristicsByFirstId.get(key));
@@ -170,7 +170,7 @@ public class TimingDataManager {
      * @param clickId A clickId associated with specified keyTapCharacteristics
      */
     public void addKeyTapCharacteristics(final KeyTapCharacteristics keyTapCharacteristics, final long clickId) {
-        Log.d(TAG,"keyTapCharacteristics: " + keyTapCharacteristics.getKeyCharacter());
+        Log.d(TAG,"keyTapCharacteristics: " + (char)keyTapCharacteristics.getKeyCharacter());
         if(!testSessionMode) {
             new Thread(new Runnable() {
                 @Override
@@ -193,7 +193,7 @@ public class TimingDataManager {
      * @param secondClickId Second clickId associated with specified flightTimeCharacteristics
      */
     public void addFlightTimeCharacteristics(final FlightTimeCharacteristics flightTimeCharacteristics, final long firstClickId, final long secondClickId) {
-        Log.d(TAG,"flightTimeCharacteristics: " + flightTimeCharacteristics.getCharFrom() + "->" + flightTimeCharacteristics.getCharTo());
+        Log.d(TAG,"flightTimeCharacteristics: " + (char)flightTimeCharacteristics.getCharFrom() + "->" + (char)flightTimeCharacteristics.getCharTo());
         if(!testSessionMode) {
             new Thread(new Runnable() {
                 @Override

@@ -14,7 +14,7 @@ public class KeyTapCharacteristics {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private long timestamp;
-    private char keyCharacter;
+    private int keyCharacter;
     private long holdTimeMillis;
     private float pressure;
     private float imprecisionX;
@@ -34,7 +34,7 @@ public class KeyTapCharacteristics {
      * @param userId         see {@link #getUserId()}
      * @param sessionId      see {@link #getSessionId()}
      */
-    public KeyTapCharacteristics(long timestamp, char keyCharacter, long holdTimeMillis, float pressure, float imprecisionX, float imprecisionY, long userId, long sessionId) {
+    public KeyTapCharacteristics(long timestamp, int keyCharacter, long holdTimeMillis, float pressure, float imprecisionX, float imprecisionY, long userId, long sessionId) {
         this.timestamp = timestamp;
         this.keyCharacter = keyCharacter;
         this.holdTimeMillis = holdTimeMillis;
@@ -77,7 +77,7 @@ public class KeyTapCharacteristics {
      *
      * @return The character of clicked button.
      */
-    public char getKeyCharacter() {
+    public int getKeyCharacter() {
         return keyCharacter;
     }
 
