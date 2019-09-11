@@ -40,7 +40,7 @@ public class FirebaseSessionSync {
         this.applicationContext = applicationContext;
     }
 
-    public void syncSession(final int sessionId, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
+    public void syncSession(final long sessionId, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
