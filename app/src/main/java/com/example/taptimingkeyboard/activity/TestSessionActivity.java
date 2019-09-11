@@ -31,6 +31,7 @@ import com.example.taptimingkeyboard.data.Md5Hash;
 import com.example.taptimingkeyboard.data.RemotePreferences;
 import com.example.taptimingkeyboard.data.TestSessionWordErrors;
 import com.example.taptimingkeyboard.data.UserInfo;
+import com.example.taptimingkeyboard.data.firebase.FirebaseSessionSync;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardButton;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardClickListener;
 import com.example.taptimingkeyboard.keyboard.TTKeyboardLayout;
@@ -373,6 +374,27 @@ public class TestSessionActivity extends AppCompatActivity {
                     testSession.setNumErrors(numErrors);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionWordErrorsDao().insertAll(TestSessionWordErrors.fromMap(wordsErrorsMap,sessionId));
+                    new FirebaseSessionSync(getApplicationContext()).syncSession(sessionId, new FirebaseSessionSync.OnSuccessfulSyncListener() {
+                        @Override
+                        public void onSuccessfulSync() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(TestSessionActivity.this,"Results sent to firesync",Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }, new FirebaseSessionSync.OnSyncFailureListener() {
+                        @Override
+                        public void onSyncFailure(Exception e) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(TestSessionActivity.this,"Error sending results to firesync",Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
             });
         }
