@@ -305,7 +305,7 @@ public class TestSessionActivity extends AppCompatActivity {
         if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_UNDEFINED)
             isLandscape=null;
         final Boolean isOrientationLandscape=isLandscape;
-        final String phoneInfo = Build.BRAND+","+Build.MODEL+","+Build.PRODUCT+","+Build.DEVICE;
+        final String phoneInfo = String.format("BRAND:\"%s\",MODEL:\"%s\",PRODUCT:\"%s\",DEVICE:\"%s\"",Build.BRAND,Build.MODEL,Build.PRODUCT,Build.DEVICE);
         Display display = ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         final DisplayMetrics displayMetrics = new DisplayMetrics();
         display.getMetrics(displayMetrics);
