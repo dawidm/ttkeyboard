@@ -1,12 +1,11 @@
 package com.example.taptimingkeyboard;
 
-import android.app.Application;
-
+import androidx.multidex.MultiDexApplication;
 import androidx.preference.PreferenceManager;
 
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 
-public class TapTimingKeyboardApplication extends Application {
+public class TapTimingKeyboardApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
