@@ -24,9 +24,9 @@
     <string name="description_first_name">First name</string>
     <string name="description_last_name">Last name</string>
     <string name="description_age">Age</string>
-    <string name="description_is_diagnosed" >Diagnosed with Parkinson\'s disease</string>
+    <string name="description_is_diagnosed">Diagnosed with Parkinson\'s disease</string>
     <string name="description_on_medication">Currently on medication</string>
-    <string name="label_sex" >Sex</string>
+    <string name="label_sex">Sex</string>
     <string name="label_handedness">Dominant hand</string>
     <string name="label_diagnosed_asymmetry">Diagnosed symptoms asymmetry</string>
     <string name="load_user_existing_info">Previous entries</string>
@@ -44,4 +44,8 @@
     <string name="pref_vibrations">Vibrations</string>
     <string name="pref_vibration_duration">Vibration duration (ms)</string>
     <string name="preference_word_progress">Word typing progress</string>
+    <string name="uncynced_lists_activity_title">Test session results unsent to a server</string>
+    <string name="button_sync_results">Send results</string>
+    <string name="preference_unsent_results">Unsent test results</string>
+    <string name="info_no_unsent_results">No unsent test session results</string>
 </resources>

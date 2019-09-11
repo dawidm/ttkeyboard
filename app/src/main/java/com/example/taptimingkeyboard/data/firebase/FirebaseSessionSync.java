@@ -52,18 +52,19 @@ public class FirebaseSessionSync {
                 firebaseTestSession.setUserInfo(userInfo);
                 firebaseTestSession.setFlightTimeCharacteristics(Arrays.asList(flightTimeCharacteristics));
                 firebaseTestSession.setKeyTapCharacteristics(Arrays.asList(keyTapCharacteristics));
-                saveSession(firebaseTestSession, onSuccessfulSyncListener, onSyncFailureListener);
+                saveSession(testSession,firebaseTestSession, onSuccessfulSyncListener, onSyncFailureListener);
             }
         });
     }
 
-    private void saveSession(final FirebaseTestSession firebaseTestSession, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
+    private void saveSession(final TestSession testSession, final FirebaseTestSession firebaseTestSession, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
         firestore = FirebaseFirestore.getInstance();
         firestore.collection(FIREBASE_COLLECTION_NAME).
                 add(firebaseTestSession).
                 addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
+                        markAsSynced(testSession);
                         onSuccessfulSyncListener.onSuccessfulSync();
                         Log.d(TAG, String.format("saved session (id %d), firebase document id: %s",firebaseTestSession.getId(),documentReference.getId()));
                     }
@@ -75,6 +76,16 @@ public class FirebaseSessionSync {
                         Log.w(TAG, "error saving session session, id" + firebaseTestSession.getId(),e);
                     }
                 });
+    }
+
+    private void markAsSynced(final TestSession testSession) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                testSession.setSynchronized(true);
+                TapTimingDatabase.instance(applicationContext).testSessionDao().update(testSession);
+            }
+        });
     }
 
 }

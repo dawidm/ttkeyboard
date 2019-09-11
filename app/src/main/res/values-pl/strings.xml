@@ -44,4 +44,8 @@
     <string name="pref_vibrations">Wibracje</string>
     <string name="warning_no_existing_users">Brak istniejących użytkowników</string>
     <string name="preference_word_progress">Postęp pisania słowa</string>
+    <string name="uncynced_lists_activity_title">Wyniki sesji testowych niewysłane na serwer</string>
+    <string name="button_sync_results">Wyślij wyniki</string>
+    <string name="preference_unsent_results">Niewysłane wyniki</string>
+    <string name="info_no_unsent_results">Brak niewysłanych wyników</string>
 </resources>

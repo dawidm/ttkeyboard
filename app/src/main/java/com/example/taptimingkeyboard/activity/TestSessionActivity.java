@@ -369,7 +369,7 @@ public class TestSessionActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     long timestampMs=System.currentTimeMillis();
-                    TestSession testSession = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getById(sessionId);
+                    final TestSession testSession = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getById(sessionId);
                     testSession.setSessionEndTimestampMs(timestampMs);
                     testSession.setNumErrors(numErrors);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
@@ -386,14 +386,7 @@ public class TestSessionActivity extends AppCompatActivity {
                         }
                     }, new FirebaseSessionSync.OnSyncFailureListener() {
                         @Override
-                        public void onSyncFailure(Exception e) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(TestSessionActivity.this,"Error sending results to firesync",Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
+                        public void onSyncFailure(Exception e) { }
                     });
                 }
             });

@@ -25,6 +25,7 @@ public class TestSession {
     private String phoneInfo;
     private float phoneXDpi;
     private float phoneYDpi;
+    private boolean isSynchronized=false;
 
     /**
      * Creates instance with data that could be determined on the beginning of the test session
@@ -159,6 +160,14 @@ public class TestSession {
     }
 
     /**
+     * Get isSynchronized
+     * @return Whether test session results has been successfully sent to the remote database.
+     */
+    public boolean isSynchronized() {
+        return isSynchronized;
+    }
+
+    /**
      * Sets sessionEndTimestampMs.
      *
      * @param sessionEndTimestampMs see {@link #getSessionEndTimestampMs()}
@@ -174,5 +183,13 @@ public class TestSession {
      */
     public void setNumErrors(int numErrors) {
         this.numErrors = numErrors;
+    }
+
+    /**
+     * Sets isSynchronized
+     * @param aSynchronized See {@link #isSynchronized}
+     */
+    public void setSynchronized(boolean aSynchronized) {
+        isSynchronized = aSynchronized;
     }
 }

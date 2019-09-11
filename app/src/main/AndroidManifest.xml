@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.taptimingkeyboard">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
     <application
         android:name=".TapTimingKeyboardApplication"
         android:allowBackup="true"
@@ -14,7 +10,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.TestSessionsSyncActivity"></activity>
 
+        <activity
+            android:name=".activity.PreferencesActivity"
+            android:label="TapTimingKeyboardPreferences" />
+
+        <activity android:name=".activity.TestSessionActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.UserInfoActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <service
             android:name=".TapTimingKeyboardService"
             android:label="TapTimingKeyboard"
@@ -27,21 +40,10 @@
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
-
-        <activity
-            android:name=".activity.PreferencesActivity"
-            android:label="TapTimingKeyboardPreferences"></activity>
-        <activity android:name=".activity.TestSessionActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".activity.UserInfoActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

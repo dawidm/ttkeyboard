@@ -78,6 +78,14 @@ public class PreferencesActivity extends AppCompatActivity {
             ((SeekBarPreference)findPreference("height_portrait")).setShowSeekBarValue(true);
             ((SeekBarPreference)findPreference("click_volume")).setShowSeekBarValue(true);
             ((SeekBarPreference)findPreference("vibration_duration")).setShowSeekBarValue(true);
+            findPreference("unsent_results").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getContext(),TestSessionsSyncActivity.class);
+                    startActivity(intent);
+                    return false;
+                }
+            });
         }
     }
 

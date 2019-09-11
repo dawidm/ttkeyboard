@@ -21,4 +21,7 @@ public interface TestSessionDao {
     @Query("SELECT * FROM test_sessions WHERE id == :id")
     TestSession getById(long id);
 
+    @Query("SELECT * FROM test_sessions")
+    TestSession[] getAll();
+
 }
