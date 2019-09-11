@@ -18,6 +18,10 @@ public class FirebaseTestSession extends TestSession {
 
     public FirebaseTestSession(TestSession testSession, String firebaseInstanceId) {
         super(testSession.getUserId(), testSession.getTimestampMs(), testSession.getWordlistName(), testSession.getWordlistWordsMd5Hash(), testSession.getOrientationLandscape(), testSession.getPhoneInfo(), testSession.getPhoneXDpi(), testSession.getPhoneYDpi());
+        this.setId(testSession.getId());
+        this.setNumErrors(testSession.getNumErrors());
+        this.setSessionEndTimestampMs(testSession.getSessionEndTimestampMs());
+        this.setSynchronized(testSession.isSynchronized());
         this.firebaseInstanceId=firebaseInstanceId;
     }
 

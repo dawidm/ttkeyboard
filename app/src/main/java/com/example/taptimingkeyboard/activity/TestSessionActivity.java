@@ -374,7 +374,7 @@ public class TestSessionActivity extends AppCompatActivity {
                     testSession.setNumErrors(numErrors);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
                     TapTimingDatabase.instance(getApplicationContext()).testSessionWordErrorsDao().insertAll(TestSessionWordErrors.fromMap(wordsErrorsMap,sessionId));
-                    new FirebaseSessionSync(getApplicationContext()).syncSession(sessionId, new FirebaseSessionSync.OnSuccessfulSyncListener() {
+                    new FirebaseSessionSync(getApplicationContext()).syncSession(testSession, new FirebaseSessionSync.OnSuccessfulSyncListener() {
                         @Override
                         public void onSuccessfulSync() {
                             runOnUiThread(new Runnable() {

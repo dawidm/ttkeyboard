@@ -41,13 +41,17 @@ public class FirebaseSessionSync {
     }
 
     public void syncSession(final long sessionId, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
+        TestSession testSession = TapTimingDatabase.instance(applicationContext).testSessionDao().getById(sessionId);
+        syncSession(testSession,onSuccessfulSyncListener,onSyncFailureListener);
+    }
+
+    public void syncSession(final TestSession testSession, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                TestSession testSession = TapTimingDatabase.instance(applicationContext).testSessionDao().getById(sessionId);
                 UserInfo userInfo = TapTimingDatabase.instance(applicationContext).userInfoDao().getById(testSession.getUserId());
-                KeyTapCharacteristics[] keyTapCharacteristics = TapTimingDatabase.instance(applicationContext).keyTapCharacteristicsDao().getForSession(sessionId);
-                FlightTimeCharacteristics[] flightTimeCharacteristics = TapTimingDatabase.instance(applicationContext).flightTimeCharacteristicsDao().getForSession(sessionId);
+                KeyTapCharacteristics[] keyTapCharacteristics = TapTimingDatabase.instance(applicationContext).keyTapCharacteristicsDao().getForSession(testSession.getId());
+                FlightTimeCharacteristics[] flightTimeCharacteristics = TapTimingDatabase.instance(applicationContext).flightTimeCharacteristicsDao().getForSession(testSession.getId());
                 FirebaseTestSession firebaseTestSession = new FirebaseTestSession(testSession, FirebaseInstanceId.getInstance().getId());
                 firebaseTestSession.setUserInfo(userInfo);
                 firebaseTestSession.setFlightTimeCharacteristics(Arrays.asList(flightTimeCharacteristics));
