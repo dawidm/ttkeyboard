@@ -41,8 +41,13 @@ public class FirebaseSessionSync {
     }
 
     public void syncSession(final long sessionId, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
-        TestSession testSession = TapTimingDatabase.instance(applicationContext).testSessionDao().getById(sessionId);
-        syncSession(testSession,onSuccessfulSyncListener,onSyncFailureListener);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                TestSession testSession = TapTimingDatabase.instance(applicationContext).testSessionDao().getById(sessionId);
+                syncSession(testSession, onSuccessfulSyncListener, onSyncFailureListener);
+            }
+        });
     }
 
     public void syncSession(final TestSession testSession, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
