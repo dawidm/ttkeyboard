@@ -31,7 +31,7 @@
         android:max="60"></SeekBarPreference>
     <CheckBoxPreference android:title="@string/preference_word_progress"
         android:key="typing_progress"
-        android:defaultValue="false"></CheckBoxPreference>
+        android:defaultValue="true"></CheckBoxPreference>
     <Preference android:title="@string/preference_unsent_results"
         android:key="unsent_results"></Preference>
     <EditTextPreference android:title="@string/pref_server_url"
