@@ -33,7 +33,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="16dp"
-        app:layout_constraintBottom_toTopOf="@id/button_load"
+        app:layout_constraintBottom_toTopOf="@id/buttons_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -48,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/user_info_label"
+                android:textColor="@android:color/primary_text_light"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -88,6 +89,7 @@
                     android:layout_marginStart="8dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/label_sex"
+                    android:textColor="@android:color/primary_text_light"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -98,6 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:spinnerMode="dropdown" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -112,6 +115,7 @@
                     android:layout_marginStart="8dp"
                     android:gravity="start|left|center_vertical"
                     android:text="@string/label_handedness"
+                    android:textColor="@android:color/primary_text_light"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -121,6 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp" />
+
             </LinearLayout>
 
             <CheckBox
@@ -141,6 +146,7 @@
                     android:layout_marginStart="8dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/label_diagnosed_asymmetry"
+                    android:textColor="@android:color/primary_text_light"
                     android:textStyle="bold" />
 
                 <Spinner
@@ -148,6 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp" />
+
             </LinearLayout>
 
             <CheckBox
@@ -159,28 +166,31 @@
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/button_load"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/buttons_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/load_user_existing_info"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/button_ok"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/button_ok"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/save_user_info"
+        android:layout_margin="16dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_load" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/button_load"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:text="@string/load_user_existing_info" />
+
+        <Button
+            android:id="@+id/button_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="@string/save_user_info" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -66,17 +66,17 @@ public class UserInfoActivity extends AppCompatActivity {
         ArrayList<LayoutStringEnum> sexesList = new ArrayList<>(2);
         sexesList.add(new LayoutStringEnum(getSexResourceString(UserInfo.Sex.MALE), UserInfo.Sex.MALE));
         sexesList.add(new LayoutStringEnum(getSexResourceString(UserInfo.Sex.FEMALE),UserInfo.Sex.FEMALE));
-        sexSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,sexesList));
+        sexSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.spinner_item,sexesList));
         ArrayList<LayoutStringEnum> handednessList = new ArrayList<>(2);
         handednessList.add(new LayoutStringEnum(getHandednessResourceString(UserInfo.Handedness.RIGHT),UserInfo.Handedness.RIGHT));
         handednessList.add(new LayoutStringEnum(getHandednessResourceString(UserInfo.Handedness.LEFT),UserInfo.Handedness.LEFT));
-        handednessSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,handednessList));
+        handednessSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.spinner_item,handednessList));
         ArrayList<LayoutStringEnum> symptomsAsymmetryList = new ArrayList<>(4);
         symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.RIGHT),UserInfo.Asymmetry.RIGHT));
         symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.LEFT),UserInfo.Asymmetry.LEFT));
         symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.NO_ASYMMETRY),UserInfo.Asymmetry.NO_ASYMMETRY));
         symptomsAsymmetryList.add(new LayoutStringEnum(getAsymmetryResourceString(UserInfo.Asymmetry.NOT_SPECIFIED),UserInfo.Asymmetry.NOT_SPECIFIED));
-        symptomsAsymmetrySpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,symptomsAsymmetryList));
+        symptomsAsymmetrySpinner.setAdapter(new ArrayAdapter<>(this,R.layout.spinner_item,symptomsAsymmetryList));
         symptomsAsymmetrySpinner.setEnabled(false);
         onMedicationCheckbox.setEnabled(false);
         diagnosedWithPDCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
