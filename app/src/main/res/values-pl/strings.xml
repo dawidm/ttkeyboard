@@ -27,7 +27,7 @@
     <string name="description_is_diagnosed">Zdignozowany zespół Parkinsona</string>
     <string name="description_first_name">Imię</string>
     <string name="description_age">Wiek</string>
-    <string name="label_diagnosed_asymmetry">Zdiagnozowana asymetria objawów</string>
+    <string name="label_diagnosed_asymmetry">Asymetria objawów</string>
     <string name="label_handedness">Ręka dominujące</string>
     <string name="load_user_existing_info">Poprzednie wpisy</string>
     <string name="save_user_info">Zapisz</string>
