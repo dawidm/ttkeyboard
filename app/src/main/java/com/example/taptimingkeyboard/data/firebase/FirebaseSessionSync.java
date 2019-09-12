@@ -10,6 +10,7 @@ import com.example.taptimingkeyboard.data.FlightTimeCharacteristics;
 import com.example.taptimingkeyboard.data.KeyTapCharacteristics;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 import com.example.taptimingkeyboard.data.TestSession;
+import com.example.taptimingkeyboard.data.TestSessionWordErrors;
 import com.example.taptimingkeyboard.data.UserInfo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,12 +46,13 @@ public class FirebaseSessionSync {
             @Override
             public void run() {
                 TestSession testSession = TapTimingDatabase.instance(applicationContext).testSessionDao().getById(sessionId);
-                syncSession(testSession, onSuccessfulSyncListener, onSyncFailureListener);
+                TestSessionWordErrors[] testSessionWordErrors = TapTimingDatabase.instance(applicationContext).testSessionWordErrorsDao().getForSession(sessionId);
+                syncSession(testSession, testSessionWordErrors, onSuccessfulSyncListener, onSyncFailureListener);
             }
         });
     }
 
-    public void syncSession(final TestSession testSession, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
+    public void syncSession(final TestSession testSession, final TestSessionWordErrors[] testSessionWordErrors, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -61,6 +63,7 @@ public class FirebaseSessionSync {
                 firebaseTestSession.setUserInfo(userInfo);
                 firebaseTestSession.setFlightTimeCharacteristics(Arrays.asList(flightTimeCharacteristics));
                 firebaseTestSession.setKeyTapCharacteristics(Arrays.asList(keyTapCharacteristics));
+                firebaseTestSession.setWordErrors(Arrays.asList(testSessionWordErrors));
                 saveSession(testSession,firebaseTestSession, onSuccessfulSyncListener, onSyncFailureListener);
             }
         });

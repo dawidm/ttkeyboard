@@ -1,10 +1,9 @@
 package com.example.taptimingkeyboard.data.firebase;
 
-import androidx.annotation.Nullable;
-
 import com.example.taptimingkeyboard.data.FlightTimeCharacteristics;
 import com.example.taptimingkeyboard.data.KeyTapCharacteristics;
 import com.example.taptimingkeyboard.data.TestSession;
+import com.example.taptimingkeyboard.data.TestSessionWordErrors;
 import com.example.taptimingkeyboard.data.UserInfo;
 
 import java.util.List;
@@ -15,6 +14,7 @@ public class FirebaseTestSession extends TestSession {
     private UserInfo userInfo;
     private List<KeyTapCharacteristics> keyTapCharacteristics;
     private List<FlightTimeCharacteristics> flightTimeCharacteristics;
+    private List<TestSessionWordErrors> wordErrors;
 
     public FirebaseTestSession(TestSession testSession, String firebaseInstanceId) {
         super(testSession.getUserId(), testSession.getTimestampMs(), testSession.getWordlistName(), testSession.getWordlistWordsMd5Hash(), testSession.getOrientationLandscape(), testSession.getPhoneInfo(), testSession.getPhoneXDpi(), testSession.getPhoneYDpi());
@@ -41,6 +41,10 @@ public class FirebaseTestSession extends TestSession {
         return flightTimeCharacteristics;
     }
 
+    public List<TestSessionWordErrors> getWordErrors() {
+        return wordErrors;
+    }
+
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
     }
@@ -52,4 +56,9 @@ public class FirebaseTestSession extends TestSession {
     public void setFlightTimeCharacteristics(List<FlightTimeCharacteristics> flightTimeCharacteristics) {
         this.flightTimeCharacteristics = flightTimeCharacteristics;
     }
+
+    public void setWordErrors(List<TestSessionWordErrors> wordErrors) {
+        this.wordErrors = wordErrors;
+    }
+
 }
