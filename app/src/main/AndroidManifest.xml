@@ -22,11 +22,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.PreferencesActivity"
-            android:label="@string/activity_label_preferences" >
+            android:label="@string/activity_label_preferences"
+            android:taskAffinity=":PreferencesTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
