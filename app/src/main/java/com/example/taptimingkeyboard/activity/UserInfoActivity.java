@@ -106,6 +106,13 @@ public class UserInfoActivity extends AppCompatActivity {
         usersListViewContainer.bringToFront();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(usersListViewContainer.getVisibility()==View.VISIBLE)
+            usersListViewContainer.setVisibility(View.GONE);
+    }
+
     /**
      * Get layout string in correct language Sex enum.
      * @param sex Sex enum.
@@ -259,7 +266,6 @@ public class UserInfoActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TestSessionActivity.class);
         intent.putExtra("user_id",id);
         startActivity(intent);
-        finish();
     }
 
     /**

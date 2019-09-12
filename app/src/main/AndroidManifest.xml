@@ -11,13 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".activity.TestSessionsSyncActivity"></activity>
-        <activity android:name=".activity.TestSessionActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+        <activity android:name=".activity.TestSessionsSyncActivity"
+            android:label="@string/app_name"></activity>
+        <activity android:name=".activity.TestSessionActivity"
+            android:label="@string/app_name">
         </activity>
-        <activity android:name=".activity.UserInfoActivity">
+        <activity android:name=".activity.UserInfoActivity"
+            android:label="@string/app_name"
+            android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,7 +26,7 @@
         </activity>
         <activity
             android:name=".activity.PreferencesActivity"
-            android:label="TapTimingKeyboard Preferences" >
+            android:label="@string/activity_label_preferences" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
