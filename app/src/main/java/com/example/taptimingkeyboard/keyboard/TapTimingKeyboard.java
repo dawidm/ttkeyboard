@@ -400,7 +400,8 @@ public class TapTimingKeyboard {
      * Use case: when hiding keyboard. Flight time for two clicks between which keyboard has been hidden and showed again probably isn't usable information.
      */
     public void abortCurrentFlightTime() {
-        buttonClickParametersList.peekLast().abortFlightTime();
+        if(!buttonClickParametersList.isEmpty())
+            buttonClickParametersList.peekLast().abortFlightTime();
     }
 
     /**
