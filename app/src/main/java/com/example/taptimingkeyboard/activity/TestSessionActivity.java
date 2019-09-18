@@ -434,7 +434,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private void loadWord() {
         if(showTypingProgress) {
             testWordCorrectTextView.setText(words[wordsIterator].substring(0,charsIterator));
-            testWordTextView.setText(words[wordsIterator].substring(charsIterator));
+            testWordTextView.setText(words[wordsIterator]);
         } else
             testWordTextView.setText(words[wordsIterator]);
     }
