@@ -366,6 +366,8 @@ public class TapTimingKeyboard {
                 getButtonDistanceXYPx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).x,
                 getButtonDistanceXYPx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).y,
                 getButtonDistanceMillimeters(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()),
+                secondButtonClickParameters.getX()-getButtonSizeX(secondButtonClickParameters.getTtKeyboardButton())/2,
+                secondButtonClickParameters.getY()-getButtonSizeY(secondButtonClickParameters.getTtKeyboardButton())/2,
                 secondButtonClickParameters.getPressEventTimeMillis()- firstButtonClickParameters.getReleasedEventTime(),
                 userId,
                 sessionId

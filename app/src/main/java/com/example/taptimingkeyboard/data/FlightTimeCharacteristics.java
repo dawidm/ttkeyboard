@@ -15,10 +15,11 @@ public class FlightTimeCharacteristics {
     private long timestamp;
     private int charFrom;
     private int charTo;
-    //this is calculated with: new Point(xFrom-xTo,yFrom-yTo), From - first button coordinates, To - seconds button coordinates
     private double distancePixelsX;
     private double distancePixelsY;
     private double distanceMm;
+    private double secondClickDisplacementPixelsX;
+    private double secondClickDisplacementPixelsY;
     private long flightTimeMillis;
     private long userId;
     private long sessionId;
@@ -32,16 +33,20 @@ public class FlightTimeCharacteristics {
      * @param distancePixelsX see {@link #getDistancePixelsX()}
      * @param distancePixelsY see {@link #getDistancePixelsY()}
      * @param distanceMm      see {@link #getDistanceMm()}
+     * @param secondClickDisplacementPixelsX see {@link #getSecondClickDisplacementPixelsX()}
+     * @param secondClickDisplacementPixelsY see {@link #getSecondClickDisplacementPixelsY()}
      * @param flightTimeMillis      see {@link #getFlightTimeMillis()}
      * @param userId          see {@link #getUserId()}
      * @param sessionId       see {@link #getSessionId()}
      */
-    public FlightTimeCharacteristics(long timestamp, int charFrom, int charTo, double distancePixelsX, double distancePixelsY, double distanceMm, long flightTimeMillis, long userId, long sessionId) {
+    public FlightTimeCharacteristics(long timestamp, int charFrom, int charTo, double distancePixelsX, double distancePixelsY, double distanceMm, double secondClickDisplacementPixelsX, double secondClickDisplacementPixelsY, long flightTimeMillis, long userId, long sessionId) {
         this.timestamp = timestamp;
         this.charFrom = charFrom;
         this.charTo = charTo;
         this.distancePixelsX = distancePixelsX;
         this.distancePixelsY = distancePixelsY;
+        this.secondClickDisplacementPixelsX = secondClickDisplacementPixelsX;
+        this.secondClickDisplacementPixelsY = secondClickDisplacementPixelsY;
         this.distanceMm = distanceMm;
         this.flightTimeMillis = flightTimeMillis;
         this.userId = userId;
@@ -94,7 +99,7 @@ public class FlightTimeCharacteristics {
     }
 
     /**
-     * Gets distancePixelsX.
+     * Gets distancePixelsX. xFrom-xTo where xFrom - first button x coordinate, xTo - second button x coordinate
      *
      * @return The distance between buttons in x dimension
      */
@@ -103,12 +108,31 @@ public class FlightTimeCharacteristics {
     }
 
     /**
-     * Gets distancePixelsY.
+     * Gets distancePixelsY. yFrom-yTo where yFrom - first button y coordinate, yTo - second button y coordinate
      *
      * @return The distance between buttons in y dimension
      */
     public double getDistancePixelsY() {
         return distancePixelsY;
+    }
+
+
+    /**
+     * For second button ({@link #getCharTo()}), get a distance in pixels of the center of the touch area from the center of the button in x dimension.
+     *
+     * @return the distance in pixels
+     */
+    public double getSecondClickDisplacementPixelsX() {
+        return secondClickDisplacementPixelsX;
+    }
+
+    /**
+     * For second button ({@link #getCharTo()}), get a distance in pixels of the center of the touch area from the center of the button in y dimension.
+     *
+     * @return the distance in pixels
+     */
+    public double getSecondClickDisplacementPixelsY() {
+        return secondClickDisplacementPixelsY;
     }
 
     /**
@@ -148,11 +172,14 @@ public class FlightTimeCharacteristics {
         return sessionId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         int hash = 7;
-        hash=31*hash+(int)id;
-        hash=31*hash+(int)timestamp;
+        hash = 31 * hash + (int) id;
+        hash = 31 * hash + (int) timestamp;
         return hash;
     }
 }
