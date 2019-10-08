@@ -237,7 +237,8 @@ public class TapTimingKeyboard {
      * @return distance in mm (calculated using data from Android's {@link DisplayMetrics}) between top-left edges of specified buttons
      */
     private double getButtonDistanceMillimeters(TTKeyboardButton from, TTKeyboardButton to) {
-        Point distancesPx = getButtonDistancePx(from,to);
+        Point distancesPx = getButtonDistanceXYPx(from,to);
+        distancesPx.set(Math.abs(distancesPx.x),(distancesPx.y));
         double distanceXMm=distancesPx.x*pixelSizeMmX;
         double distanceYMm=distancesPx.y*pixelSizeMmY;
         return Math.sqrt(Math.pow(distanceXMm,2)+Math.pow(distanceYMm,2));
@@ -249,7 +250,7 @@ public class TapTimingKeyboard {
      * @param to seconds button
      * @return distance in pixels between top-left edges of specified buttons
      */
-    private Point getButtonDistancePx(TTKeyboardButton from, TTKeyboardButton to) {
+    private Point getButtonDistanceXYPx(TTKeyboardButton from, TTKeyboardButton to) {
         if(buttonsMap.isEmpty())
             throw new IllegalStateException("called getButtonDistance before creating layout view");
         TextView buttonFrom = buttonsMap.get(from);
@@ -264,7 +265,7 @@ public class TapTimingKeyboard {
         ((LinearLayout)tapTimingKeyboardView).offsetDescendantRectToMyCoords(buttonTo,buttonToRect);
         int xTo=buttonToRect.left;
         int yTo=buttonToRect.top;
-        return new Point(Math.abs(xFrom-xTo),Math.abs(yFrom-yTo));
+        return new Point(xFrom-xTo,yFrom-yTo);
     }
 
     /**
@@ -362,8 +363,8 @@ public class TapTimingKeyboard {
                 currentTimestampMillis-secondHoldTime,
                 firstButtonClickParameters.getTtKeyboardButton().getCode(),
                 secondButtonClickParameters.getTtKeyboardButton().getCode(),
-                getButtonDistancePx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).x,
-                getButtonDistancePx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).y,
+                getButtonDistanceXYPx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).x,
+                getButtonDistanceXYPx(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()).y,
                 getButtonDistanceMillimeters(firstButtonClickParameters.getTtKeyboardButton(), secondButtonClickParameters.getTtKeyboardButton()),
                 secondButtonClickParameters.getPressEventTimeMillis()- firstButtonClickParameters.getReleasedEventTime(),
                 userId,

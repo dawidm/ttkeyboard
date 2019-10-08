@@ -15,6 +15,7 @@ public class FlightTimeCharacteristics {
     private long timestamp;
     private int charFrom;
     private int charTo;
+    //this is calculated with: new Point(xFrom-xTo,yFrom-yTo), From - first button coordinates, To - seconds button coordinates
     private double distancePixelsX;
     private double distancePixelsY;
     private double distanceMm;
