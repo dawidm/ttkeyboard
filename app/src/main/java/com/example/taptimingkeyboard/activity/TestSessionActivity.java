@@ -199,7 +199,8 @@ public class TestSessionActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        endSession(true);
+        if(sessionActive)
+            endSession(true);
         super.onPause();
     }
 
