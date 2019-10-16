@@ -353,7 +353,7 @@ public class TestSessionActivity extends AppCompatActivity {
      * Update interface and database entry with session info
      * @param aborted
      */
-    private void endSession(boolean aborted) {
+    private void endSession(final boolean aborted) {
         sessionActive=false;
         tapTimingKeyboard.endTestSession();
         updateSessionInfo();
@@ -364,34 +364,34 @@ public class TestSessionActivity extends AppCompatActivity {
         testWordCorrectTextView.setText("");
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         clicksIds.clear();
-        if (!aborted) {
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    long timestampMs=System.currentTimeMillis();
-                    final TestSession testSession = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getById(sessionId);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                long timestampMs = System.currentTimeMillis();
+                final TestSession testSession = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getById(sessionId);
+                if (!aborted)
                     testSession.setSessionEndTimestampMs(timestampMs);
-                    testSession.setNumErrors(numErrors);
-                    TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
-                    TestSessionWordErrors[] testSessionWordErrors = TestSessionWordErrors.fromMap(wordsErrorsMap,sessionId);
-                    TapTimingDatabase.instance(getApplicationContext()).testSessionWordErrorsDao().insertAll(testSessionWordErrors);
-                    new FirebaseSessionSync(getApplicationContext()).syncSession(testSession, testSessionWordErrors,  new FirebaseSessionSync.OnSuccessfulSyncListener() {
-                        @Override
-                        public void onSuccessfulSync() {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(TestSessionActivity.this, getString(R.string.toast_session_results_sent),Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }, new FirebaseSessionSync.OnSyncFailureListener() {
-                        @Override
-                        public void onSyncFailure(Exception e) { }
-                    });
-                }
-            });
-        }
+                testSession.setNumErrors(numErrors);
+                TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
+                TestSessionWordErrors[] testSessionWordErrors = TestSessionWordErrors.fromMap(wordsErrorsMap, sessionId);
+                TapTimingDatabase.instance(getApplicationContext()).testSessionWordErrorsDao().insertAll(testSessionWordErrors);
+                new FirebaseSessionSync(getApplicationContext()).syncSession(testSession, testSessionWordErrors, new FirebaseSessionSync.OnSuccessfulSyncListener() {
+                    @Override
+                    public void onSuccessfulSync() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(TestSessionActivity.this, getString(R.string.toast_session_results_sent), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }, new FirebaseSessionSync.OnSyncFailureListener() {
+                    @Override
+                    public void onSyncFailure(Exception e) {
+                    }
+                });
+            }
+        });
     }
 
     /**
