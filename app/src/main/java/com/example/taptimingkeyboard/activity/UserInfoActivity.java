@@ -266,6 +266,7 @@ public class UserInfoActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TestSessionActivity.class);
         intent.putExtra("user_id",id);
         startActivity(intent);
+        finish();
     }
 
     /**
