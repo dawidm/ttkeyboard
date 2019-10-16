@@ -177,19 +177,19 @@ public class UserInfoActivity extends AppCompatActivity {
             public void run() {
                 UserInfo.Asymmetry symptomsAsymmetry;
                 Boolean onMedication;
-                if(!diagnosedWithPDCheckbox.isSelected()) {
+                if(!diagnosedWithPDCheckbox.isChecked()) {
                     symptomsAsymmetry=null;
                     onMedication=null;
                 } else {
                     symptomsAsymmetry = (UserInfo.Asymmetry)((LayoutStringEnum)symptomsAsymmetrySpinner.getSelectedItem()).getEnumValue();
-                    onMedication=onMedicationCheckbox.isSelected();
+                    onMedication=onMedicationCheckbox.isChecked();
                 }
                 UserInfo userInfo = new UserInfo(firstNameEditText.getText().toString().trim(),
                         lastNameEditText.getText().toString().trim(),
                         Integer.parseInt(ageEditText.getText().toString()),
                         (UserInfo.Sex)((LayoutStringEnum)sexSpinner.getSelectedItem()).getEnumValue(),
                         (UserInfo.Handedness)((LayoutStringEnum)handednessSpinner.getSelectedItem()).getEnumValue(),
-                        diagnosedWithPDCheckbox.isSelected(),
+                        diagnosedWithPDCheckbox.isChecked(),
                         symptomsAsymmetry,
                         onMedication);
                 final long userId = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().insert(userInfo);
