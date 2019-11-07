@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -102,6 +103,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private ConstraintLayout getDataContainer;
     private TextView getDataTextView;
     private Button retryButton;
+    private ProgressBar progressBar;
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
     private ScheduledFuture testWordColorFuture;
@@ -124,6 +126,7 @@ public class TestSessionActivity extends AppCompatActivity {
         getDataContainer=findViewById(R.id.get_data_container);
         getDataTextView=findViewById(R.id.get_data_text_view);
         retryButton=findViewById(R.id.retry_button);
+        progressBar=findViewById(R.id.progressBar);
         uiSounds = new UiSounds(this);
         remoteSettingsLoader=new RemoteSettingsLoader(getApplicationContext());
         remoteSettingsLoader.subscribeOnSuccessfulLoad(new RemoteSettingsLoader.SuccessfulLoadListener() {
@@ -334,6 +337,8 @@ public class TestSessionActivity extends AppCompatActivity {
         sessionStartButton.setClickable(false);
         listLinearLayout.setVisibility(View.INVISIBLE);
         buttonsContainer.setVisibility(View.GONE);
+        progressBar.setProgress(0);
+        progressBar.setVisibility(View.VISIBLE);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         sessionActive=true;
         tapTimingKeyboard.startTestSession(sessionId);
@@ -361,6 +366,7 @@ public class TestSessionActivity extends AppCompatActivity {
         sessionStartButton.setClickable(true);
         buttonsContainer.setVisibility(View.VISIBLE);
         listLinearLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
         testWordTextView.setText("");
         testWordCorrectTextView.setText("");
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
@@ -433,6 +439,7 @@ public class TestSessionActivity extends AppCompatActivity {
     }
 
     private void loadWord() {
+        progressBar.setProgress(100*wordsIterator/words.length);
         if(showTypingProgress) {
             testWordCorrectTextView.setText(words[wordsIterator].substring(0,charsIterator));
             testWordTextView.setText(words[wordsIterator]);
