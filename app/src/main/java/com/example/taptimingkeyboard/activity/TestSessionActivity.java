@@ -351,9 +351,11 @@ public class TestSessionActivity extends AppCompatActivity {
         tapTimingKeyboard.startTestSession(sessionId);
         updateSessionInfo();
         words=wordList.getWords();
-        List<String> wordsArrayList= Arrays.asList(words);
-        Collections.shuffle(wordsArrayList);
-        words=wordsArrayList.toArray(new String[wordsArrayList.size()]);
+        if(randomizeWordOrder) {
+            List<String> wordsArrayList = Arrays.asList(words);
+            Collections.shuffle(wordsArrayList);
+            words = wordsArrayList.toArray(new String[wordsArrayList.size()]);
+        }
         numErrors=0;
         wordsIterator=0;
         currentWord=words[0].toCharArray();
