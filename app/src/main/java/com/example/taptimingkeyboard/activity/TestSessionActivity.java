@@ -43,8 +43,12 @@ import com.example.taptimingkeyboard.data.TestSession;
 import com.example.taptimingkeyboard.tools.LimitedFrequencyExecutor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -90,6 +94,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private float soundsVol;
     private boolean vibrations;
     private boolean showTypingProgress;
+    private boolean randomizeWordOrder=false;
 
     private TextView testWordTextView;
     private TextView testWordCorrectTextView;
@@ -244,6 +249,8 @@ public class TestSessionActivity extends AppCompatActivity {
         soundsVol=(remotePreferences!=null&&remotePreferences.getVolume()!=null)?remotePreferences.getVolume()/100.f:sharedPreferences.getInt("click_volume",0)/100.f;
         vibrations=(remotePreferences!=null&&remotePreferences.getVibrations()!=null)?remotePreferences.getVibrations():sharedPreferences.getBoolean("vibrations",false);
         showTypingProgress=sharedPreferences.getBoolean("typing_progress",false);
+        if(remotePreferences!=null&&remotePreferences.getRandomizeWordOrder()!=null)
+            randomizeWordOrder=remotePreferences.getRandomizeWordOrder();
         if(sounds)
             uiSounds.initSounds();
     }
@@ -344,6 +351,9 @@ public class TestSessionActivity extends AppCompatActivity {
         tapTimingKeyboard.startTestSession(sessionId);
         updateSessionInfo();
         words=wordList.getWords();
+        List<String> wordsArrayList= Arrays.asList(words);
+        Collections.shuffle(wordsArrayList);
+        words=wordsArrayList.toArray(new String[wordsArrayList.size()]);
         numErrors=0;
         wordsIterator=0;
         currentWord=words[0].toCharArray();

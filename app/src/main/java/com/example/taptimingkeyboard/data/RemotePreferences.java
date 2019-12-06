@@ -30,6 +30,8 @@ public class RemotePreferences {
     private Integer vibrationDuration;
     @Nullable
     private Integer orientation;
+    @Nullable
+    private Boolean randomizeWordOrder;
 
     /**
      * Instantiates a new Remote preferences.
@@ -134,4 +136,8 @@ public class RemotePreferences {
         return gson.fromJson(new InputStreamReader(new URL(url).openStream()), RemotePreferences.class);
     }
 
+    @Nullable
+    public Boolean getRandomizeWordOrder() {
+        return randomizeWordOrder;
+    }
 }
