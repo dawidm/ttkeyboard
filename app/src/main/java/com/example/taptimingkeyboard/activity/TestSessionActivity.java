@@ -66,7 +66,7 @@ public class TestSessionActivity extends AppCompatActivity {
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
     private static final int ERROR_TIMEOUT_MILLIS = 1000;
-    public static final int ENABLE_SESSION_END_OK_BUTTON_DELAY_MILLIS = 5000;
+    public static final int ENABLE_SESSION_END_OK_BUTTON_DELAY_MILLIS = 10000;
 
     private AtomicBoolean settingsInitialized = new AtomicBoolean(false);
 
