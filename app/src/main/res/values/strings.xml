@@ -50,4 +50,7 @@
     <string name="info_no_unsent_results">No unsent test session results</string>
     <string name="toast_session_results_sent">Results sent to server</string>
     <string name="activity_label_preferences">TapTimingKeyboard Preferences</string>
+    <string name="session_end">Test session finished, thank you :)</string>
+    <string name="ok_button">OK</string>
+    <string name="sending_results_button">Sending results...</string>
 </resources>

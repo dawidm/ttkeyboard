@@ -50,4 +50,7 @@
     <string name="info_no_unsent_results">Brak niewysłanych wyników</string>
     <string name="toast_session_results_sent">Wyniki wyłsłane na serwer</string>
     <string name="activity_label_preferences">Preferencje TapTimingKeyboard</string>
+    <string name="session_end">Sesja testowa zakończona, dziękuję :)</string>
+    <string name="ok_button">OK</string>
+    <string name="sending_results_button">Wysyłanie wyników...</string>
 </resources>

@@ -47,9 +47,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -65,6 +66,7 @@ public class TestSessionActivity extends AppCompatActivity {
 
     public static final int TEST_WORD_BLINK_TIME_MILLIS = 1000;
     private static final int ERROR_TIMEOUT_MILLIS = 1000;
+    public static final int ENABLE_SESSION_END_OK_BUTTON_DELAY_MILLIS = 5000;
 
     private AtomicBoolean settingsInitialized = new AtomicBoolean(false);
 
@@ -106,8 +108,10 @@ public class TestSessionActivity extends AppCompatActivity {
     private LinearLayout contentContainer;
     private ConstraintLayout keyboardContainer;
     private ConstraintLayout getDataContainer;
+    private ConstraintLayout sessionEndContainer;
     private TextView getDataTextView;
     private Button retryButton;
+    private Button sessionEndOkButton;
     private ProgressBar progressBar;
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
@@ -129,8 +133,10 @@ public class TestSessionActivity extends AppCompatActivity {
         contentContainer=findViewById(R.id.content_container);
         keyboardContainer=findViewById(R.id.keyboard_container);
         getDataContainer=findViewById(R.id.get_data_container);
+        sessionEndContainer=findViewById(R.id.session_end_container);
         getDataTextView=findViewById(R.id.get_data_text_view);
         retryButton=findViewById(R.id.retry_button);
+        sessionEndOkButton=findViewById(R.id.session_end_ok_button);
         progressBar=findViewById(R.id.progressBar);
         uiSounds = new UiSounds(this);
         remoteSettingsLoader=new RemoteSettingsLoader(getApplicationContext());
@@ -182,10 +188,17 @@ public class TestSessionActivity extends AppCompatActivity {
                 return true;
             }
         });
+        sessionEndOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sessionEndContainer.setVisibility(View.INVISIBLE);
+            }
+        });
         ArrayList<String> emptySpinnerArray = new ArrayList<>(1);
         emptySpinnerArray.add(getResources().getString(R.string.wordlist_spinner_empty));
         listsSpinner.setAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,emptySpinnerArray));
         getDataContainer.bringToFront();
+        sessionEndContainer.bringToFront();
         if(settingsInitialized.get())
             useSettings();
         else
@@ -382,7 +395,21 @@ public class TestSessionActivity extends AppCompatActivity {
         testWordTextView.setText("");
         testWordCorrectTextView.setText("");
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        sessionEndContainer.setVisibility(View.VISIBLE);
+        sessionEndOkButton.setText(R.string.sending_results_button);
+        sessionEndOkButton.setEnabled(false);
         clicksIds.clear();
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        enableSessionEndOkButton();
+                    }
+                });
+            }
+        }, ENABLE_SESSION_END_OK_BUTTON_DELAY_MILLIS);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -400,17 +427,28 @@ public class TestSessionActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(TestSessionActivity.this, getString(R.string.toast_session_results_sent), Toast.LENGTH_SHORT).show();
+                                enableSessionEndOkButton();
                             }
                         });
                     }
                 }, new FirebaseSessionSync.OnSyncFailureListener() {
                     @Override
                     public void onSyncFailure(Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                enableSessionEndOkButton();
+                            }
+                        });
                     }
                 });
             }
         });
+    }
+
+    private void enableSessionEndOkButton() {
+        sessionEndOkButton.setText(R.string.ok_button);
+        sessionEndOkButton.setEnabled(true);
     }
 
     /**
