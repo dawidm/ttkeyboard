@@ -100,22 +100,4 @@ public class FirebaseSessionSync {
         });
     }
 
-    public void retrySyncAllUnsyncedSessions() {
-        TestSession[] testSessions = TapTimingDatabase.instance(applicationContext).testSessionDao().getUnsynchronized();
-        Log.d(TAG, String.format("number of unsynchronized sessions: %d", testSessions.length));
-        for (TestSession testSession : testSessions) {
-            TestSessionWordErrors[] testSessionWordErrors = TapTimingDatabase.instance(applicationContext).testSessionWordErrorsDao().getForSession(testSession.getId());
-            Log.d(TAG, String.format("retrying sync for session id: %d", testSession.getId()));
-            syncSession(testSession, testSessionWordErrors, new OnSuccessfulSyncListener() {
-                @Override
-                public void onSuccessfulSync() {
-                }
-            }, new OnSyncFailureListener() {
-                @Override
-                public void onSyncFailure(Exception e) {
-                }
-            });
-        }
-    }
-
 }
