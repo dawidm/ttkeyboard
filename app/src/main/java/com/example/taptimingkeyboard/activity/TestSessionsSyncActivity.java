@@ -116,13 +116,11 @@ public class TestSessionsSyncActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                TestSession[] testSessions = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getAll();
+                TestSession[] testSessions = TapTimingDatabase.instance(getApplicationContext()).testSessionDao().getUnsynchronized();
                 testSessionUserNameList = new LinkedList<>();
                 for(int i=0;i<testSessions.length;i++) {
-                    if(!testSessions[i].isSynchronized()) {
-                        UserInfo userInfo=TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getById(testSessions[i].getUserId());
-                        testSessionUserNameList.add(new TestSessionUserName(testSessions[i],userInfo.toString()));
-                    }
+                    UserInfo userInfo=TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getById(testSessions[i].getUserId());
+                    testSessionUserNameList.add(new TestSessionUserName(testSessions[i],userInfo.toString()));
                 }
                 updateListViewOnUiThread();
             }

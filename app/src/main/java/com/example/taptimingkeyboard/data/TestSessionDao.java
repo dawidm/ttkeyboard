@@ -24,4 +24,7 @@ public interface TestSessionDao {
     @Query("SELECT * FROM test_sessions")
     TestSession[] getAll();
 
+    @Query("SELECT * FROM test_sessions WHERE isSynchronized == 0")
+    TestSession[] getUnsynchronized();
+
 }
