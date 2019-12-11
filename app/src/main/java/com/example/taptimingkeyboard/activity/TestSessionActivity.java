@@ -73,6 +73,7 @@ public class TestSessionActivity extends AppCompatActivity {
     private TapTimingKeyboard tapTimingKeyboard;
     private UiSounds uiSounds;
     private RemoteSettingsLoader remoteSettingsLoader;
+    private FirebaseSessionSync firebaseSessionSync;
 
     private LimitedFrequencyExecutor limitedFrequencyExecutor=new LimitedFrequencyExecutor();
     private static final int COUNT_ERROR_TASK_ID=1;
@@ -139,6 +140,7 @@ public class TestSessionActivity extends AppCompatActivity {
         sessionEndOkButton=findViewById(R.id.session_end_ok_button);
         progressBar=findViewById(R.id.progressBar);
         uiSounds = new UiSounds(this);
+        firebaseSessionSync = new FirebaseSessionSync(getApplicationContext());
         remoteSettingsLoader=new RemoteSettingsLoader(getApplicationContext());
         remoteSettingsLoader.subscribeOnSuccessfulLoad(new RemoteSettingsLoader.SuccessfulLoadListener() {
             @Override
@@ -153,6 +155,7 @@ public class TestSessionActivity extends AppCompatActivity {
                         useSettings();
                     }
                 });
+
             }
         });
         remoteSettingsLoader.subscribeOnFailure(new RemoteSettingsLoader.FailureListener() {
@@ -421,7 +424,7 @@ public class TestSessionActivity extends AppCompatActivity {
                 TapTimingDatabase.instance(getApplicationContext()).testSessionDao().update(testSession);
                 TestSessionWordErrors[] testSessionWordErrors = TestSessionWordErrors.fromMap(wordsErrorsMap, sessionId);
                 TapTimingDatabase.instance(getApplicationContext()).testSessionWordErrorsDao().insertAll(testSessionWordErrors);
-                new FirebaseSessionSync(getApplicationContext()).syncSession(testSession, testSessionWordErrors, new FirebaseSessionSync.OnSuccessfulSyncListener() {
+                firebaseSessionSync.syncSession(testSession, testSessionWordErrors, new FirebaseSessionSync.OnSuccessfulSyncListener() {
                     @Override
                     public void onSuccessfulSync() {
                         runOnUiThread(new Runnable() {

@@ -39,6 +39,7 @@ public class FirebaseSessionSync {
 
     public FirebaseSessionSync(Context applicationContext) {
         this.applicationContext = applicationContext;
+        firestore = FirebaseFirestore.getInstance();
     }
 
     public void syncSession(final long sessionId, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
@@ -70,7 +71,6 @@ public class FirebaseSessionSync {
     }
 
     private void saveSession(final TestSession testSession, final FirebaseTestSession firebaseTestSession, final OnSuccessfulSyncListener onSuccessfulSyncListener, final OnSyncFailureListener onSyncFailureListener) {
-        firestore = FirebaseFirestore.getInstance();
         firestore.collection(FIREBASE_COLLECTION_NAME).
                 add(firebaseTestSession).
                 addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
