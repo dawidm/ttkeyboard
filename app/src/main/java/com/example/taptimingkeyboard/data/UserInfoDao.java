@@ -19,4 +19,7 @@ public interface UserInfoDao {
 
         @Query("SELECT * FROM user_info WHERE id == :id")
         UserInfo getById(long id);
+
+        @Query("SELECT * FROM user_info WHERE id != 1")
+        UserInfo[] getAllButDefault();
 }

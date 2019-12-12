@@ -213,7 +213,7 @@ public class UserInfoActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                final UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getAll();
+                final UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getAllButDefault();
                 if(userInfos==null || userInfos.length==0) {
                     runOnUiThread(new Runnable() {
                         @Override
