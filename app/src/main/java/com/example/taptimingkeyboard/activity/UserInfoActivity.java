@@ -43,13 +43,16 @@ public class UserInfoActivity extends AppCompatActivity {
     private ConstraintLayout usersListViewContainer;
     private ListView usersListView;
     private Boolean startedFromPreferences;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
-        if(getIntent().getExtras()!=null)
-            startedFromPreferences=getIntent().getExtras().getBoolean("started_from_preferences");
+        if(getIntent().getExtras()!=null) {
+            this.startedFromPreferences = getIntent().getExtras().getBoolean("started_from_preferences");
+            this.email = getIntent().getExtras().getString("email");
+        }
         mainLayout=findViewById(R.id.main_layout);
         firstNameEditText=findViewById(R.id.edit_text_name);
         lastNameEditText=findViewById(R.id.edit_text_last_name);
@@ -104,6 +107,7 @@ public class UserInfoActivity extends AppCompatActivity {
             }
         });
         usersListViewContainer.bringToFront();
+        checkDataForEmail();
     }
 
     @Override
@@ -111,6 +115,15 @@ public class UserInfoActivity extends AppCompatActivity {
         super.onResume();
         if(usersListViewContainer.getVisibility()==View.VISIBLE)
             usersListViewContainer.setVisibility(View.GONE);
+    }
+
+    private void checkDataForEmail() {
+        if (email!=null) {
+            UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getByEmail(email);
+            if (userInfos.length>0) {
+                startTestSessionActivity(userInfos[0].getId());
+            }
+        }
     }
 
     /**
@@ -191,7 +204,8 @@ public class UserInfoActivity extends AppCompatActivity {
                         (UserInfo.Handedness)((LayoutStringEnum)handednessSpinner.getSelectedItem()).getEnumValue(),
                         diagnosedWithPDCheckbox.isChecked(),
                         symptomsAsymmetry,
-                        onMedication);
+                        onMedication,
+                        email);
                 final long userId = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().insert(userInfo);
                 runOnUiThread(new Runnable() {
                     @Override

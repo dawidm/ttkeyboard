@@ -42,6 +42,8 @@ public class UserInfo {
     private Asymmetry symptomsAsymmetry;
     @Nullable
     private Boolean onMedication;
+    @Nullable
+    private String email;
 
     /**
      * Instantiates a new User info.
@@ -55,7 +57,7 @@ public class UserInfo {
      * @param symptomsAsymmetry see {@link #symptomsAsymmetry}
      * @param onMedication      see {@link #getOnMedication()}
      */
-    public UserInfo(String firstName, String lastName, int age, Sex sex, Handedness handedness, boolean diagnosedWithPD, @Nullable Asymmetry symptomsAsymmetry, @Nullable Boolean onMedication) {
+    public UserInfo(String firstName, String lastName, int age, Sex sex, Handedness handedness, boolean diagnosedWithPD, @Nullable Asymmetry symptomsAsymmetry, @Nullable Boolean onMedication, @Nullable String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -64,6 +66,7 @@ public class UserInfo {
         this.diagnosedWithPD = diagnosedWithPD;
         this.symptomsAsymmetry = symptomsAsymmetry;
         this.onMedication = onMedication;
+        this.email = email;
     }
 
     /**
@@ -157,6 +160,25 @@ public class UserInfo {
         return onMedication;
     }
 
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
+    @Nullable
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets email.
+     *
+     * @param email the email
+     */
+    public void setEmail(@Nullable String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         if(this.getFirstName().equals(DEFAULT_USER_NAME))
@@ -171,6 +193,6 @@ public class UserInfo {
      * @return The instance of UserInfo to be used by application when no other users were added.
      */
     public static UserInfo defaultUser() {
-        return new UserInfo(DEFAULT_USER_NAME,"",0,Sex.MALE,Handedness.RIGHT,false,null,null);
+        return new UserInfo(DEFAULT_USER_NAME,"",0,Sex.MALE,Handedness.RIGHT,false,null,null, null);
     }
 }
