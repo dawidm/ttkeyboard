@@ -53,4 +53,13 @@
     <string name="session_end">Test session finished, thank you :)</string>
     <string name="ok_button">OK</string>
     <string name="sending_results_button">Sending results...</string>
+    <string name="login_title">TapTimingKeyboard log in</string>
+    <string name="login_button_login">Log in</string>
+    <string name="login_button_register">Register</string>
+    <string name="login_label_no_account">Don\'t have an account?</string>
+    <string name="register_button_register" >Register</string>
+    <string name="text_password">Password</string>
+    <string name="text_confirm_password">Confirm password</string>
+    <string name="register_title" >TapTimingKeyboard Registration</string>
+    <string name="text_email">E-mail address</string>
 </resources>

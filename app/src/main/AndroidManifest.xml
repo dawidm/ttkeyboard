@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.taptimingkeyboard">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".TapTimingKeyboardApplication"
         android:allowBackup="true"
@@ -10,19 +14,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".activity.TestSessionsSyncActivity"
-            android:label="@string/app_name"></activity>
-        <activity android:name=".activity.TestSessionActivity"
+        <activity android:name=".FirebaseRegisterActivity"></activity>
+        <activity android:name=".FireBaseLoginActivity" />
+        <activity
+            android:name=".activity.TestSessionsSyncActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".activity.TestSessionActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".activity.UserInfoActivity"
+            android:clearTaskOnLaunch="true"
             android:label="@string/app_name">
-        </activity>
-        <activity android:name=".activity.UserInfoActivity"
-            android:label="@string/app_name"
-            android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -31,9 +39,10 @@
             android:taskAffinity=":PreferencesTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             </intent-filter>
         </activity>
+
         <service
             android:name=".TapTimingKeyboardService"
             android:label="TapTimingKeyboard"
@@ -47,9 +56,5 @@
                 android:resource="@xml/method" />
         </service>
     </application>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
