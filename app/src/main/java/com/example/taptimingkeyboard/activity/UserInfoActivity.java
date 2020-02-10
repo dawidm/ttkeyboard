@@ -124,6 +124,7 @@ public class UserInfoActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (firebaseUser!=null) {
+                    buttonLoad.setVisibility(View.GONE);
                     UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getByEmail(firebaseUser.getEmail());
                     if (userInfos.length>0) {
                         startTestSessionActivity(userInfos[0].getId());
