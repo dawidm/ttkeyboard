@@ -62,4 +62,5 @@
     <string name="text_confirm_password">Potwierdź hasło</string>
     <string name="register_title" >Rejestracja TapTimingKeyboard</string>
     <string name="text_email">Adres e-mail</string>
+    <string name="login_text_failed">Logowanie zakończone niepowodzeniem</string>
 </resources>
