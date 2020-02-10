@@ -63,4 +63,7 @@
     <string name="register_title" >Rejestracja TapTimingKeyboard</string>
     <string name="text_email">Adres e-mail</string>
     <string name="login_text_failed">Logowanie zakończone niepowodzeniem</string>
+    <string name="text_passwords_differ">Hasła różnią się</string>
+    <string name="text_registration_failed">Rejestracja nie powiodła się</string>
+    <string name="text_registration_succeed">Rejestracja zakończona powodzeniem, proszę się zalogować</string>
 </resources>
