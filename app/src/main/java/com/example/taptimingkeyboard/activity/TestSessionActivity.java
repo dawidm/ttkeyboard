@@ -127,7 +127,6 @@ public class TestSessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
-        //getSupportActionBar().hide();
         userId=getIntent().getExtras().getLong("user_id");
         testWordTextView = findViewById(R.id.test_word_textview);
         testWordCorrectTextView = findViewById(R.id.test_word_correct_chars_textview);
@@ -386,6 +385,7 @@ public class TestSessionActivity extends AppCompatActivity {
         buttonsContainer.setVisibility(View.GONE);
         progressBar.setProgress(0);
         progressBar.setVisibility(View.VISIBLE);
+        getSupportActionBar().hide();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         sessionActive=true;
         tapTimingKeyboard.startTestSession(sessionId);
@@ -421,6 +421,7 @@ public class TestSessionActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         testWordTextView.setText("");
         testWordCorrectTextView.setText("");
+        getSupportActionBar().hide();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         sessionEndContainer.setVisibility(View.VISIBLE);
         sessionEndOkButton.setText(R.string.sending_results_button);
