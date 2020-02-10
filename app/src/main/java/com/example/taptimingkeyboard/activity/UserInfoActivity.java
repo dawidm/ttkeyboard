@@ -21,6 +21,8 @@ import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.LayoutStringEnum;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 import com.example.taptimingkeyboard.data.UserInfo;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -43,15 +45,15 @@ public class UserInfoActivity extends AppCompatActivity {
     private ConstraintLayout usersListViewContainer;
     private ListView usersListView;
     private Boolean startedFromPreferences;
-    private String email;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(getIntent().getExtras()!=null) {
             this.startedFromPreferences = getIntent().getExtras().getBoolean("started_from_preferences");
-            this.email = getIntent().getExtras().getString("email");
         }
         mainLayout=findViewById(R.id.main_layout);
         firstNameEditText=findViewById(R.id.edit_text_name);
@@ -118,8 +120,8 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void checkDataForEmail() {
-        if (email!=null) {
-            UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getByEmail(email);
+        if (firebaseUser!=null) {
+            UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getByEmail(firebaseUser.getEmail());
             if (userInfos.length>0) {
                 startTestSessionActivity(userInfos[0].getId());
             }
@@ -205,7 +207,7 @@ public class UserInfoActivity extends AppCompatActivity {
                         diagnosedWithPDCheckbox.isChecked(),
                         symptomsAsymmetry,
                         onMedication,
-                        email);
+                        firebaseUser!=null ? firebaseUser.getEmail() : null);
                 final long userId = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().insert(userInfo);
                 runOnUiThread(new Runnable() {
                     @Override
