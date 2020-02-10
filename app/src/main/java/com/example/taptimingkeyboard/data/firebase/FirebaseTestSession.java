@@ -21,7 +21,7 @@ public class FirebaseTestSession extends TestSession {
         this.setId(testSession.getId());
         this.setNumErrors(testSession.getNumErrors());
         this.setSessionEndTimestampMs(testSession.getSessionEndTimestampMs());
-        this.setSynchronized(testSession.isSynchronized());
+        this.setSynchronized(true);
         this.firebaseInstanceId=firebaseInstanceId;
     }
 
