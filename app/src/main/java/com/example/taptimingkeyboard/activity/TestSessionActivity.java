@@ -8,6 +8,7 @@ import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -17,6 +18,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -27,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.taptimingkeyboard.FireBaseLoginActivity;
 import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.Md5Hash;
 import com.example.taptimingkeyboard.data.RemotePreferences;
@@ -41,6 +45,7 @@ import com.example.taptimingkeyboard.data.WordLists;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;
 import com.example.taptimingkeyboard.data.TestSession;
 import com.example.taptimingkeyboard.tools.LimitedFrequencyExecutor;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,7 +127,7 @@ public class TestSessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_session);
-        getSupportActionBar().hide();
+        //getSupportActionBar().hide();
         userId=getIntent().getExtras().getLong("user_id");
         testWordTextView = findViewById(R.id.test_word_textview);
         testWordCorrectTextView = findViewById(R.id.test_word_correct_chars_textview);
@@ -212,6 +217,25 @@ public class TestSessionActivity extends AppCompatActivity {
                 updateSessionInfo();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(getString(R.string.text_logout));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(this, FireBaseLoginActivity.class);
+                startActivity(intent);
+                finish();
+            break;
+        }
+        return true;
     }
 
     @Override

@@ -66,4 +66,5 @@
     <string name="text_passwords_differ">Passwords are different</string>
     <string name="text_registration_failed">Registration has failed</string>
     <string name="text_registration_succeed">Registration succeed, plase log in</string>
+    <string name="text_logout">Logout</string>
 </resources>

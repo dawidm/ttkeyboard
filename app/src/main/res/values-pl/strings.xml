@@ -66,4 +66,5 @@
     <string name="text_passwords_differ">Hasła różnią się</string>
     <string name="text_registration_failed">Rejestracja nie powiodła się</string>
     <string name="text_registration_succeed">Rejestracja zakończona powodzeniem, proszę się zalogować</string>
+    <string name="text_logout">Wyloguj</string>
 </resources>
