@@ -67,4 +67,6 @@
     <string name="text_registration_failed">Rejestracja nie powiodła się</string>
     <string name="text_registration_succeed">Rejestracja zakończona powodzeniem, proszę się zalogować</string>
     <string name="text_logout">Wyloguj</string>
+    <string name="text_wrong_email_addres">Błędny adres e-mail</string>
+    <string name="text_empty_fields">Pola nie mogą być puste</string>
 </resources>

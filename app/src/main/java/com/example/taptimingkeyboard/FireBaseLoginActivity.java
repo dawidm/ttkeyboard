@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,6 +42,16 @@ public class FireBaseLoginActivity extends AppCompatActivity {
     }
 
     public void loginClick(View v) {
+        if (editTextPassword.getText().length()<1 || editTextEmail.getText().length()<1) {
+            Toast.makeText(FireBaseLoginActivity.this, getString(R.string.text_empty_fields),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(editTextEmail.getText().toString()).matches()) {
+            Toast.makeText(FireBaseLoginActivity.this, getString(R.string.text_wrong_email_addres),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         final Button button = (Button)v;
         button.setEnabled(false);
         mAuth.signInWithEmailAndPassword(editTextEmail.getText().toString(), editTextPassword.getText().toString())

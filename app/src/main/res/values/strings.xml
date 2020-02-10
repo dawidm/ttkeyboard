@@ -67,4 +67,6 @@
     <string name="text_registration_failed">Registration has failed</string>
     <string name="text_registration_succeed">Registration succeed, plase log in</string>
     <string name="text_logout">Logout</string>
+    <string name="text_wrong_email_addres">E-mail address is wrong</string>
+    <string name="text_empty_fields">Any of the fields coudn\'t be empty</string>
 </resources>

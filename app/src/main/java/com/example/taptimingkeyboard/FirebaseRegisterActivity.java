@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,8 +36,18 @@ public class FirebaseRegisterActivity extends AppCompatActivity {
     }
 
     public void registerClick(View v) {
+        if (editTextPassword.getText().length()<1 || editTextEmail.getText().length()<1) {
+            Toast.makeText(FirebaseRegisterActivity.this, getString(R.string.text_empty_fields),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!editTextPassword.getText().toString().equals(editTextPasswordConfirm.getText().toString())) {
             Toast.makeText(FirebaseRegisterActivity.this, getString(R.string.text_passwords_differ),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(editTextEmail.getText().toString()).matches()) {
+            Toast.makeText(FirebaseRegisterActivity.this, getString(R.string.text_wrong_email_addres),
                     Toast.LENGTH_SHORT).show();
             return;
         }
