@@ -120,12 +120,17 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void checkDataForEmail() {
-        if (firebaseUser!=null) {
-            UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getByEmail(firebaseUser.getEmail());
-            if (userInfos.length>0) {
-                startTestSessionActivity(userInfos[0].getId());
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (firebaseUser!=null) {
+                    UserInfo[] userInfos = TapTimingDatabase.instance(getApplicationContext()).userInfoDao().getByEmail(firebaseUser.getEmail());
+                    if (userInfos.length>0) {
+                        startTestSessionActivity(userInfos[0].getId());
+                    }
+                }
             }
-        }
+        });
     }
 
     /**
