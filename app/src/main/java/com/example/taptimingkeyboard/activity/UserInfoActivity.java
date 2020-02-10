@@ -19,7 +19,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.taptimingkeyboard.FireBaseLoginActivity;
 import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.LayoutStringEnum;
 import com.example.taptimingkeyboard.data.TapTimingDatabase;

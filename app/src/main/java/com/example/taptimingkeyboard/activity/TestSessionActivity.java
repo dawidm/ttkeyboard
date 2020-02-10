@@ -30,7 +30,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.taptimingkeyboard.FireBaseLoginActivity;
 import com.example.taptimingkeyboard.R;
 import com.example.taptimingkeyboard.data.Md5Hash;
 import com.example.taptimingkeyboard.data.RemotePreferences;
