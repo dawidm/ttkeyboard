@@ -107,10 +107,9 @@ public class TestSessionActivity extends AppCompatActivity {
     private TextView testWordCorrectTextView;
     private TextView sessionInfoTextView;
     private Button sessionStartButton;
-    private LinearLayout buttonsContainer;
     private Spinner listsSpinner;
-    private LinearLayout listLinearLayout;
-    private LinearLayout contentContainer;
+    private TextView listsTextView;
+    private ConstraintLayout contentContainer;
     private ConstraintLayout keyboardContainer;
     private ConstraintLayout getDataContainer;
     private ConstraintLayout sessionEndContainer;
@@ -131,9 +130,8 @@ public class TestSessionActivity extends AppCompatActivity {
         testWordCorrectTextView = findViewById(R.id.test_word_correct_chars_textview);
         sessionInfoTextView = findViewById(R.id.session_info_textview);
         sessionStartButton = findViewById(R.id.start_button);
-        buttonsContainer=findViewById(R.id.buttons_container);
         listsSpinner=findViewById(R.id.lists_spinner);
-        listLinearLayout=findViewById(R.id.lists_linear_layout);
+        listsTextView=findViewById(R.id.lists_textview);
         contentContainer=findViewById(R.id.content_container);
         keyboardContainer=findViewById(R.id.keyboard_container);
         getDataContainer=findViewById(R.id.get_data_container);
@@ -141,7 +139,7 @@ public class TestSessionActivity extends AppCompatActivity {
         getDataTextView=findViewById(R.id.get_data_text_view);
         retryButton=findViewById(R.id.retry_button);
         sessionEndOkButton=findViewById(R.id.session_end_ok_button);
-        progressBar=findViewById(R.id.progressBar);
+        progressBar=findViewById(R.id.progress_bar);
         uiSounds = new UiSounds(this);
         firebaseSessionSync = new FirebaseSessionSync(getApplicationContext());
         remoteSettingsLoader=new RemoteSettingsLoader(getApplicationContext());
@@ -262,7 +260,7 @@ public class TestSessionActivity extends AppCompatActivity {
         }
         getDataContainer.setVisibility(View.INVISIBLE);
         contentContainer.setVisibility(View.VISIBLE);
-        keyboardContainer.setVisibility(View.VISIBLE);
+        keyboardContainer.setVisibility(View.GONE);
         initKeyboard();
         initWordListsSpinner();
     }
@@ -380,8 +378,10 @@ public class TestSessionActivity extends AppCompatActivity {
      */
     private void startSession(WordLists.WordList wordList) {
         sessionStartButton.setClickable(false);
-        listLinearLayout.setVisibility(View.INVISIBLE);
-        buttonsContainer.setVisibility(View.GONE);
+        listsTextView.setVisibility(View.INVISIBLE);
+        listsSpinner.setVisibility(View.INVISIBLE);
+        sessionStartButton.setVisibility(View.GONE);
+        keyboardContainer.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
         progressBar.setVisibility(View.VISIBLE);
         getSupportActionBar().hide();
@@ -415,12 +415,14 @@ public class TestSessionActivity extends AppCompatActivity {
         tapTimingKeyboard.endTestSession();
         updateSessionInfo();
         sessionStartButton.setClickable(true);
-        buttonsContainer.setVisibility(View.VISIBLE);
-        listLinearLayout.setVisibility(View.VISIBLE);
+        sessionStartButton.setVisibility(View.VISIBLE);
+        listsSpinner.setVisibility(View.VISIBLE);
+        listsTextView.setVisibility(View.VISIBLE);
+        keyboardContainer.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
         testWordTextView.setText("");
         testWordCorrectTextView.setText("");
-        getSupportActionBar().hide();
+        getSupportActionBar().show();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         sessionEndContainer.setVisibility(View.VISIBLE);
         sessionEndOkButton.setText(R.string.sending_results_button);
